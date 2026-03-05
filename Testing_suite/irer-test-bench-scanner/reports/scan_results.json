@@ -1,0 +1,13 @@
+{
+  "scan_id": "example_scan_id",
+  "date": "2023-10-01",
+  "files_scanned": 0,
+  "governance_violations": [],
+  "remedies": [],
+  "metadata": {
+    "total_files": 0,
+    "filtered_files": 0,
+    "red_tier_flags": 0,
+    "compliance_status": "COMPLIANT"
+  }
+}

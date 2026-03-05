@@ -1,0 +1,10 @@
+YAML
+PyYAML
+requests
+numpy
+scikit-learn
+pydantic
+fastapi
+uvicorn
+pytest
+pytest-cov

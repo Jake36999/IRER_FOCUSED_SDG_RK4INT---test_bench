@@ -1,0 +1,127 @@
+{
+  "audit_report": {
+    "system": "IRER Test Bench Frontend (workbench-ui)",
+    "status": "V1 Freeze Pending",
+    "completion_estimate": "95%",
+    "identified_issues": [
+      {
+        "id": "ISSUE-001",
+        "category": "Scope Creep",
+        "title": "Chaos Mode Isolation Failure",
+        "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+        "location": [
+          "src/components/chaos/CatastrophicStream.tsx",
+          "src/components/chaos/EntropyCanvas.tsx",
+          "src/components/chaos/TriageControls.tsx",
+          "src/components/layout/GodViewLayout.tsx"
+        ],
+        "severity": "High",
+        "blocking_v1": true
+      },
+      {
+        "id": "ISSUE-002",
+        "category": "Composition",
+        "title": "Missing Forensics Dock",
+        "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+        "location": [
+          "src/components/session/SessionTimeLine.tsx",
+          "src/components/axioms/AxiomInspector.tsx"
+        ],
+        "severity": "High",
+        "blocking_v1": true
+      },
+      {
+        "id": "ISSUE-003",
+        "category": "State Management",
+        "title": "Hydration vs. Live Stream Race Condition",
+        "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+        "location": [
+          "src/components/monitor/MonitorContainer.tsx"
+        ],
+        "severity": "High",
+        "blocking_v1": true
+      },
+      {
+        "id": "ISSUE-004",
+        "category": "UX / Remediation",
+        "title": "Missing Patch Export Functionality",
+        "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+        "location": [
+          "src/components/KEL/RemedialManifold.tsx",
+          "src/components/KEL/RemedialDiffViewer.tsx"
+        ],
+        "severity": "High",
+        "blocking_v1": true
+      },
+      {
+        "id": "ISSUE-005",
+        "category": "Architecture",
+        "title": "Semantic Bleed-Through",
+        "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+        "location": [
+          "src/components/axioms/AxiomInspector.tsx",
+          "src/components/KEL/UnifiedLensExplorer.tsx"
+        ],
+        "severity": "High",
+        "blocking_v1": true
+      },
+      {
+        "id": "ISSUE-006",
+        "category": "Performance",
+        "title": "Lack of Headless Bulk Selection",
+        "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+        "location": [
+          "src/components/KEL/UnifiedLensExplorer.tsx"
+        ],
+        "severity": "Medium",
+        "blocking_v1": false
+      }
+    ],
+    "flags_and_warnings": [
+      {
+        "id": "FLAG-001",
+        "category": "Resilience",
+        "title": "Error Boundaries Audit Required",
+        "description": "Need to verify that React Error Boundaries are properly wrapping TelemetryChart and KEL components so that isolated render failures do not crash the 'God View'."
+      },
+      {
+        "id": "FLAG-002",
+        "category": "Visuals",
+        "title": "Aurora Shaders Not Implemented",
+        "description": "GPU-accelerated fragment shaders for ambient telemetry background states are missing. This is a nice-to-have but not a V1 blocker."
+      }
+    ],
+    "actionable_suggestions": [
+      {
+        "id": "SUG-001",
+        "resolves": "ISSUE-001",
+        "action": "Execute: `mkdir -p src/_experimental/chaos && mv src/components/chaos/* src/_experimental/chaos/`. Remove associated imports from layout."
+      },
+      {
+        "id": "SUG-002",
+        "resolves": "ISSUE-002",
+        "action": "Create 'ForensicsDock.tsx' to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout."
+      },
+      {
+        "id": "SUG-003",
+        "resolves": "ISSUE-003",
+        "action": "Refactor MonitorContainer to await `fetchReport()` (historical baseline) before calling `connectSSE()`."
+      },
+      {
+        "id": "SUG-004",
+        "resolves": "ISSUE-004",
+        "action": "Add a utility function in RemedialManifold using `new Blob([patchData], { type: 'text/x-patch' })` and a hidden `<a>` tag to trigger the browser download."
+      },
+      {
+        "id": "SUG-005",
+        "resolves": "ISSUE-005",
+        "action": "Audit UI components and replace hardcoded string descriptions with dynamic variables like `axiom.message` and `event.description` mapped from the JSON contracts."
+      },
+      {
+        "id": "SUG-006",
+        "resolves": "ISSUE-006",
+        "action": "Integrate '@viselect/vanilla' inside a `useRef` hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle."
+      }
+    ]
+  }
+}

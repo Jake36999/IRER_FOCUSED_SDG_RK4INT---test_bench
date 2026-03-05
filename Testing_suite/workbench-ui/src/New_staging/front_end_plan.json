@@ -1,0 +1,119 @@
+{
+  "frontend_architecture_plan": {
+    "design_system": {
+      "name": "Aletheia Design System",
+      "standards": ["ISA-101", "IEC 63303", "High-Performance HMI"],
+      "palette": {
+        "canvas": "bg-cyber-black (#0a0a0a)",
+        "neutral": "ui-neutral (#1e293b)",
+        "safe": "status-safe (#22c55e)",
+        "warning": "status-warning (#f59e0b)",
+        "critical": "status-critical (#ef4444)",
+        "jax_primitive": "jax-magenta (#d946ef)",
+        "signal_layer": "signal-overlay (#ffffff10)"
+      }
+    },
+    "core_layout": [
+      {
+        "file_path": "src/components/layout/GodViewLayout.tsx",
+        "type": "Layout Shell",
+        "description": "The high-density grid container using CSS Grid. Implements the 'Topological Layout' dividing the screen into the Diagnostic HUD, Sidebar, Main Canvas, and Right-Pane Manifold.",
+        "key_features": ["JIT Layout Loading", "Global Error Boundary", "Hot-key Listeners (Ctrl+K, Esc)", "Read-Only Contract Badge"]
+      },
+      {
+        "file_path": "src/components/shared/Sidebar.tsx",
+        "type": "Compound Component",
+        "description": "Polymorphic navigation rail utilizing implicit state via Context. Supports 'Standard Navigation' and 'Action Triggers'.",
+        "props": ["StrictSidebarItemProps (Discriminated Union)"]
+      },
+      {
+        "file_path": "src/components/hud/DiagnosticContextBar.tsx",
+        "type": "Presentational",
+        "description": "Top-level HUD displaying system pulse. Renders 'Vectors Loaded', 'Unindexed Points', and 'Active JAX Version' using high-contrast text.",
+        "key_features": ["PulseIndicator (CSS Animation)", "Global Search Input"]
+      },
+      {
+        "file_path": "src/components/shared/CommandPalette.tsx",
+        "type": "Global Router",
+        "description": "The primary navigation and action router. Elevated to handle all major transitions via Ctrl+K.",
+        "key_features": ["Fuzzy Search", "Axiom Filters", "Deep Linking"]
+      }
+    ],
+    "monitor_engine": [
+      {
+        "file_path": "src/components/monitor/MonitorContainer.tsx",
+        "type": "Logic Container",
+        "description": "The Sovereign Data Handler. Manages the WebSocket connection to the Telemetry Proxy. Performs 'Axiom 2' schematic checks on incoming JAX data.",
+        "hooks_used": ["useTelemetry", "useKelSummary", "useRef (Buffering)"]
+      },
+      {
+        "file_path": "src/components/monitor/TelemetryChart.tsx",
+        "type": "Presentational (SVG/WebGL)",
+        "description": "Renders the 'Hamiltonian Norm' and 'Rho Max' curves. Uses SVG <path> elements with feGaussianBlur filters to visualize 'Explosion' events.",
+        "animation": "Physics-based spring interpolation (Stiffness: 170, Damping: 26)"
+      },
+      {
+        "file_path": "src/components/monitor/SignalLayer.tsx",
+        "type": "Unified Overlay",
+        "description": "A consolidated abstraction layer for all visual signals. Manages GhostTracerOverlay, Schematic Toasts, and Runtime Warnings under a single z-index strategy.",
+        "sub_components": ["SchematicSignals", "RuntimeSignals", "KnowledgeSignals"]
+      }
+    ],
+    "remedial_manifold": [
+      {
+        "file_path": "src/components/kel/UnifiedLensExplorer.tsx",
+        "type": "Interactive Container",
+        "description": "Consolidated view replacing separate 'Friction Stream' and 'Binary Guard' tabs. Uses a 'Lens' toggle to switch data sources while maintaining layout.",
+        "modes": ["Friction Lens", "Filesystem Lens", "Telemetry Lens"]
+      },
+      {
+        "file_path": "src/components/kel/RemedialManifold.tsx",
+        "type": "Interactive Container",
+        "description": "The 'Right Pane' action space. Orchestrates the comparison between broken code and KEL 'Golden Standard' fixes.",
+        "sub_components": ["HistoricalInsightPane", "RemedialDiffViewer", "TriageInputOverlay", "KnowledgeConfidenceBar"]
+      },
+      {
+        "file_path": "src/components/kel/KnowledgeConfidenceBar.tsx",
+        "type": "Visualization",
+        "description": "Visualizes the reliability of a historical fix. Displays similarity score, historical occurrences, and resolution rate.",
+        "visuals": ["Confidence Bar", "Numeric Indicators"]
+      }
+    ],
+    "temporal_and_axiomatic": [
+      {
+        "file_path": "src/components/session/SessionTimeline.tsx",
+        "type": "Visualization",
+        "description": "A horizontal timeline tracking scan start, anomalies, warnings, and interventions. Provides temporal context to spatial data.",
+        "key_features": ["Event Markers", "Zoom/Pan"]
+      },
+      {
+        "file_path": "src/components/axioms/AxiomInspector.tsx",
+        "type": "Collapsible Panel",
+        "description": "Real-time validator for system axioms. Shows satisfied/violated states for 'Sanitization', 'Intent Consistency', etc.",
+        "key_features": ["Status Indicators", "Rule Definitions"]
+      }
+    ],
+    "telescope_system": [
+      {
+        "file_path": "src/components/telescope/TelescopeModal.tsx",
+        "type": "Modal (Render Prop)",
+        "description": "The 'Deep Dive' view. Uses render props to dynamically inject either 'AI Analysis' or 'Raw Code' views based on the inspection context.",
+        "accessibility": ["Global ESC listener", "Focus Trap"]
+      }
+    ],
+    "utilities_and_hooks": [
+      {
+        "file_path": "src/lib/hooks/useTelemetry.ts",
+        "description": "Manages SSE connection. Implements 'Pause/Scrub' buffer logic."
+      },
+      {
+        "file_path": "src/types/telemetry.ts",
+        "description": "Strict discriminated unions for 'HEARTBEAT', 'DATA_POINT', and 'ANOMALY' events."
+      },
+      {
+        "file_path": "src/lib/utils/iconFactory.ts",
+        "description": "Generated file from the backend pipeline containing strictly typed SVG paths."
+      }
+    ]
+  }
+}

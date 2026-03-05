@@ -1,0 +1,196 @@
+[
+  {
+    "name": "S-NCGL (Stochastic Non-Commutative Geometry Logic) Master Equation Engine",
+    "description": "Implements the full S-NCGL master field equation, including sourced, non-local, and nonlinear terms, as the foundational physics kernel for IRER.",
+    "differences": "Synthesizes dispersion and beta terms in Fourier space, applies nonlinear saturation and phase shift in real space, and supports both NumPy (debug) and JAX (production) backends.",
+    "issues": ["Early versions suffered from monolithic design, state-bleed, and lack of separation between UI, optimization, and simulation logic."],
+    "strengths": ["Provides the mathematically rigorous foundation for all subsequent variants", "Supports both CPU and GPU/TPU execution"],
+    "compatibility": ["Core of all IRER physics stacks", "Required for scientific reproducibility"],
+      "mathematics": "$\\partial_t A = \\epsilon A - (1+ib_3)|A|^2A + (1+ic_3)\\nabla^2A + S(x) + \\Phi(A)$"
+        "mathematics": "$\\partial_t A = \\epsilon A - (1+ib_3)|A|^2A + (1+ic_3)\\nabla^2A + S(x) + \\Phi(A)$",
+        "governance_provenance": false,
+        "validation_protocols": false,
+        "storage_abstraction": false,
+        "feedback_loop": false
+  ,
+      "name": "JAX-Agnostic Pivot Engine",
+      "description": "Engine variant that uses a backend abstraction layer (lazy_load_backend) to switch between NumPy and JAX for logic validation and GPU/TPU acceleration.",
+      "differences": "Enables unified numerical API, supports JIT compilation and high-performance execution across hardware.",
+      "issues": ["Early versions had concretization and recompilation errors due to non-hashable static constants."],
+      "strengths": ["High performance", "Scalable", "Portable across CPU, GPU, and TPU"],
+      "compatibility": ["Required for production and debugging", "Supports both local and cloud/HPC environments"],
+      "mathematics": "S-NCGL, with backend-agnostic implementation."
+        "mathematics": "S-NCGL, with backend-agnostic implementation.",
+        "governance_provenance": "Partial (deterministic seeding, no manifest signing)",
+        "validation_protocols": false,
+        "storage_abstraction": "Supports HDF5, portable across hardware",
+        "feedback_loop": false
+    },
+    {
+      "name": "Quantule Mapper Protocol Engine",
+      "description": "Variant with enhanced validation pipeline, implementing the Quantule Mapper Protocol for topological and spectral validation.",
+      "differences": "Integrates multi-ray sampling, persistence homology, and hard-gate SSE checks.",
+      "issues": ["Increased pipeline complexity", "Requires advanced validation logic"],
+      "strengths": ["Ensures only physically valid, topologically robust results are accepted"],
+      "compatibility": ["Required for certified production and scientific publication"],
+      "mathematics": "S-NCGL, with topological and spectral validation."
+        "mathematics": "S-NCGL, with topological and spectral validation.",
+        "governance_provenance": "Manifest signing and SHA256 planned",
+        "validation_protocols": "TDA, multi-metric validation, hard-gate SSE",
+        "storage_abstraction": "HDF5, MinIO, portable storage",
+        "feedback_loop": "Closed-loop optimization with validation feedback"
+    },
+  {
+    "name": "IRER v6 Monolithic Script",
+    "description": "Early version where the core engine, hunter, scorer, and worker logic are all combined in a single script.",
+    "differences": "No separation of concerns; UI, optimization, and simulation are tightly coupled.",
+    "issues": ["Fragile, single point of failure", "UI freezes", "Not scalable", "High technical debt"],
+    "strengths": ["Simple to run for initial prototyping"],
+    "compatibility": ["Only with early dashboard and local file-based validation"],
+    "mathematics": "S-NCGL, but with inline scoring and no modular feedback."
+      "mathematics": "S-NCGL, but with inline scoring and no modular feedback.",
+      "governance_provenance": false,
+      "validation_protocols": false,
+      "storage_abstraction": false,
+      "feedback_loop": false
+  },
+  {
+    "name": "Blind 5D Exploration Engine",
+    "description": "Initial workflow where parameter selection is random or brute-force, with no adaptive feedback.",
+    "differences": "Lacks historical state awareness, no parent selection or evolutionary optimization.",
+    "issues": ["Inefficient", "Wastes compute cycles", "Cannot focus on promising parameter regions"],
+    "strengths": ["Useful for initial parameter space mapping"],
+    "compatibility": ["Early orchestrator", "Not compatible with adaptive optimization"],
+    "mathematics": "S-NCGL, but parameter sweep is non-adaptive."
+      "mathematics": "S-NCGL, but parameter sweep is non-adaptive.",
+      "governance_provenance": false,
+      "validation_protocols": false,
+      "storage_abstraction": false,
+      "feedback_loop": false
+  },
+  {
+    "name": "Adaptive Evolutionary Engine (ASTE-Hunter)",
+    "description": "Implements evolutionary strategies, using elite parent selection and adaptive parameter breeding.",
+    "differences": "Queries registry for top performers, breeds new parameter sets, targets resonance at k ≈ ln(2).",
+    "issues": ["Still bottlenecked by 3D snapshot limits", "Lack of 4D spatiotemporal stack"],
+    "strengths": ["More efficient, directed search", "Supports 4D predictive modeling"],
+    "compatibility": ["Requires global state registry and parent lineage tracking"],
+    "mathematics": "S-NCGL with evolutionary optimization logic."
+      "mathematics": "S-NCGL with evolutionary optimization logic.",
+      "governance_provenance": "Partial (parent lineage tracking, no manifest signing)",
+      "validation_protocols": "Fitness, SSE, parent lineage",
+      "storage_abstraction": "HDF5, partial MinIO",
+      "feedback_loop": "Evolutionary feedback loop"
+  },
+  {
+    "name": "Integrated Simulation Driver",
+    "description": "Unified orchestration and execution in a single, portable script for reproducibility across local and HPC environments.",
+    "differences": "Eliminates import errors, ensures identical logic across platforms.",
+    "issues": ["May still be monolithic if not modularized"],
+    "strengths": ["High reproducibility", "Easy to deploy"],
+    "compatibility": ["Local and HPC", "Supports deterministic runs"],
+    "mathematics": "S-NCGL, with deterministic seeding and manifest tracking."
+      "mathematics": "S-NCGL, with deterministic seeding and manifest tracking.",
+      "governance_provenance": "Deterministic seeding, manifest tracking",
+      "validation_protocols": "SSE, manifest validation",
+      "storage_abstraction": "HDF5, portable",
+      "feedback_loop": false
+  },
+  {
+    "name": "S-NCGL v1",
+    "description": "Original solver using explicit Euler integration.",
+    "differences": "No adaptive dt, basic boundary conditions.",
+    "issues": ["Unstable for large dt", "No GPU support"],
+    "strengths": ["Simple, easy to debug"],
+    "compatibility": ["Works with orchestrator v1", "Not compatible with new validation"],
+    "mathematics": "Discretized S-NCGL: $\\rho_{t+1} = \\rho_t + dt \\cdot f(\\rho_t, \\omega_t)$"
+      "mathematics": "Discretized S-NCGL: $\\rho_{t+1} = \\rho_t + dt \\cdot f(\\rho_t, \\omega_t)$",
+      "governance_provenance": false,
+      "validation_protocols": false,
+      "storage_abstraction": false,
+      "feedback_loop": false
+  },
+  {
+    "name": "S-NCGL v2 (current)",
+    "description": "JAX-based, adaptive dt, periodic boundaries.",
+    "differences": "Vectorized, stability checks, supports MinIO artifact output.",
+    "issues": ["Complex error handling"],
+    "strengths": ["Fast, stable, scalable"],
+    "compatibility": ["Current orchestrator/validation"],
+    "mathematics": "See IRER_stack_brief.json, Section: mathematical_formulation"
+      "mathematics": "See IRER_stack_brief.json, Section: mathematical_formulation",
+      "governance_provenance": "Manifest tracking, partial provenance",
+      "validation_protocols": "SSE, stability checks",
+      "storage_abstraction": "HDF5, MinIO",
+      "feedback_loop": false
+  },
+  {
+    "name": "4D Spatiotemporal Engine",
+    "description": "Evolved engine supporting 4D stacks (t, x, y, z), streaming time-FFT, and dynamic resonance collapse tracking.",
+    "differences": "Moves beyond static 3D snapshots, enables temporal evolution analysis.",
+    "issues": ["High implementation complexity", "Requires advanced storage and memory management"],
+    "strengths": ["Extreme theoretical value", "Enables dynamic predictive power"],
+    "compatibility": ["Requires tiered storage and advanced validation"],
+    "mathematics": "S-NCGL with 4D data management and analysis."
+      "mathematics": "S-NCGL with 4D data management and analysis.",
+      "governance_provenance": "Planned",
+      "validation_protocols": "Planned (4D TDA, spectral validation)",
+      "storage_abstraction": "Planned (tiered storage)",
+      "feedback_loop": false
+  },
+  {
+    "name": "Hardware-Integrated Engine",
+    "description": "Integrates feedback from physical hardware (e.g., LOM, photonic cavities) into the simulation loop.",
+    "differences": "Calibrates simulation parameters against real-world data.",
+    "issues": ["Hardware dependency", "Increased system complexity"],
+    "strengths": ["Bridges digital and physical validation", "Enables real-world resonance logic"],
+    "compatibility": ["Requires hardware interface and calibration logic"],
+    "mathematics": "S-NCGL, with hardware-calibrated parameters."
+      "mathematics": "S-NCGL, with hardware-calibrated parameters.",
+      "governance_provenance": "Planned (hardware provenance)",
+      "validation_protocols": "Planned (hardware-integrated validation)",
+      "storage_abstraction": "Planned (hardware interface)",
+      "feedback_loop": false
+  },
+    "name": "Modular Microservice-Based Engine (Target/Planned)",
+    "description": "Fully decoupled, event-driven architecture with separate services for UI, optimization, simulation, validation, and storage.",
+    "differences": "Each service is independently scalable and replaceable.",
+    "issues": ["Requires significant refactoring and orchestration"],
+    "strengths": ["High scalability, maintainability, and compliance"],
+    "compatibility": ["Modern orchestrator, validation, and registry"],
+    "mathematics": "S-NCGL, modularized and compliant with feedback and provenance protocols."
+      "mathematics": "S-NCGL, modularized and compliant with feedback and provenance protocols.",
+      "governance_provenance": "Planned (full microservice provenance)",
+      "validation_protocols": "Planned (modular, multi-metric)",
+      "storage_abstraction": "Planned (microservice, portable)",
+      "feedback_loop": "Planned (event-driven feedback)"
+  }
+  },
+    "name": "Aletheia-IRER Phase 2 Engine (Planned/Future)",
+    "description": "Engine variant designed to bridge IRER physics with LLM reasoning, simulating reasoning as informational tension minimization.",
+    "differences": "Integrates physics-based validation with AI/LLM training pipelines.",
+    "issues": ["Conditional on successful validation of IRER physics", "Not yet implemented"],
+    "strengths": ["Enables bottom-up simulation of reasoning", "Supports custom LLM training"],
+    "compatibility": ["Future Aletheia phase", "Not compatible with current validation-only stack"],
+    "mathematics": "S-NCGL for physics, extended to reasoning dynamics."
+      "mathematics": "S-NCGL for physics, extended to reasoning dynamics.",
+      "governance_provenance": "Planned (AI/LLM provenance)",
+      "validation_protocols": "Planned (AI/LLM validation)",
+      "storage_abstraction": "Planned (AI/LLM data abstraction)",
+      "feedback_loop": "Planned (reasoning feedback)"
+  },
+  {
+    "name": "Certified Logic Microservice Engine (Target/Planned)",
+    "description": "Fully decoupled, microservice-based architecture with asynchronous optimization, governance, and validation services.",
+    "differences": "Each service is independently scalable and replaceable; implements JSON-RPC and job queues.",
+    "issues": ["Requires significant refactoring and orchestration"],
+    "strengths": ["High scalability, maintainability, compliance, and auditability"],
+    "compatibility": ["Modern orchestrator, validation, and registry"],
+    "mathematics": "S-NCGL, modularized and compliant with feedback and provenance protocols."
+      "mathematics": "S-NCGL, modularized and compliant with feedback and provenance protocols.",
+      "governance_provenance": "Planned (full microservice provenance)",
+      "validation_protocols": "Planned (modular, multi-metric)",
+      "storage_abstraction": "Planned (microservice, portable)",
+      "feedback_loop": "Planned (event-driven feedback)"
+  }
+]

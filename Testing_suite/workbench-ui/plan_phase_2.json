@@ -1,0 +1,78 @@
+{
+  "backend_upgrade_plan": {
+    "architecture_style": "Sovereign Auditor (Observer Pattern)",
+    "core_principle": "Decoupled Observation - System B observing System A",
+    "layers": {
+      "middleware_bridge": {
+        "location": "bench-middleware/",
+        "tasks": [
+          {
+            "id": "MW-01",
+            "name": "Telemetry Proxy Service",
+            "description": "Implement Redis Subscriber to listen to Target's 'phys_telemetry'. Rebroadcast as SSE to Frontend. Ensures zero coupling with Target."
+          },
+          {
+            "id": "MW-02",
+            "name": "Scanner Trigger Endpoint",
+            "description": "POST /api/scan. Triggers Python Static Analysis script on the mounted read-only volume (/mnt/target)."
+          },
+          {
+            "id": "MW-03",
+            "name": "AI Orchestrator Proxy",
+            "description": "POST /api/analyze. Proxies requests to local LM Studio instance. Centralizes API keys and model config."
+          }
+        ]
+      },
+      "librarian_kel": {
+        "location": "core/librarian/",
+        "tasks": [
+          {
+            "id": "KEL-01",
+            "name": "Vector DB Integration",
+            "description": "Implement ChromaDB ingestion for 'Category A-D' notebooks. Extract 'Friction Points' and 'Remedies'."
+          },
+          {
+            "id": "KEL-02",
+            "name": "Confidence Logic",
+            "description": "Implement calculation logic for 'Resolution Rate' and 'Recurrence' to feed the KnowledgeConfidenceBar."
+          },
+          {
+            "id": "KEL-03",
+            "name": "Asset Pipeline",
+            "description": "Node.js script to ingest SVGs -> Optimize (SVGO) -> Output 'iconset.ts' to Frontend."
+          }
+        ]
+      },
+      "scanner_core": {
+        "location": "core/scanner/",
+        "tasks": [
+          {
+            "id": "SC-01",
+            "name": "Axiom 2 Verification",
+            "description": "Refine AST parsing to detect 'jax.lax.scan' missing 'init' args. Feeds the SignalLayer."
+          },
+          {
+            "id": "SC-02",
+            "name": "Session Logging",
+            "description": "Log timestamped events (Scan Start, Warning, Fix) to temporary session store for SessionTimeline."
+          }
+        ]
+      }
+    },
+    "data_contracts": {
+      "telemetry_event": {
+        "structure": {
+          "h_norm": "float",
+          "rho_max": "float",
+          "step_count": "int",
+          "instability_flag": "boolean",
+          "timestamp": "ISO8601"
+        }
+      },
+      "kel_query": {
+        "input": ["error_trace", "context", "similarity_threshold"],
+        "output": ["uid", "description", "code_snippet", "effectiveness_score", "recurrence_count", "resolution_rate"]
+      }
+    }
+  }
+}

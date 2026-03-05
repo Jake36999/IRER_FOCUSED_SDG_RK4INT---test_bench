@@ -1,0 +1,17 @@
+compliance_policy:
+  - rule_id: "SEC-AST-001-DANGEROUS-FUNCS"
+    target_pattern: "DANGEROUS_PATTERNS"
+    compliance_criteria: "Strictly forbid: eval, exec, compile, subprocess, os.system, pickle."
+    risk_level: "Red Tier"
+    action: "BLOCK"
+
+  - rule_id: "SEC-ENT-002-SECRET-DETECTION"
+    target_pattern: "SECRET_PATTERNS"
+    entropy_threshold: 4.5
+    compliance_criteria: "Flag high-entropy strings (AWS keys, tokens, private keys) in non-ignored zones."
+    risk_level: "Red Tier"
+
+  - rule_id: "ARCH-003-STRUCTURE-DRIFT"
+    target_pattern: "IRERProcessor"
+    compliance_criteria: "Core modules must implement the 'process_stream' method within Class 'IRERProcessor'."
+    risk_level: "High"

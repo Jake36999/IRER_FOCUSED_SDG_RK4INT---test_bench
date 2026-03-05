@@ -1,0 +1,2107 @@
+  "future_expectations": {
+    "ir_physics": {
+      "remedial_plan": [
+        "Refactor solver.py to modularize integration schemes.",
+        "Deprecate legacy kernels in kernels_legacy.py if present.",
+        "Document parameter units and ranges in models.py.",
+        "Align SimState structure with design expectations.",
+        "Standardize manifest and provenance logic across all variants.",
+        "Implement feedback loop from validation to orchestrator for adaptive optimization.",
+        "Transition to event-driven, microservice-based architecture for scalability."
+      ],
+      "target_state": "All physics modules modular, documented, and compliant with new validation pipeline. Provenance, feedback, and compliance logic enforced upstream."
+    },
+    "reference": "See engine_variants.json for the canonical record of all engine variants, their lineage, compatibility, issues, strengths, and mathematical details. This file is the authoritative source for variant documentation and future planning."
+  },
+{
+  "architecture_version": "V14.0",
+  "modules": {
+  },
+  "data_contracts_and_schemas": {
+  },
+  "validation_and_vv_protocols": {
+    },
+    "discrepancy_tracking_and_issue_mapping": {
+      "known_issues": [
+        "Monolithic anti-pattern in core engine: violates separation of concerns, acts as both API gateway and optimizer.",
+        "Worker tightly coupled to storage: limits scalability, needs decoupling via job queue.",
+        "TDA placement downstream: should be upstream for early stopping and resource efficiency.",
+        "Governance manifest generation is downstream: must be moved upstream for provenance and compliance.",
+        "Simulation registry lacks role clarity: needs structured state store for governance validation.",
+        "Validation pipeline too linear: combines governance and analysis, lacks feedback loop to orchestrator.",
+        "Passive optimization logic: core engine should actively direct parameter selection, not just scan for low SSE."
+      ],
+      "discrepancies": [
+        {"component": "core_engine.py", "expected": "Active inference controller with modular API and optimizer.", "actual": "Monolithic script, synchronous DB queries, UI bottleneck."},
+        {"component": "worker", "expected": "Decoupled, stateless solver receiving manifest from orchestrator.", "actual": "Coupled to storage, implicit config passing, lacks manifest enforcement."},
+        {"component": "validation_pipeline", "expected": "Upstream TDA, feedback loop to orchestrator, compliance checks.", "actual": "TDA downstream, no feedback loop, compliance logic not enforced upstream."},
+        {"component": "simulation_registry", "expected": "Structured DB for governance and provenance.", "actual": "Ambiguous role, circular dependency with dashboard."}
+      ],
+      "source": ["Refactoring + test_suite_analysis Transcripts (compiled.).txt", "system_handover.json"]
+    },
+    "component_status_and_progress_tracking": {
+      "api": {
+        "status": "Stateless FastAPI app for job status viewing; mature, requires Redis running.",
+        "setup": "Install requirements.txt, run with uvicorn.",
+        "notes": "Read-only viewer, no direct simulation control."
+      },
+      "data": {
+        "status": "Postgres migration script for scalable storage; migration required for KEL.",
+        "setup": "Run postgres_migration.sql in Postgres environment.",
+        "notes": "Critical for registry scalability."
+      },
+      "orchestrator": {
+        "status": "Manages job manifests and Redis queue; microservices ready.",
+        "setup": "Install requirements.txt, configure Redis, run orchestrator.py.",
+        "notes": "Decouples job management, enables scalable orchestration."
+      },
+      "redis": {
+        "status": "Task queue and inter-service communication; central nervous system.",
+        "setup": "Install and start Redis server, configure redis.conf.",
+        "notes": "Required for orchestrator and worker communication."
+      },
+      "validation": {
+        "status": "Validation pipeline for physics results; filters unstable data.",
+        "setup": "Install requirements.txt, run validation_pipeline.py.",
+        "notes": "Ensures only valid results are stored; logic must be updated for new models."
+      },
+      "worker": {
+        "status": "SDG worker with governance enforcement; requires SHA-256 hash in job payload.",
+        "setup": "Install requirements.txt, run worker_v14_sdg.py.",
+        "notes": "Strict governance, immutable simulation state via SimState Pytree."
+      },
+      "progress_tracking": {
+        "completed": ["Directory parsing", "Metadata extraction", "Layered architecture summary"],
+        "pending": ["Monolithic engine refactor", "Upstream governance manifest generation", "Validation pipeline update", "Test coverage expansion"],
+        "blocked": ["TDA placement upstream", "Governance manifest generation must be moved upstream"]
+      }
+    },
+  },
+  "governance_and_compliance": {
+        "localization_internationalization_and_data_privacy": {
+          "localization": "No explicit localization or language packs found in UI or backend. All UI and API responses are in English.",
+          "internationalization": "No i18n libraries or multi-language support detected in React/Next.js or FastAPI layers.",
+          "data_privacy": {
+            "frontend": "No explicit privacy banners or user consent dialogs found.",
+            "backend": "No explicit GDPR or data privacy enforcement; CORS is enabled for localhost only. No PII is processed in core pipeline.",
+            "recommendations": "Implement i18n support in UI, add privacy policy and consent dialogs, and review backend for GDPR/data privacy compliance if user data is introduced."
+          }
+        },
+        "backup_recovery_and_disaster_planning": {
+          "backup_scripts": [
+            "No dedicated backup scripts found; recommend implementing regular Postgres DB dumps and MinIO artifact backups.",
+            "scan_results.json and scan_summary.md must be kept in sync for audit and recovery." 
+          ],
+          "recovery_plans": [
+            "Middleware and backend are stateless; recovery involves redeploying containers and restoring DB/artifact backups.",
+            "Dead-letter queues (dlq:validation) retain failed jobs for manual review and reprocessing." 
+          ],
+          "disaster_protocols": [
+            "Incident response includes logging all exceptions, surfacing errors, and maintaining audit trails in KEL and session events.",
+            "Recommend formalizing disaster recovery documentation, including DB restore, MinIO artifact recovery, and failover procedures." 
+          ],
+          "recommendations": "Implement automated backup scripts for Postgres and MinIO, document restore procedures, and test disaster recovery regularly."
+        },
+        "error_handling_and_incident_response": {
+          "strategy": {
+            "validation": "Try/except blocks for artifact processing, logs errors, pushes failed jobs to dead-letter queue (dlq:validation), cleans up temp files.",
+            "orchestrator": "Try/except for component connection, logs fatal errors, uses JSONLogFormatter for structured logging, non-blocking result processing.",
+            "middleware": "All exceptions must be logged and surfaced; error boundaries in FastAPI and Redis/SSE disconnects are audited.",
+            "frontend": "Error boundaries in React, CommandPalette for rapid recovery, and session event tracking for incident review."
+          },
+          "incident_response": {
+            "validation": "Rejected or errored artifacts are logged and pushed to dead-letter queue for review.",
+            "orchestrator": "Fatal errors halt main loop and are logged; non-blocking result processing prevents queue stalling.",
+            "middleware": "Session events and errors are tracked for audit; SSRF/path traversal and contract versioning are checked.",
+            "frontend": "SessionTimeline and ForensicsDock provide temporal context for incident review; error boundaries prevent UI crashes."
+          },
+          "recommendations": "Expand incident response documentation, formalize escalation procedures, and ensure all exceptions are logged and surfaced for audit."
+        },
+        "analytics_reporting_and_historical_metrics": {
+          "reporting_scripts": [
+            "MonitorContainer.tsx: Sovereign Data Handler for telemetry and decoupling physics logic from rendering.",
+            "TelemetryChart.tsx: Renders Hamiltonian Norm and Rho Max with physics-based interpolation.",
+            "SignalLayer.tsx: Aggregates runtime warnings and overlays.",
+            "UnifiedLensExplorer.tsx: Consolidated explorer for friction, filesystem, and telemetry data.",
+            "RemedialManifold.tsx: Orchestrates code comparison and KEL fix application.",
+            "SessionTimeline.tsx: Tracks scan events and provides temporal context.",
+            "AxiomInspector.tsx: Real-time validator for system rules.",
+            "TelescopeModal.tsx: Deep-dive modal for AI analysis or raw code views."
+          ],
+          "historical_metrics": [
+            "Knowledge Extraction Log (KEL): Tracks friction points, remediation workflows, and fix reliability.",
+            "SessionTimeline: Records scan events (Start, Anomaly, Fix) for temporal analysis.",
+            "AxiomInspector: Tracks rule satisfaction/violation states in real time.",
+            "Scan results: scan_results.json and scan_summary.md must be in sync for output consistency.",
+            "Backend audit: YAML-driven governance, entropy and forbidden pattern detection, AST profiling, and JSON/Markdown reporting."
+          ],
+          "current_state": {
+            "frontend": "Grid-based GodViewLayout, modular React components, real-time telemetry, partial container/presentational separation, CommandPalette, experimental chaos components.",
+            "middleware": "FastAPI gateway, Redis pub/sub, Pydantic validation, async subprocess for scanner, patch generation, session events API, SSRF prevention, strict data contracts, error boundaries.",
+            "backend": "Read-only observer, YAML-driven governance, iterative file traversal, AI orchestrator, entropy and forbidden pattern detection, JSON/Markdown reports."
+          }
+        },
+        "user_roles_constraints_and_workflows": {
+          "roles": [
+            "Operator: Monitors dashboards, responds to alarms, executes safety-critical actions.",
+            "Engineer: Configures system, manages simulation parameters, reviews diagnostics and logs.",
+            "Auditor: Reviews Knowledge Extraction Log (KEL), verifies compliance and historical remediation.",
+            "Developer: Implements and maintains code, updates validation and orchestration logic."
+          ],
+          "constraints": [
+            "Critical controls must not be buried more than one level deep (USS Fitzgerald Directive).",
+            "Mutually exclusive options must be visually and interactively distinct (Hawaii Missile Alert Directive).",
+            "Mandatory two-step activation for consequential triggers (e.g., Emergency Shutdown).",
+            "Context-aware controls: UI disables invalid actions based on system state.",
+            "Alarms follow tiered visual hierarchy with immediate navigation to failure points."
+          ],
+          "workflow_steps": [
+            "Operator logs in and reviews system overview dashboard.",
+            "Monitors real-time telemetry and alarm banners.",
+            "Executes control actions (with two-step confirmation for critical commands).",
+            "Reviews diagnostics, logs, and historical remediation via KEL.",
+            "Engineer configures simulation parameters and initiates new jobs.",
+            "Auditor verifies compliance and reviews incident logs.",
+            "Developer updates codebase and validation logic as needed."
+          ]
+        },
+        "integration_points_and_third_party_connections": {
+          "redis": {
+            "role": "Job queue and inter-service communication.",
+            "connections": ["orchestrator", "worker", "validation", "api"]
+          },
+          "postgres": {
+            "role": "Simulation registry and artifact metrics storage.",
+            "connections": ["validation", "data", "orchestrator"]
+          },
+          "minio": {
+            "role": "Artifact storage for simulation outputs.",
+            "connections": ["worker", "validation"]
+          },
+          "fastapi": {
+            "role": "API gateway for job submission and status.",
+            "connections": ["api", "orchestrator"]
+          },
+          "scichart.js": {
+            "role": "High-performance data visualization in UI.",
+            "connections": ["workbench-ui"]
+          },
+          "other": [
+            {"service": "Minio Python SDK", "used_by": ["validation", "worker"]},
+            {"service": "SQLAlchemy", "used_by": ["validation", "data"]},
+            {"service": "React/Next.js", "used_by": ["workbench-ui"]}
+          ]
+        },
+        "ai_pipeline_logic_and_scan_reduction": {
+          "ai_logic": {
+            "core_engine": "Implements optimization logic for parameter sweeps, targeting global minimum of informational tension (SSE + entropy).",
+            "validation": "Performs TDA (Topological Data Analysis), FFT spectral checks, and entropy calculation for artifact acceptance.",
+            "worker": "Numerically solves S-NCGL master equation, streams state matrices, and uploads artifacts for validation."
+          },
+          "scan_reduction_metrics": {
+            "phase_1": "Minimizes SSE and informational tension via active inference and parameter sweeps.",
+            "phase_2": "Pending implementation: LLM pipeline to reduce scan space and optimize reasoning complex for Aletheia handoff."
+          },
+          "integration_points": [
+            "Redis job queue (orchestrator → worker)",
+            "MinIO artifact storage (worker → validation)",
+            "Postgres DB (validation → data)",
+            "FastAPI endpoints (api → orchestrator)"
+          ],
+          "pending_features": [
+            "Phase 2 LLM pipeline integration for scan reduction and reasoning complex.",
+            "Expand active inference optimizer for dynamic parameter selection."
+          ]
+        },
+        "telemetry_state_management_and_data_flow": {
+          "state_tracking": {
+            "worker": "SimState Pytree manages immutable simulation state, ensuring reproducibility and auditability.",
+            "validation": "Observer logic tracks artifact validation, logs results, and enforces compliance.",
+            "api": "Stateless, tracks job status from Redis queue.",
+            "orchestrator": "Tracks job manifests and queue status in Redis."
+          },
+          "telemetry": {
+            "workbench-ui": "Real-time telemetry streaming via WebSocket, persistent connection, heartbeat logic, and millisecond-accurate updates.",
+            "validation": "Logs artifact metrics, verdicts, and failure reasons to Postgres and Redis queues."
+          },
+          "inter_service_flows": [
+            {"source": "orchestrator", "target": "worker", "medium": "Redis job queue", "description": "Orchestrator dispatches jobs to worker via Redis."},
+            {"source": "worker", "target": "validation", "medium": "MinIO artifact storage", "description": "Worker stores artifacts for validation pipeline."},
+            {"source": "validation", "target": "data", "medium": "Postgres", "description": "Validation logs results to Postgres."},
+            {"source": "api", "target": "orchestrator", "medium": "HTTP", "description": "API endpoints trigger orchestration and job management."}
+          ],
+          "internal_data_movement": {
+            "worker": "Simulation state → artifact → MinIO → validation pipeline.",
+            "validation": "Artifact → metrics/logs → Postgres/Redis → dashboard.",
+            "orchestrator": "Job manifest → Redis → worker; logs events and job status.",
+            "api": "Job request/status → HTTP → orchestrator; status pulled from Redis."
+          }
+        },
+        "technology_stack_and_directory_structure": {
+          "libraries": [
+            "numpy", "jax", "scipy", "h5py", "ripser", "pytest", "FastAPI", "uvicorn", "psycopg2", "SQLAlchemy", "redis", "minio", "SciChart.js", "react", "next", "typescript"
+          ],
+          "frameworks": [
+            "FastAPI (API)", "React (UI)", "Next.js (UI)", "SQLAlchemy (DB ORM)", "MinIO (artifact storage)", "Redis (queue)", "Postgres (DB)"
+          ],
+          "system_requirements": [
+            "Python >=3.8", "Node.js >=16", "Postgres >=13", "Redis >=6", "MinIO >=2022", "SciChart.js", "Linux/Windows OS"
+          ],
+          "directory_structure": {
+            "root": ["docker-compose.yml", "system_handover.json", "IRER_stack_brief.json", "README.md"],
+            "api": ["fastapi_app.py", "requirements.txt", "README.md", "Docker/"],
+            "data": ["postgres_migration.sql", "README.md"],
+            "orchestrator": ["dockerfile", "hunter.py", "kel.py", "requirements.txt", "service.py", "README.md"],
+            "redis": ["README.md"],
+            "validation": ["analytics.py", "check_invariance.py", "dockerfile", "map_stability.py", "map_stability_envelope.py", "requirements.txt", "service.py", "validation_pipeline.py", "README.md", "tests/test_analytics.py", "tests/test_analytics.py (comprehensive suite)"],
+            "worker": ["README.md", "requirements.txt", "simstate.py", "worker_v14_sdg.py", "ir_physics/kernels.py", "ir_physics/models.py", "ir_physics/solver.py", "ir_physics/stability_envelope.py", "ir_physics/__init__.py", "tests/test_gf1_math.py", "tests/test_solver.py", "worker_bundle_20260218_032800/worker_bundle_20260218_032800.yaml"],
+            "Testing_suite": ["brief.json", "current_issues.json", "current_review.md", "current_system.json", "expected_outcome.json", "expected_outcomes.json", "technical specification _IRER_SUITE_TESTBENCH_.txt", "bench-middleware/Dockerfile", "bench-middleware/requirements.txt", "bench-middleware/app/", "bench-middleware/services/telemetry_proxy.py", "irer-test-bench-scanner/", "Testing_suite_bundle_20260219_131934/Testing_suite_bundle_20260219_131934.yaml", "workbench-ui/Frontend UI_UX Design Specification Test Bench.txt", "workbench-ui/package.json", "workbench-ui/plan_phase_2.json", "workbench-ui/plan.json", "workbench-ui/tailwind.config.js", "workbench-ui/tsconfig.json", "workbench-ui/src/"],
+            "vs-code": ["co-pilot_role.yaml", "code_refactor.yaml", "DevOps_Engineer.yaml", "resources.md", "system_handover.json", "validation_robustness.yaml"]
+          },
+          "module_relationships": {
+            "api": "Exposes endpoints for job submission and status, communicates with orchestrator via HTTP.",
+            "orchestrator": "Manages job queue, dispatches jobs to worker via Redis.",
+            "worker": "Processes jobs, generates artifacts, uploads to MinIO, triggers validation.",
+            "validation": "Validates artifacts, logs results to Postgres, enforces compliance.",
+            "data": "Manages DB schema and migration for simulation registry.",
+            "redis": "Provides job queue and inter-service communication."
+          }
+        },
+        "audit_results_and_compliance_enforcement": {
+          "audit_results": {
+            "validation_pipeline": "Artifacts are validated for H-Norm (<0.09), Betti numbers (H0>0), and spectral metrics. Verdicts are stamped as SUCCESS or REJECTED, with specific failure reasons logged (instability, no structure, TDA failure, unknown). Rejected artifacts are pushed to a dead-letter queue (dlq:validation).",
+            "service.py": "Validator microservice automates artifact validation, logs verdicts, and ensures only stable results are accepted. Incident handling for errors and cleanup is implemented."
+          },
+          "compliance_checks": {
+            "manifest_signing": "Artifacts and jobs are tracked via manifest signing and provenance hash. Manifest generation is enforced upstream in worker and orchestrator bundles.",
+            "governance_hash": "Simulation ID and config hash are generated before execution, ensuring provenance and compliance. Governance hash is checked in validation pipeline."
+          },
+          "enforcement_logic": {
+            "criteria": "Artifacts must pass H-Norm, Betti number, and entropy checks. Only validated artifacts are accepted for downstream processing.",
+            "incident_response": "Rejected artifacts are logged with failure reason and pushed to dead-letter queue. Errors are handled and cleaned up in validator microservice."
+          }
+        },
+        "visual_enhancements_and_accessibility": {
+          "visualization_modules": [
+            "React-based dashboard (workbench-ui)",
+            "SciChart.js for high-performance data visualization",
+            "Waterfall/Spectrogram chart for acoustic and vibration analysis",
+            "DiagnosticContextBar HUD for system status",
+            "GodViewLayout for topological layout and global hotkeys"
+          ],
+          "dashboard_features": [
+            "ISA-101 HMI design standard for situational awareness",
+            "Hierarchical navigation: System Overview, Sub-system Control, Component Diagnostics, Documentation",
+            "Context-aware visuals: color logic for alarms, warnings, and interactive elements",
+            "Real-time telemetry streaming via WebSocket (useWebSocket hook)",
+            "CommandPalette for expert operator routing and deep linking"
+          ],
+          "accessibility_features": [
+            "Gray-scale foundation to reduce eye fatigue",
+            "Strategic color logic for alarms and warnings",
+            "JetBrains Mono and Inter typography for technical clarity",
+            "Modular layout with CSS Grid for responsive design",
+            "Context API for global state management and accessibility flags"
+          ],
+          "recommendations": "Continue modular React development, enforce ISA-101 standards, expand accessibility testing, and integrate real-time telemetry for operator awareness."
+        },
+        "performance_metrics_and_optimization": {
+          "metrics": [
+            "SSE (Sum of Squared Errors): primary metric for simulation accuracy, calculated in validation pipeline.",
+            "PAS (Potential Actualization State): coherence metric, calculated from spectral properties of rho field.",
+            "Entropy (Von Neumann Entropy): complexity metric, calculated in validation pipeline for artifact acceptance."
+          ],
+          "optimization_routines": [
+            "Active Inference optimizer: pending feature for dynamic parameter selection in core engine.",
+            "Early killing of divergent simulations: planned for worker and validation pipeline to save compute resources.",
+            "TDA (Topological Data Analysis): used for early stopping and topology validation, placement needs to be upstream.",
+            "FFT spectral checks: implemented in validation pipeline for spectral analysis."
+          ],
+          "pending_improvements": [
+            "Integrate entropy calculation fully into validation pipeline.",
+            "Implement Phase 2 LLM pipeline for scan reduction and reasoning complex.",
+            "Expand optimization logic in orchestrator for parameter sweeps and job prioritization."
+          ]
+        },
+        "security_ssrf_prevention_and_volume_management": {
+          "security_policies": [
+            "Binary guard enforcement for artifact integrity (worker_bundle compliance)",
+            "PEM + entropy redaction for sensitive data (worker_bundle compliance)",
+            "Manifest signing for provenance (validation pipeline)",
+            "Observer pattern for simulation state tracking (SimState Pytree, validation pipeline)"
+          ],
+          "ssrf_prevention": {
+            "dockerfiles": {
+              "orchestrator": "No explicit SSRF prevention; no network isolation or restricted outbound calls found.",
+              "validation": "No explicit SSRF prevention; no network isolation or restricted outbound calls found."
+            },
+            "recommendation": "Add network isolation, restrict outbound calls, and use environment variables for safe endpoint configuration."
+          },
+          "volume_management": {
+            "dockerfiles": {
+              "orchestrator": "No explicit volume mounts; WORKDIR is /app, all files copied into container.",
+              "validation": "No explicit volume mounts; WORKDIR is /app, all files copied into container."
+            },
+            "recommendation": "Define explicit volume mounts for artifact and data storage, ensure isolation between services."
+          }
+        },
+        "contract_versioning_and_upgrade_policy": {
+          "contracts": [
+            {"name": "IRER_stack_brief.json", "version": "V14.0", "type": "architecture decomposition", "last_updated": "2026-02-19"},
+            {"name": "worker_bundle_20260218_032800.yaml", "version": "2026-02-18T03:28:00", "type": "workspace bundle", "compliance": "binary guard, PEM + entropy redaction, polyglot summaries"},
+            {"name": "system_handover.json", "version": "unknown", "type": "handover manifest", "last_updated": "unknown"}
+          ],
+          "schema_evolution": {
+            "architecture": "IRER_stack_brief.json tracks architectural decomposition and is updated with each major refactor.",
+            "worker_bundle": "worker_bundle YAMLs are generated per workspace and include compliance metadata, updated on bundle creation.",
+            "handover": "system_handover.json is intended for governance and provenance handover, but is currently empty and needs population."
+          },
+          "upgrade_process": {
+            "policy": "Contracts and manifests are versioned and updated with each major architectural or compliance change. YAML bundles include timestamp and compliance fields. JSON manifests should include version and last_updated fields.",
+            "procedure": "On schema change, update version fields, document changes in IRER_stack_brief.json, regenerate workspace bundles, and ensure compliance metadata is included."
+          }
+        },
+        "test_coverage_and_error_handling_summary": {
+          "test_mapping": {
+            "validation": ["validation/tests/test_analytics.py", "validation/tests/test_analytics.py (comprehensive suite)"],
+            "worker": ["worker/tests/test_gf1_math.py", "worker/tests/test_solver.py"],
+            "orchestrator": [],
+            "api": [],
+            "data": [],
+            "redis": []
+          },
+          "coverage_summary": {
+            "validation": "Good coverage for analytics and pipeline logic; comprehensive suite planned.",
+            "worker": "Covers math and solver logic; edge cases and error handling need expansion.",
+            "orchestrator": "No formal tests; coverage gap for job management and error handling.",
+            "api": "No formal tests; coverage gap for endpoint error handling.",
+            "data": "No formal tests; migration script not tested.",
+            "redis": "No formal tests; setup and connection not tested."
+          },
+          "error_handling_review": {
+            "validation": "Uses try/except for artifact validation and logging; needs incident response plan.",
+            "worker": "Error handling for simulation state and artifact upload; logging present, but incident response not formalized.",
+            "orchestrator": "Logging present, but lacks robust error handling and incident response.",
+            "api": "Minimal error handling; relies on FastAPI defaults.",
+            "data": "No explicit error handling in migration script.",
+            "redis": "Relies on Redis server stability; no explicit error handling."
+          },
+          "coverage_gaps": "Orchestrator and API lack formal tests; edge cases and error handling incomplete across modules. Incident response plans need formalization."
+        },
+  },
+  "infrastructure_and_deployment": {
+  },
+  "test_coverage_and_quality": {
+  },
+  "known_issues_and_limitations": {
+  },
+  "external_dependencies": {
+  },
+  "security_and_observer_pattern": {
+  },
+  "file_inventory": {
+    "root_files": [
+      "docker-compose.yml",
+      "system_handover.json",
+      "README.md"
+    ],
+    "api": [
+      "fastapi_app.py",
+      "requirements.txt",
+      "README.md",
+      "Docker/"
+    ],
+    "data": [
+      "postgres_migration.sql",
+      "README.md"
+    ],
+    "orchestrator": [
+      "dockerfile",
+      "hunter.py",
+      "kel.py",
+      "requirements.txt",
+      "service.py",
+      "README.md"
+    ],
+    "redis": [
+      "README.md"
+    ],
+    "validation": [
+      "analytics.py",
+      "check_invariance.py",
+      "dockerfile",
+      "map_stability.py",
+      "map_stability_envelope.py",
+      "requirements.txt",
+      "resource_utilization_scaling_and_limitations": {
+        "resource_usage": {
+          "core_services": [
+            "Redis: Central job queue, low memory footprint, scales horizontally for high job throughput.",
+            "Postgres: Stores simulation registry and metrics, requires regular backups for data integrity.",
+            "MinIO: Artifact storage, disk usage grows with simulation output volume; recommend monitoring and pruning old artifacts."
+          ],
+          "compute": [
+            "Workers: Python/JAX-based, CPU-bound by default; can leverage GPU if JAX is configured for CUDA.",
+            "Validation: Moderate CPU/memory for TDA, FFT, and entropy checks; scales with artifact volume."
+          ],
+          "network": [
+            "All services communicate over Docker network (irer-mesh); Redis and MinIO are potential bottlenecks under high load."
+          ]
+        },
+        "scaling_strategies": {
+          "horizontal_scaling": [
+            "Multiple workers can be launched to process jobs in parallel (scale worker service in docker-compose).",
+            "Orchestrator and API are stateless and can be replicated for high availability.",
+            "Redis and Postgres support clustering for high-availability and throughput (not enabled by default)."
+          ],
+          "vertical_scaling": [
+            "Increase CPU/memory for worker and validation containers as simulation complexity grows.",
+            "Provision additional disk for MinIO and Postgres as data volume increases."
+          ],
+          "statelessness": "Most services are stateless except for Postgres and MinIO; redeployment is safe if persistent volumes are maintained."
+        },
+        "known_limitations": [
+          "No auto-scaling or orchestration (e.g., Kubernetes) is configured; scaling is manual via docker-compose.",
+          "Redis and MinIO are single-instance by default; risk of bottleneck or SPOF under heavy load.",
+          "No resource quota enforcement; risk of disk exhaustion if artifact cleanup is not automated.",
+          "GPU acceleration is possible but not configured by default; requires JAX CUDA setup and compatible hardware.",
+          "Validation pipeline may become a bottleneck if artifact volume greatly increases; recommend monitoring and scaling as needed.",
+          "No explicit monitoring/alerting for resource exhaustion or service health; recommend integrating Prometheus/Grafana or similar."
+        ],
+        "recommendations": [
+          "Implement resource monitoring and alerting for Redis, Postgres, MinIO, and worker containers.",
+          "Automate artifact cleanup and database pruning to prevent disk exhaustion.",
+          "Consider enabling Redis/Postgres clustering for high-availability deployments.",
+          "Evaluate Kubernetes or similar orchestration for auto-scaling and resilience.",
+          "Document resource requirements and scaling procedures for operators."
+        ]
+      },
+      "service.py",
+      "validation_pipeline.py",
+      "README.md",
+      "tests/test_analytics.py",
+      "tests/test_analytics.py (comprehensive suite)"
+    ],
+    "worker": [
+      "README.md",
+      "requirements.txt",
+      "simstate.py",
+      "worker_v14_sdg.py",
+      "ir_physics/kernels.py",
+      "ir_physics/models.py",
+      "ir_physics/solver.py",
+      "ir_physics/stability_envelope.py",
+      "ir_physics/__init__.py",
+      "tests/test_gf1_math.py",
+      "tests/test_solver.py",
+      "worker_bundle_20260218_032800/worker_bundle_20260218_032800.yaml"
+    ]
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "simulation_workflow_and_data_lifecycle": {
+    "overview": "Describes the end-to-end flow of simulation jobs, artifact generation, validation, and compliance enforcement across the IRER stack.",
+    "workflow_steps": [
+      "1. Orchestrator dispatches job manifest to worker via Redis queue.",
+      "2. worker_v14_sdg.py receives manifest, validates parameters, initializes SimState, and runs simulation loop.",
+      "3. During simulation, state matrices (rho, omega, A) are updated and checked for instability (NaN/Inf, divergence).",
+      "4. Upon completion or early termination, worker uploads artifact (state, history, parameters) to MinIO storage.",
+      "5. worker_bundle YAML (worker_bundle_20260218_032800.yaml) records manifest, compliance metadata, and provenance hash for the job.",
+      "6. Validation pipeline (validation_pipeline.py) retrieves artifact, performs H-Norm, TDA, FFT, and entropy checks.",
+      "7. analytics.py computes advanced metrics (Betti numbers, spectral properties, entropy) for artifact acceptance.",
+      "8. check_invariance.py validates conservation laws and invariance properties for scientific rigor.",
+      "9. Validation verdict (SUCCESS/REJECTED) and metrics are logged to Postgres and Redis; rejected artifacts are pushed to dead-letter queue.",
+      "10. Compliance and provenance are enforced via manifest signing and governance hash checks throughout the workflow."
+    ],
+    "data_lifecycle": {
+      "job_manifest": "Created by orchestrator, includes job_id, config, and parameters. Tracked in worker_bundle YAML.",
+      "simulation_artifact": "Generated by worker, contains state matrices, history, and parameters. Stored in MinIO.",
+      "validation_metrics": "Computed by validation pipeline and analytics, includes H-Norm, Betti numbers, entropy, and FFT results.",
+      "compliance_metadata": "worker_bundle YAML and validation logs record provenance, manifest hash, and compliance status.",
+      "verdict_logging": "Validation results and failure reasons are logged to Postgres and Redis for audit and review."
+    },
+    "key_files": [
+      "worker/worker_v14_sdg.py: Job execution, simulation loop, artifact upload.",
+      "worker/worker_bundle_20260218_032800/worker_bundle_20260218_032800.yaml: Manifest schema, compliance metadata, provenance hash.",
+      "validation/validation_pipeline.py: Artifact validation, H-Norm, TDA, FFT, entropy checks, verdict logging.",
+      "validation/analytics.py: Advanced metrics (Betti numbers, spectral analysis, entropy).",
+      "validation/check_invariance.py: Conservation and invariance validation."
+    ]
+  },
+  "detailed_component_interactions": {
+    "overview": "Describes the precise data, control, and compliance flows between orchestrator, worker, and validation components.",
+    "interactions": [
+      {
+        "from": "orchestrator/service.py",
+        "to": "worker/worker_v14_sdg.py",
+        "medium": "Redis job queue",
+        "control_flow": "Orchestrator generates job manifest, logs event, and enqueues job for worker.",
+        "data_flow": "Manifest includes job_id, parameters, and governance hash."
+      },
+      {
+        "from": "worker/worker_v14_sdg.py",
+        "to": "validation/validation_pipeline.py",
+        "medium": "MinIO artifact storage",
+        "control_flow": "Worker executes simulation, uploads artifact, and notifies validation pipeline.",
+        "data_flow": "Artifact contains state matrices, simulation history, parameters, and manifest hash."
+      },
+      {
+        "from": "validation/validation_pipeline.py",
+        "to": "orchestrator/service.py",
+        "medium": "Postgres/Redis logging",
+        "control_flow": "Validation pipeline logs verdict and metrics, updates job status, and can trigger feedback to orchestrator for failed jobs.",
+        "data_flow": "Validation results, failure reasons, and compliance status are logged for audit and possible re-queueing."
+      }
+    ],
+    "compliance_enforcement": {
+      "manifest_signing": "Orchestrator and worker enforce manifest signing and governance hash propagation for provenance.",
+      "validation_checks": "Validation pipeline enforces H-Norm, TDA, entropy, and compliance checks before artifact acceptance.",
+      "audit_logging": "All components log events and results to Postgres and Redis for traceability and audit."
+    },
+    "sequence_summary": [
+      "1. Orchestrator creates and dispatches job manifest to worker via Redis.",
+      "2. Worker runs simulation, uploads artifact to MinIO, and records compliance metadata.",
+      "3. Validation pipeline retrieves artifact, performs checks, logs results, and updates orchestrator on job status."
+    ]
+  },
+  "physics_model_validation": {
+    "overview": "Describes the scientific and computational validation of the physics model, including advanced analytics, invariance checks, and test coverage.",
+    "validation_logic": {
+      "analytics.py": [
+        "Performs Topological Data Analysis (TDA) to compute Betti numbers for structure validation.",
+        "Executes FFT-based spectral analysis to assess frequency content and stability.",
+        "Calculates Von Neumann entropy as a complexity metric for artifact acceptance.",
+        "Implements multi-ray FFT and Betti number sweeps for robust artifact validation."
+      ],
+      "check_invariance.py": [
+        "Validates conservation laws (e.g., mass, energy) and invariance properties of the simulation.",
+        "Checks for numerical drift and ensures physical plausibility across simulation steps."
+      ]
+    },
+    "test_coverage": {
+      "validation/tests/test_analytics.py": "Unit and integration tests for analytics functions, including TDA, FFT, and entropy calculations. Ensures correct metric computation and edge case handling.",
+      "worker/tests/test_solver.py": "Tests solver logic for correctness, stability, and error handling. Includes edge cases and regression tests for simulation core."
+    },
+    "acceptance_criteria": [
+      "Artifacts must pass H-Norm, Betti number, and entropy checks.",
+      "Conservation and invariance properties must be satisfied.",
+      "No NaN/Inf or instability detected in simulation or validation steps."
+    ]
+  },
+  "performance_and_scaling_benchmarks": {
+    "overview": "Summarizes performance metrics, scaling strategies, and benchmark results for the IRER stack, referencing worker and validation documentation as well as system handover requirements.",
+    "performance_metrics": {
+      "worker": "CPU-bound by default, can leverage GPU if JAX is configured for CUDA. Performance scales with number of workers and available compute resources. Benchmarking includes simulation throughput, time per job, and memory usage.",
+      "validation": "Moderate CPU/memory usage for TDA, FFT, and entropy checks. Performance depends on artifact volume and complexity. Benchmarks include artifact validation rate and resource utilization."
+    },
+    "scaling_strategies": {
+      "horizontal": "Multiple workers and validation pipelines can be launched in parallel (docker-compose scaling). Orchestrator and API are stateless and can be replicated for high availability.",
+      "vertical": "Increase CPU/memory for worker and validation containers as simulation complexity grows. Provision additional disk for MinIO and Postgres as data volume increases."
+    },
+    "benchmarks_and_limits": {
+      "artifact_throughput": "Worker and validation throughput measured in jobs/hour. Bottlenecks identified at Redis/MinIO under high load.",
+      "resource_limits": "No auto-scaling or orchestration (e.g., Kubernetes) configured; scaling is manual. Disk exhaustion possible if artifact cleanup is not automated."
+    },
+    "recommendations": [
+      "Implement resource monitoring and alerting for Redis, Postgres, MinIO, and worker containers.",
+      "Automate artifact cleanup and database pruning to prevent disk exhaustion.",
+      "Consider enabling Redis/Postgres clustering for high-availability deployments.",
+      "Evaluate Kubernetes or similar orchestration for auto-scaling and resilience."
+    ],
+    "source_files": [
+      "worker/README.md: Performance notes, scaling strategies, and resource requirements.",
+      "validation/README.md: Validation pipeline performance and scaling notes.",
+      "system_handover.json: Infrastructure and handover requirements for scaling and performance."
+    ]
+  },
+  "extensibility_and_customization": {
+    "overview": "Describes how the IRER stack supports extensibility and user customization at the physics, worker, and validation layers.",
+    "physics_engine": {
+      "modularity": "Physics kernels and models are modular. New equations, kernels, or geometries can be added by extending worker/ir_physics/__init__.py, kernels.py, or models.py.",
+      "customization": "Users can define custom simulation parameters, boundary conditions, and numerical schemes by subclassing or extending SimParams and SimState."
+    },
+    "worker": {
+      "plugin_support": "Worker logic is designed for extension via new job schemas, artifact types, and compliance checks. See worker/README.md for extension guidelines.",
+      "configuration": "Simulation parameters and job manifests are configurable via orchestrator and worker interfaces."
+    },
+    "validation": {
+      "custom_metrics": "Validation pipeline supports custom analytics, metrics, and acceptance criteria. Users can add new checks in analytics.py or validation_pipeline.py.",
+      "extending_tests": "Test coverage can be expanded by adding new test cases in validation/tests and worker/tests. See validation/README.md for details."
+    },
+    "source_files": [
+      "worker/ir_physics/__init__.py: Physics kernel and model extensibility.",
+      "worker/README.md: Worker extension and configuration guidelines.",
+      "validation/README.md: Validation pipeline customization and test extension."
+    ]
+  },
+  "formal_documentation_and_examples": {
+    "overview": "Summarizes the formal documentation, usage examples, and reference materials available for the IRER stack.",
+    "worker": {
+      "documentation": "worker/README.md provides setup instructions, architecture overview, extension guidelines, and example job manifests.",
+      "examples": "Includes example simulation parameters, job payloads, and artifact upload workflows."
+    },
+    "validation": {
+      "documentation": "validation/README.md details artifact validation logic, pipeline usage, and extension points for analytics and tests.",
+      "examples": "Provides sample artifact validation commands, expected output formats, and test case examples."
+    },
+    "reference_materials": {
+      "brief.json": "Testing_suite/brief.json contains summarized system state, expected outcomes, and reference scenarios for validation and benchmarking."
+    },
+    "recommendations": [
+      "Expand README files with more usage examples and troubleshooting tips.",
+      "Maintain brief.json as a living reference for system state and validation scenarios.",
+      "Encourage contributions of new examples and documentation improvements."
+    ],
+    "source_files": [
+      "worker/README.md: Worker documentation and examples.",
+      "validation/README.md: Validation pipeline documentation and examples.",
+      "Testing_suite/brief.json: Reference scenarios and expected outcomes."
+    ]
+  },
+  "test_coverage_for_physics_logic": {
+    "overview": "Summarizes the test coverage for core physics logic, including mathematical kernels, solver routines, and analytics validation.",
+    "worker": {
+      "test_gf1_math.py": "Covers mathematical kernels and core numerical routines. Tests gradient, Laplacian, and stability calculations for correctness and edge cases.",
+      "test_solver.py": "Validates solver logic, time-stepping, and simulation stability. Includes regression and error handling tests for the simulation core."
+    },
+    "validation": {
+      "test_analytics.py": "Tests analytics functions for TDA, FFT, and entropy calculations. Ensures correct metric computation and robust handling of edge cases."
+    },
+    "coverage_summary": "Physics logic is well-covered for core mathematical and solver routines. Analytics and validation logic are tested for correctness and edge cases. Further expansion recommended for new kernels, models, and error scenarios.",
+    "source_files": [
+      "worker/tests/test_gf1_math.py: Mathematical kernel tests.",
+      "worker/tests/test_solver.py: Solver and simulation tests.",
+      "validation/tests/test_analytics.py: Analytics and validation tests."
+    ]
+  },
+  "governance_and_compliance_in_physics_layer": {
+    "overview": "Describes governance, provenance, and compliance enforcement in the physics layer, referencing manifest signing, hash propagation, and validation checks.",
+    "worker_bundle_yaml": {
+      "role": "Defines manifest schema, compliance metadata, and provenance hash for each simulation job. Enforces binary guard, PEM + entropy redaction, and contract versioning.",
+      "enforcement": "Manifest must be generated and signed before simulation. Provenance hash is checked downstream in validation."
+    },
+    "worker": {
+      "governance_logic": "worker_v14_sdg.py enforces manifest presence, computes config hash, and ensures all jobs are tracked with immutable state. Artifacts are uploaded with compliance metadata for auditability."
+    },
+    "validation_pipeline": {
+      "compliance_checks": "validation_pipeline.py verifies manifest hash, enforces artifact acceptance criteria (H-Norm, TDA, entropy), and logs compliance status. Rejected artifacts are pushed to a dead-letter queue for review."
+    },
+    "provenance_and_audit": "All jobs and artifacts are tracked via manifest signing, provenance hash, and audit logs. Compliance is enforced at each stage of the simulation and validation workflow.",
+    "source_files": [
+      "worker/worker_bundle_20260218_032800/worker_bundle_20260218_032800.yaml: Manifest schema and compliance metadata.",
+      "worker/worker_v14_sdg.py: Governance logic and artifact upload.",
+      "validation/validation_pipeline.py: Compliance checks and audit logging."
+    ]
+  },
+  "visualization_and_diagnostics": {
+    "overview": "Summarizes visualization, diagnostics, and UI/UX design for the IRER stack, referencing analytics, worker documentation, and frontend design specifications.",
+    "analytics": {
+      "diagnostic_metrics": "validation/analytics.py computes and visualizes H-Norm, Betti numbers, entropy, and FFT spectra for artifact diagnostics.",
+      "reporting": "Diagnostics are logged and visualized in the dashboard for operator review and scientific validation."
+    },
+    "worker": {
+      "diagnostics": "worker/README.md documents diagnostic outputs, error reporting, and artifact structure for downstream visualization and review."
+    },
+    "frontend": {
+      "ui_ux_design": "Frontend UI_UX Design Specification Test Bench.txt defines dashboard layout, telemetry streaming, alarm logic, and operator workflows. Implements ISA-101 HMI standards, modular React components, and real-time telemetry overlays.",
+      "features": [
+        "GodViewLayout: Grid-based dashboard for system overview and diagnostics.",
+        "DiagnosticContextBar: HUD for system status and alarms.",
+        "TelemetryChart: Real-time visualization of Hamiltonian Norm and Rho Max.",
+        "CommandPalette: Rapid navigation and expert operator routing.",
+        "SessionTimeline: Tracks scan events and provides temporal context."
+      ]
+    },
+    "recommendations": [
+      "Continue modular React development and expand diagnostic overlays.",
+      "Integrate more analytics outputs into the dashboard for operator awareness.",
+      "Enforce ISA-101 standards and expand accessibility testing."
+    ],
+    "source_files": [
+      "validation/analytics.py: Diagnostic metrics and reporting.",
+      "worker/README.md: Diagnostic outputs and artifact structure.",
+      "Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt: UI/UX design and dashboard features."
+    ]
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents operator interface standards and best practices.",
+      "Testing_suite/current_review.md provides implementation and troubleshooting guidance."
+    ],
+    "community_engagement": {
+      "contribution_guidelines": "Each module README encourages contributions and adherence to coding standards.",
+      "community_links": "No explicit community forums, chat, or support links found in documentation.",
+      "recommendations": [
+        "Develop formal operator training and onboarding materials.",
+        "Add community/support links (e.g., GitHub Discussions, Slack, or email) to documentation.",
+        "Create a central documentation portal for operators, developers, and auditors."
+      ]
+    }
+  },
+  "change_management_release_and_upgrade_history": {
+    "release_notes": [
+      "V14: Major architectural refactor. Transitioned from JSON file-based communication to Redis Task Queue for performance and scalability.",
+      "Introduced dedicated orchestrator service, decoupling job management from core engine.",
+      "Physics engine updated to pure SDG gravity implementation; removed legacy logic.",
+      "Data management migrated from SQLite to PostgreSQL for scalable storage.",
+      "See module READMEs for additional details."
+    ],
+    "upgrade_history": [
+      "V13 → V14: Microservices pivot, Redis queue, Postgres migration, orchestrator/worker/API separation, improved governance and validation pipeline.",
+      "No prior formal changelog found; earlier versions tracked via ad hoc documentation and code comments."
+    ],
+    "change_management_process": {
+      "current": "No formal change management or release process documented. Upgrades and refactors are tracked via README notes, code comments, and versioned manifests (IRER_stack_brief.json, worker_bundle YAMLs).",
+      "recommendations": [
+        "Establish a CHANGELOG.md for all future releases.",
+        "Adopt semantic versioning and document upgrade steps for operators.",
+        "Populate system_handover.json with release and upgrade metadata.",
+        "Formalize change management workflow (e.g., PR review, release checklist, operator notification)."
+      ]
+    },
+    "handover_manifest": "system_handover.json exists but is currently empty; should be populated for future releases."
+  },
+  "compliance_audit_schedule_and_continuous_improvement": {
+    "audit_frequency": "No formal compliance audit schedule documented. Governance and validation logic are enforced via pipeline checks and YAML manifests. Recommend quarterly compliance audits and post-release reviews.",
+    "feedback_mechanisms": [
+      "Discrepancy tracking and issue mapping in IRER_stack_brief.json.",
+      "Refactoring and test suite analysis transcripts inform improvement priorities.",
+      "Incident response and error handling logs provide feedback for continuous improvement.",
+      "Recommend establishing a formal feedback loop (e.g., operator/developer retrospectives, audit checklists)."
+    ],
+    "recommendations": [
+      "Define and document a regular compliance audit schedule (e.g., quarterly).",
+      "Create a compliance checklist and assign audit responsibilities.",
+      "Integrate audit results and feedback into the refactoring and release process."
+    ]
+  },
+  "verification": {
+    "directory_parsing_and_module_mapping": "Complete. All major directories and modules parsed and mapped in IRER_stack_brief.json.",
+    "architectural_brief_validation": "IRER_stack_brief.json reflects current architecture and aligns with design documents and refactoring transcripts.",
+    "checklist_alignment": "Prioritized checklist items addressed and cross-referenced with refactoring transcripts.",
+    "test_coverage_governance_compliance": "Test coverage, governance, and compliance enforcement documented. Coverage gaps and recommendations noted.",
+    "issue_mapping_and_discrepancy_log": "Known issues and discrepancies are tracked and mapped in the brief.",
+    "contract_versioning_and_audit_logic": "Contract versioning, schema evolution, and audit logic are documented in the brief and supporting manifests."
+  },
+  "physics_stack": {
+    "mathematical_formulation": {
+      "core_equation": "S-NCGL master equation: governs resonance density (rho) and phase (omega) evolution. Discretized for numerical integration.",
+      "kernels": [
+        "get_gradients_periodic(f, dx): Computes periodic gradients for field f.",
+        "laplacian_periodic(f, dx): Computes periodic Laplacian for field f.",
+        "covariant_laplacian(field, omega, grad_omega, dx): Covariant Laplacian for curved geometry.",
+        "solve_geometry_proxy(rho, params): Solves geometry proxy for simulation domain.",
+        "spectral_radius_estimate(params, rho_max): Estimates spectral radius for stability checks.",
+        "dt_stability_bound(params, rho_max): Computes maximum stable dt for integration."
+      ],
+      "numerical_methods": "Explicit time-stepping with adaptive dt, stability checks, and periodic boundary conditions. Uses JAX for vectorized computation."
+    },
+    "parameter_definitions": {
+      "SimParams": {
+        "fields": [
+          {"name": "alpha", "description": "Coupling strength, controls resonance interaction."},
+          {"name": "rho_max", "description": "Maximum resonance density, sets upper bound for field."},
+          {"name": "dt", "description": "Time step, dynamically adapted for stability."},
+          {"name": "dx", "description": "Spatial discretization step."},
+          {"name": "n_steps", "description": "Number of simulation steps."},
+          {"name": "geometry", "description": "Domain geometry (e.g., periodic, proxy)."}
+        ],
+        "validation": "Parameters are clamped and validated for physical plausibility in validate_and_clamp_params()."
+      },
+      "SimState": {
+        "fields": [
+          {"name": "rho", "description": "Resonance density field, main simulation variable."},
+          {"name": "omega", "description": "Phase field, coupled to rho evolution."},
+          {"name": "A", "description": "Auxiliary field for geometry or stability calculations."}
+        ],
+        "immutability": "SimState is a Pytree, ensuring immutable state for reproducibility."
+      }
+    },
+    "simulation_workflow": {
+      "steps": [
+        "Receive manifest and parameters from orchestrator.",
+        "Validate and clamp parameters.",
+        "Initialize SimState (rho, omega, A).",
+        "Iteratively step physics: compute time derivatives, update fields, check for instability (NaN/Inf, divergence).",
+        "Stream or store state matrices as artifacts.",
+        "Upload artifact to MinIO for validation."
+      ],
+      "extensibility": "Physics kernels and models are modular; new equations or geometries can be added by extending kernels.py and models.py."
+    },
+    "validation_and_diagnostics": {
+      "criteria": [
+        "H-Norm < 0.09 for artifact acceptance.",
+        "Valid Betti numbers (TDA) and entropy within expected range.",
+        "No NaN/Inf or instability detected during simulation."
+      ],
+      "diagnostics": [
+        "calculate_h_norm(omega, rho, params): Computes H-Norm for acceptance.",
+        "compute_tda_betti_numbers(rho_field, threshold): Computes Betti numbers for topology validation.",
+        "perform_multi_ray_fft(rho_field, num_rays): FFT for spectral analysis.",
+        "check_invariance.py: Validates conservation and invariance properties."
+      ],
+      "test_coverage": "Unit tests for solver, kernels, and analytics; edge cases and error handling need expansion."
+    }
+  },
+  "operator_training_documentation_and_community_engagement": {
+    "training_materials": [
+      "No formal operator training guides or onboarding materials found.",
+      "Operators are expected to follow module README files for setup and usage.",
+      "Frontend UI/UX Design Specification (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) provides detailed HMI/UX standards for operator workflows.",
+      "Testing_suite/current_review.md contains step-by-step code and action plans for developers and advanced operators."
+    ],
+    "documentation": [
+      "Main project README (irer-v14/README.md) covers architecture, setup, and goals.",
+      "Each module (api, orchestrator, worker, validation) includes a README with setup and contribution guidelines.",
+      "Validation module README details artifact validation and usage.",
+      "UI/UX design spec (Testing_suite/workbench-ui/Frontend UI_UX Design Specification Test Bench.txt) documents

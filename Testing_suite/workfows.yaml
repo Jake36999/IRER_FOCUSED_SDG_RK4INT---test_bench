@@ -1,0 +1,76 @@
+# ---
+# Intelligent Pipelines for Automated Documentation and Audit Updates
+
+- name: Update Brief After Major Change
+	description: >
+		After a major code, architecture, or contract change, update brief.json with new system state, component status, and audit results.
+	triggers:
+		- git_commit
+		- merge
+		- release
+		- manual
+	steps:
+		- name: Detect Major Change
+			action: >
+				Scan git diff or commit messages for keywords: "architecture", "contract", "component", "security", "release", "freeze".
+		- name: Gather Current State
+			action: >
+				Parse src/components, src/lib, and config files for new/removed/modified components, hooks, contracts, and test coverage.
+		- name: Extract Audit Results
+			action: >
+				Parse audit logs, error boundary audits, and test results for new findings.
+		- name: Update brief.json
+			action: >
+				Patch brief.json:
+					- Update component_status, audit_results, contract_versioning_status, performance_metrics, and v1_freeze_checklist.
+					- Add new issues, blockers, or resolved items.
+		- name: Log Action
+			action: >
+				Append a log entry to system_metrics_historical_analytics.trend_data and feedback_continuous_improvement.feedback_mechanism in brief.json.
+
+- name: Update Expected Outcomes After Major Change
+	description: >
+		After a major change, update expected_outcome.json to reflect new architecture, blockers, audit status, and V1 freeze checklist.
+	triggers:
+		- git_commit
+		- merge
+		- release
+		- manual
+	steps:
+		- name: Detect Major Change
+			action: >
+				Scan git diff or commit messages for keywords: "architecture", "contract", "component", "security", "release", "freeze".
+		- name: Gather Current vs. Expected State
+			action: >
+				Compare current_system.json and brief.json to expected_outcome.json for discrepancies in component status, blockers, and audit results.
+		- name: Extract Review Provenance
+			action: >
+				Parse current_review.md for new closure items, checklist steps, and review provenance.
+		- name: Update expected_outcome.json
+			action: >
+				Patch expected_outcome.json:
+					- Update component_status, component_issues, error_boundaries, patch_export_ux, bulk_selection_performance, visual_enhancements, synchronization_logic, contract_versioning_security, and v1_freeze_checklist.
+					- Add new source_review fields and update workflow_tags.
+		- name: Log Action
+			action: >
+				Append a log entry to audit_results_continuous_improvement and meta.expected_outcomes in expected_outcome.json.
+
+- name: Knowledge Gathering and Logging
+	description: >
+		Quickly gather system knowledge, update documentation, and log actions for traceability.
+	triggers:
+		- manual
+		- scheduled
+	steps:
+		- name: Scan Workspace
+			action: >
+				Parse src/components, src/lib, and config files for new/removed/modified files, stubs, TODOs, and test coverage.
+		- name: Extract Issues and Blockers
+			action: >
+				Parse current_issues.json and current_review.md for unresolved issues, blockers, and workflow tags.
+		- name: Update Documentation
+			action: >
+				Patch brief.json and expected_outcome.json with new findings, status updates, and workflow tags.
+		- name: Log Action
+			action: >
+				Append a timestamped entry to feedback_continuous_improvement and system_metrics_historical_analytics in brief.json.

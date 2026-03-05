@@ -1,0 +1,178 @@
+{
+  "system_overview": {
+    "name": "IRER Validation Workbench & Remedial Manifold",
+    "version": "1.0.0-V1-FREEZE",
+    "mission": "Agnostic cyber-physical interrogation of spacetime-density simulations and autonomous code profiling.",
+    "design_philosophy": "ISA-101 Industrial HMI, Read-Only Observer, Cyber-Physical Telemetry",
+    "primary_directive": "Monitor the IRER-V14 JAX Physics Engine for topological drift and numerical instability without mutating the runtime environment.",
+    "discrepancies": [
+      "V1 Freeze Pending: 95% complete, several architectural blockers remain (see architecture_layers)."
+    ],
+    "closure_plan": [
+      "Resolve all flagged issues in architecture_layers and implementation_issues before freeze."
+    ],
+    "final_state": "System is architecturally sound, agnostic, and ready for V1 freeze."
+  },
+  "architecture_layers": [
+    {
+      "layer_name": "Frontend UI",
+      "framework": "React / Tailwind / Lucide / Next.js",
+      "standards": "ISA-101 (HMI Standard)",
+      "components": {
+        "GodViewLayout": "Topological Grid",
+        "MonitorContainer": "Logic (SSE, Telemetry)",
+        "RemedialManifold": "Diff Viewer & Confidence Bars",
+        "ForensicsDock": "Unified Timeline + Axiom Inspector",
+        "ChaosMode": "EntropyCanvas, CatastrophicStream (Experimental)"
+      },
+      "discrepancies": [
+        "ChaosMode not isolated (scope creep)",
+        "ForensicsDock missing composition",
+        "MonitorContainer race condition (hydration vs SSE)",
+        "RemedialManifold missing patch export UX",
+        "UnifiedLensExplorer lacks headless bulk selection and has semantic bleed-through"
+      ],
+      "closure_plan": [
+        "Move ChaosMode to _experimental/chaos and strip imports from GodViewLayout.",
+        "Create ForensicsDock wrapper for timeline and axiom inspector.",
+        "Refactor MonitorContainer to await baseline before SSE.",
+        "Implement Blob-based patch export utility in RemedialManifold.",
+        "Integrate @viselect/vanilla for bulk selection and audit semantic labels in UnifiedLensExplorer."
+      ],
+      "final_state": "All blockers resolved, UI is agnostic, performant, and architecturally sound."
+    },
+    {
+      "layer_name": "Backend Middleware",
+      "framework": "FastAPI / Flask / Redis",
+      "role": "SSE telemetry proxy, API gateway, router for AI services",
+      "discrepancies": [
+        "Patch export endpoint not fully wired",
+        "Contract versioning and SSRF/path traversal prevention need audit"
+      ],
+      "closure_plan": [
+        "Enable .patch file export endpoint.",
+        "Audit and enforce contract versioning and SSRF/path traversal prevention."
+      ],
+      "final_state": "Middleware is robust, secure, and fully integrated with frontend and scanner."
+    },
+    {
+      "layer_name": "Core Scanner",
+      "framework": "Python 3.10+ / ast / PyYAML",
+      "role": "AST parsing, drift detection, governance enforcement",
+      "discrepancies": [
+        "Audit for accidental writes/temp files pending",
+        "Integration hooks and error handling need expansion"
+      ],
+      "closure_plan": [
+        "Audit scanner for accidental writes/temp files.",
+        "Expand integration hooks and error handling."
+      ],
+      "final_state": "Scanner is immutable, robust, and fully compliant with governance."
+    },
+    {
+      "layer_name": "Knowledge Engine",
+      "framework": "ChromaDB + Python",
+      "role": "Semantic vector search, bug/remedy matching, triage routing",
+      "discrepancies": [
+        "Variable flow tracking (deep scan) and trend plot visualization are stubbed"
+      ],
+      "closure_plan": [
+        "Implement NaN propagation analysis and trend plot visualization."
+      ],
+      "final_state": "Knowledge engine is fully featured and integrated."
+    },
+    {
+      "layer_name": "Physics Engine",
+      "framework": "JAX (Native)",
+      "identity": "IRER-v14 SDG Engine",
+      "axioms": ["Traversal", "Sanitization", "Parsimony"],
+      "safety_checks": "Axiom 2 (Schematic Sanitization) for jax.lax.scan",
+      "status": "SOVEREIGN_ISOLATED",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Physics engine remains sovereign and isolated."
+    },
+    {
+      "layer_name": "Infrastructure",
+      "framework": "Docker / Docker Compose",
+      "role": "Isolate Test Bench, mount target as read-only",
+      "discrepancies": [
+        "Volume mount verification required"
+      ],
+      "closure_plan": [
+        "Verify TARGET_PATH binds to /mnt/target in bench-middleware container."
+      ],
+      "final_state": "Infrastructure is secure and non-invasive."
+    }
+  ],
+  "data_contracts": {
+    "scan_results": {
+      "path": "reports/scan_results.json",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Unified profile generated and consumed by UI."
+    },
+    "governance": {
+      "path": "rules/governance.yaml",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Entropy & SEC rules enforced."
+    },
+    "remedy": {
+      "schema": "KnowledgeNode Schema (UID-hashed pattern matches)",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Remedy contract is versioned and in sync."
+    },
+    "telemetry_stream": {
+      "type": "Server-Sent Events (SSE)",
+      "payload": "{ h_norm: float, rho_max: float, step_count: int, instability_flag: 'URGENT' | null }",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Telemetry stream is robust and contract-compliant."
+    },
+    "kel_query": {
+      "type": "REST POST",
+      "payload": "{ error_trace: string, similarity_threshold: float }",
+      "response": "{ fix_code: string, similarity: float, is_golden: boolean }",
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Kel query contract is versioned and in sync."
+    }
+  },
+  "rules_of_engagement": [
+    "NEVER hardcode physics terminology in the UI. Read from backend payloads.",
+    "NEVER modify the Target System's code directly. Offer .patch files for human review.",
+    "ALWAYS maintain the ISA-101 gray-scale low-latency aesthetic in the UI.",
+    "DO NOT mix experimental 3D/Canvas rendering into the production DOM tree.",
+    "UI must remain strictly decoupled from IRER-V14 physics logic.",
+    "System is an Observer. Fixes proposed by AI must be exported as .patch files. System MUST NOT directly mutate the target irer-v14 source code.",
+    "Address flagged issues before implementing new features."
+  ],
+  "workflow_recommendations": [
+    {
+      "tag": "search-stubs",
+      "description": "Scan codebase for stubs, placeholders, and TODOs. Tag and prioritize for closure."
+    },
+    {
+      "tag": "design-gap",
+      "description": "Identify and document unclear specs. Schedule design reviews for affected components."
+    },
+    {
+      "tag": "focus-area",
+      "description": "Select critical components and drive them to completion before freeze."
+    },
+    {
+      "tag": "audit-needed",
+      "description": "Audit error boundaries, contract versioning, and test coverage."
+    },
+    {
+      "tag": "performance-risk",
+      "description": "Profile and optimize known bottlenecks."
+    },
+    {
+      "tag": "finalize",
+      "description": "Mark tasks that must be completed for V1 freeze."
+    }
+  ]
+}

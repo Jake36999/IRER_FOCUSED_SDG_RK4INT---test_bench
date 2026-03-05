@@ -1,0 +1,102 @@
+{
+  "frontend_architecture_plan": {
+    "meta": {
+      "system_name": "IRER Test Bench V15",
+      "design_standard": "ISA-101 / IEC 63303",
+      "visual_philosophy": "Aletheia (Truth Unconcealed)",
+      "root_directory": "src"
+    },
+    "design_system": {
+      "palette": {
+        "canvas": "bg-cyber-black (#0a0a0a)",
+        "neutral": "ui-neutral (#1e293b)",
+        "safe": "status-safe (#22c55e)",
+        "warning": "status-warning (#f59e0b)",
+        "critical": "status-critical (#ef4444)",
+        "jax_primitive": "jax-magenta (#d946ef)",
+        "signal_layer": "signal-overlay (#ffffff10)"
+      },
+      "typography": "JetBrains Mono (Technical Data) / Inter (UI Labels)"
+    },
+    "component_registry": {
+      "layout": [
+        {
+          "path": "src/components/layout/GodViewLayout.tsx",
+          "description": "High-density CSS Grid container implementing the Topological Layout. Manages global hotkeys (Ctrl+K, Esc) and the 'Read-Only Contract' badge."
+        },
+        {
+          "path": "src/components/shared/Sidebar.tsx",
+          "description": "Polymorphic navigation rail using implicit Context state. Supports standard navigation and 'Action Triggers' (e.g., Chaos Mode)."
+        }
+      ],
+      "hud_and_navigation": [
+        {
+          "path": "src/components/hud/DiagnosticContextBar.tsx",
+          "description": "Top-level HUD. Displays 'Vectors Loaded', 'Unindexed Friction', and 'Active JAX Version'. Includes the Global Search Input."
+        },
+        {
+          "path": "src/components/shared/CommandPalette.tsx",
+          "description": "The primary router for expert operators. Handles fuzzy search, axiom filtering (/axiom2), and deep linking."
+        }
+      ],
+      "monitor_engine": [
+        {
+          "path": "src/components/monitor/MonitorContainer.tsx",
+          "description": "Sovereign Data Handler. Manages WebSocket/SSE connections. Decouples physics logic from rendering."
+        },
+        {
+          "path": "src/components/monitor/TelemetryChart.tsx",
+          "description": "SVG/WebGL renderer for Hamiltonian Norm and Rho Max. Uses physics-based spring interpolation (Stiffness: 170) for organic motion."
+        },
+        {
+          "path": "src/components/monitor/SignalLayer.tsx",
+          "description": "Unified overlay manager. Aggregates GhostTracer, Schematic Toasts, and Runtime Warnings into a single Z-index layer."
+        }
+      ],
+      "remedial_manifold": [
+        {
+          "path": "src/components/kel/UnifiedLensExplorer.tsx",
+          "description": "Consolidated explorer replacing separate file/friction trees. Uses 'Lens' toggles (Friction, Filesystem, Telemetry) to filter data."
+        },
+        {
+          "path": "src/components/kel/RemedialManifold.tsx",
+          "description": "The 'Right Pane' action space. Orchestrates code comparison (DiffViewer) and KEL fix application."
+        },
+        {
+          "path": "src/components/kel/KnowledgeConfidenceBar.tsx",
+          "description": "Visualizer for fix reliability. Displays similarity scores, historical recurrence, and resolution rates."
+        }
+      ],
+      "temporal_axiomatic": [
+        {
+          "path": "src/components/session/SessionTimeline.tsx",
+          "description": "Horizontal timeline tracking scan events (Start, Anomaly, Fix). Provides temporal context to spatial findings."
+        },
+        {
+          "path": "src/components/axioms/AxiomInspector.tsx",
+          "description": "Real-time validator for system rules (e.g., 'Sanitization', 'Intent Consistency'). Shows satisfied/violated states."
+        }
+      ],
+      "telescope_system": [
+        {
+          "path": "src/components/telescope/TelescopeModal.tsx",
+          "description": "Deep-dive modal using Render Props to inject 'AI Analysis' or 'Raw Code' views dynamically."
+        }
+      ]
+    },
+    "hooks_and_utils": [
+      {
+        "path": "src/lib/hooks/useTelemetry.ts",
+        "role": "Manages SSE connection and implements 'Pause/Scrub' buffer logic."
+      },
+      {
+        "path": "src/lib/hooks/useKelSummary.ts",
+        "role": "Fetches and aggregates KEL stats for the HUD."
+      },
+      {
+        "path": "src/lib/utils/iconFactory.ts",
+        "role": "Auto-generated file containing strictly typed SVG paths."
+      }
+    ]
+  }
+}

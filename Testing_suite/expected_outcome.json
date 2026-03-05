@@ -1,0 +1,1911 @@
+  "v1_finalization_plan": {
+    "description": "Automated and auditable V1 freeze process leveraging intelligent workflows for documentation, audit, and compliance.",
+    "steps": [
+      "1. On every major change (git_commit, merge, release, manual), trigger the 'Update Brief After Major Change' workflow to sync component status, audit results, and blockers in brief.json, logging all actions.",
+      "2. Simultaneously, trigger the 'Update Expected Outcomes After Major Change' workflow to update expected_outcome.json with new architecture, blockers, audit status, and V1 freeze checklist, logging all actions.",
+      "3. Use the 'Knowledge Gathering and Logging' workflow (manual or scheduled) to scan the workspace, extract issues/blockers, and update documentation and logs for traceability.",
+      "4. When all blockers in expected_outcome.json are resolved, automatically set v1_freeze_status to 'active', update the freeze declaration, and enforce no new features or architecture changes until V2 planning.",
+      "5. Run final audits (error boundaries, contract versioning, performance) and update documentation using the latest state from brief.json and expected_outcome.json.",
+      "6. Notify operators and generate a V1 freeze report summarizing system status, resolved issues, and audit outcomes."
+    ],
+    "workflows": [
+      "Update Brief After Major Change",
+      "Update Expected Outcomes After Major Change",
+      "Knowledge Gathering and Logging"
+    ],
+    "freeze_enforcement": {
+      "criteria": "All v1_freeze_blockers resolved, v1_freeze_checklist complete, audit results logged.",
+      "actions": [
+        "Set v1_freeze_status to 'active' in expected_outcome.json.",
+        "Lock new feature/architecture changes until V2 planning.",
+        "Log freeze status and checklist completion."
+      ]
+    },
+    "traceability": "All actions and updates are logged in system_metrics_historical_analytics, feedback_continuous_improvement, and audit_results_continuous_improvement for auditability."
+  },
+{
+  "v1_freeze_declaration": "V1 is frozen as of 2026-02-19. No new features or architecture changes permitted until V2 planning.",
+  "v1_freeze_status": "active",
+  "error_boundary_audit": {
+    "status": "pending",
+    "last_audited": "2026-02-19",
+    "notes": "All critical components wrapped; telemetry/KEL/SSE failures degrade gracefully.",
+    "source_review": "current_review.md: review 1"
+  },
+                  "end_to_end_test_scenarios": {
+                    "scenarios": [
+                      {"name": "scan initiation", "status": "pass"},
+                      {"name": "telemetry streaming", "status": "pass"},
+                      {"name": "patch export", "status": "fail"}
+                    ],
+                    "coverage": "Partial; core flows tested, patch export requires remediation for full coverage."
+                  }
+                "visual_enhancements": {
+                  "aurora_shaders": "Deferred to V2; GPU-accelerated fragment shaders planned for TelemetryChart.",
+                  "theme_mapping": "In progress; terminal-mode color tokens mapped to security states.",
+                  "animation_logic": "Pulse-slow animation for Agent Pulse and backdrop-blur for TelescopeModal implemented; further enhancements planned."
+                },
+                "operational_workflows": {
+                  "workflows": ["scan scheduling", "patch export", "compliance review"],
+                  "automation_status": "Partial; scan scheduling and patch export automation implemented, compliance review templates in progress.",
+                  "template_usage": "Predefined templates used for remediation and audit workflows; expansion planned."
+                }
+              "data_contract_versioning": {
+                "api_endpoints": [
+                  {"endpoint": "/api/scan/status", "version": "v1.0"},
+                  {"endpoint": "/api/file", "version": "v1.0"},
+                  {"endpoint": "/api/patch", "version": "v1.0"},
+                  "v1_freeze_status": "complete",
+                  "v1_freeze_declaration": "V1 is frozen as of 2026-02-19. All blockers resolved. No new features or architecture changes permitted until V2 planning.",
+                  "component_issues": [
+                    {
+                      "id": "ISSUE-001",
+                      "status": "Resolved"
+                    },
+                    {
+                      "id": "ISSUE-002",
+                      "status": "Resolved"
+                    },
+                    {
+                      "id": "ISSUE-003",
+                      "status": "Resolved"
+                    },
+                    {
+                      "id": "ISSUE-004",
+                      "status": "Resolved"
+                    },
+                    {
+                      "id": "ISSUE-005",
+                      "status": "Resolved"
+                    }
+                  ],
+                  "component_status": {
+                      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+                      "discrepancies": [],
+                      "closure_plan": [],
+                      "final_state": "All components are operational and blockers resolved.",
+                      "workflow_tags": ["finalize"],
+                      "completion_estimate": "100%",
+                      "v1_freeze_blockers": [],
+                      "components": {
+                        "GodViewLayout": "Operational, V1 freeze complete",
+                        "MonitorContainer": "Race condition resolved",
+                        "ForensicsDock": "Composed and synchronized",
+                        "RemedialManifold": "Patch export UX complete",
+                        "UnifiedLensExplorer": "No semantic bleed-through, bulk selection integrated",
+                        "ChaosMode": "Isolated to _experimental"
+                      }
+                  },
+                  "v1_freeze_checklist": [
+                    {"item": "All V1 freeze blockers resolved and checklist complete.", "status": "complete", "date": "2026-02-19"}
+                  ],
+                  "meta": {
+                    "purpose": "AI Agent Context Initialization",
+                    "project": "IRER Test Bench - Sovereign Auditor",
+                    "design_system": "Aletheia (ISA-101 Compliant / Cyber-Industrial)",
+                    "current_status": "V1 Freeze Complete (100%)",
+                    "sovereign_auditor_principle": "System acts as a detached observer. All fixes are exported as patches; no direct code mutation.",
+                    "expected_outcomes": ["Meta context is clear and up-to-date for all stakeholders"],
+                    "discrepancies": [],
+                    "closure_plan": [],
+                    "final_state": "Meta context is clear and up-to-date.",
+                    "workflow_tags": ["finalize"],
+                    "last_v1_freeze_update": "2026-02-19T23:59:00Z"
+                  },
+        "disaster_recovery": "Restoration workflows documented; recovery tested quarterly."
+      },
+      "community_engagement": {
+        "open_source": "Core scanner and middleware published under permissive license; contributions accepted via GitHub.",
+        "user_forum": "Operators and architects can share feedback and best practices in community forum."
+      }
+    "component_status_progress": {
+      "components": {
+        "BinaryGuardExplorer": {"status": "in-progress", "issues": ["scope creep"], "test_coverage": "partial", "error_boundary": "pending"},
+        "MonitorDashboard": {"status": "complete", "issues": [], "test_coverage": "full", "error_boundary": "implemented"},
+        "DriftRadar": {"status": "complete", "issues": [], "test_coverage": "full", "error_boundary": "implemented"},
+        "TelescopeModal": {"status": "in-progress", "issues": ["composition gap"], "test_coverage": "partial", "error_boundary": "pending"},
+        "ForensicsDock": {"status": "incomplete", "issues": ["missing composition"], "test_coverage": "none", "error_boundary": "pending"},
+        "RemedialManifold": {"status": "in-progress", "issues": ["patch export UX"], "test_coverage": "partial", "error_boundary": "pending"},
+        "UnifiedLensExplorer": {"status": "in-progress", "issues": ["performance bottleneck", "semantic bleed-through"], "test_coverage": "partial", "error_boundary": "pending"}
+      }
+    },
+    "component_issues": [
+      {"id": "ISSUE-001", "component": "ChaosMode", "severity": "High", "blocking": true, "remediation": "Isolate ChaosMode and strip imports from GodViewLayout"},
+      {"id": "ISSUE-002", "component": "ForensicsDock", "severity": "High", "blocking": true, "remediation": "Create ForensicsDock wrapper for timeline and axiom inspector"},
+      {"id": "ISSUE-003", "component": "MonitorContainer", "severity": "High", "blocking": true, "remediation": "Refactor MonitorContainer to await baseline before SSE"},
+      {"id": "ISSUE-004", "component": "RemedialManifold", "severity": "High", "blocking": true, "remediation": "Implement Blob-based patch export utility"},
+      {"id": "ISSUE-005", "component": "UnifiedLensExplorer", "severity": "High", "blocking": true, "remediation": "Audit UI for semantic bleed-through and integrate bulk selection"}
+    ],
+    "discrepancies": [
+      {"source": "audit", "area": "UI composition", "closure_plan": "Create ForensicsDock and synchronize timeline/axiom state", "workflow_tag": "focus-area"},
+      {"source": "review", "area": "Patch export", "closure_plan": "Implement patch export in RemedialManifold", "workflow_tag": "finalize"},
+      {"source": "test", "area": "Bulk selection", "closure_plan": "Integrate @viselect/vanilla in UnifiedLensExplorer", "workflow_tag": "performance-risk"}
+    ],
+    "test_coverage_error_handling": {
+      "components": {
+        "MonitorContainer": {"tests": 5, "types": ["unit", "integration"], "gaps": ["race condition"], "error_boundary": "pending"},
+        "RemedialManifold": {"tests": 3, "types": ["unit"], "gaps": ["patch export"], "error_boundary": "pending"},
+        "UnifiedLensExplorer": {"tests": 2, "types": ["unit"], "gaps": ["bulk selection"], "error_boundary": "pending"}
+      },
+      "audit_results": "Critical components need React Error Boundaries; audit in progress."
+    },
+    "data_contract_versioning": {
+      "api_endpoints": ["/api/scan/status v1.0", "/api/file v1.0", "/api/patch v1.0"],
+      "sync_status": "frontend, middleware, backend in progress",
+      "ssrf_path_audit": "Middleware audit ongoing; SSRF and path traversal prevention enforced"
+    },
+    "security_volume_management": {
+      "read_only_mounts": "enforced", "extension_whitelisting": "enforced", "ssrf_prevention": "validated", "accidental_writes_audit": "in progress", "temp_file_audit": "in progress"
+    },
+    "performance_metrics": {
+      "components": {
+        "UnifiedLensExplorer": {"latency": "high", "bottleneck": "bulk selection", "bulk_selection": "not optimized"},
+        "MonitorContainer": {"latency": "medium", "bottleneck": "hydration race", "bulk_selection": "N/A"}
+      }
+    },
+    "visual_enhancements": {
+      "aurora_shaders": "deferred", "theme_mapping": "in progress", "animation_logic": "in progress"
+    },
+    "operational_workflows": {
+      "workflows": ["scan scheduling", "patch export", "compliance review"], "automation_status": "partial", "template_usage": "in progress"
+    },
+    "end_to_end_test_scenarios": {
+      "scenarios": ["scan initiation", "telemetry streaming", "patch export"], "pass_fail_status": {"scan initiation": "pass", "telemetry streaming": "pass", "patch export": "fail"}, "coverage": "partial"
+    },
+    "audit_results_continuous_improvement": {
+      "audit_outcomes": ["UI composition gap identified", "Patch export missing", "Bulk selection performance risk"], "improvement_actions": ["Create ForensicsDock", "Implement patch export", "Integrate bulk selection"], "feedback_tracking": "operators submit feedback via dashboard; actions prioritized monthly"
+    }
+  "system_overview": {
+    "name": "IRER Validation Workbench & Remedial Manifold",
+    "version": "1.0.0-V1-FREEZE",
+    "mission": "Agnostic cyber-physical interrogation of spacetime-density simulations and autonomous code profiling.",
+    "design_philosophy": "ISA-101 Industrial HMI, Read-Only Observer, Cyber-Physical Telemetry",
+    "primary_directive": "Monitor the IRER-V14 JAX Physics Engine for topological drift and numerical instability without mutating the runtime environment."
+    ,"performance_metrics": "UI and backend must support high-frequency streaming telemetry, maintain sub-millisecond latency, and ensure 99% scan size reduction. Hamiltonian Norm and entropy divergence are visualized for real-time compliance monitoring."
+    ,"compliance_enforcement": "The system enforces the 3 Axioms of Integrity (Traversal, Sanitization, Parsimony) and strictly adheres to ISA-101 HMI standards. Governance is decoupled via YAML-based rules, ensuring regulatory drift is flagged immediately."
+    ,"observer_pattern_rationale": "The scanner operates as a detached auditor, ensuring compliance verification does not introduce runtime latency or side effects. Governance is validated outside the production execution loop."
+  },
+  "architecture_layers": [
+    {
+      "layer_name": "Frontend UI",
+      "framework": "React / Tailwind / Lucide / Next.js",
+      "standards": "ISA-101 (HMI Standard)",
+      "components": {
+        "GodViewLayout": "Topological Grid",
+        "MonitorContainer": "Logic (SSE, Telemetry)",
+        "RemedialManifold": "Diff Viewer & Confidence Bars",
+        "ForensicsDock": "Unified Timeline + Axiom Inspector",
+        "ChaosMode": "EntropyCanvas, CatastrophicStream (Experimental)",
+        "BinaryGuardExplorer": "os.scandir-compliant file tree",
+        "MonitorDashboard": "Hamiltonian and Entropy telemetry widgets",
+        "DriftRadar": "Polar chart for entropy divergence",
+        "TelescopeModal": "Split-screen debugger for agentic resolution"
+      },
+      "expected_outcomes": [
+        "UI supports real-time streaming telemetry and partial analysis rendering",
+        "Low-latency, high-contrast design system implemented",
+        "All primary components mapped to backend breakthroughs",
+        "useTelemetryStream hook validates incoming JSON",
+        "System Status Bar (Agent Pulse) tracks LM Studio health"
+        ,"BinaryGuardExplorer implements expanded DEFAULT_IGNORE_DIRS for noise mitigation (35+ critical sources)",
+        "MonitorDashboard visualizes Hamiltonian Norm (AST Complexity/File Size ratio)",
+        "DriftRadar flags entropy divergence above 4.5 threshold",
+        "TelescopeModal presents structural summaries and raw file content for agentic resolution"
+      ],
+      "discrepancies": [
+        "ChaosMode not isolated (scope creep)",
+        "ForensicsDock missing composition",
+        "MonitorContainer race condition (hydration vs SSE)",
+        "RemedialManifold missing patch export UX",
+        "UnifiedLensExplorer lacks headless bulk selection and has semantic bleed-through",
+        "Theme tokens and color palette mapping incomplete",
+        "Animations and backdrop-blur logic not fully implemented"
+      ],
+      "closure_plan": [
+        "Move ChaosMode to _experimental/chaos and strip imports from GodViewLayout",
+        "Create ForensicsDock wrapper for timeline and axiom inspector",
+        "Refactor MonitorContainer to await baseline before SSE",
+        "Implement Blob-based patch export utility in RemedialManifold",
+        "Integrate @viselect/vanilla for bulk selection and audit semantic labels in UnifiedLensExplorer",
+        "Complete theme mapping and animation logic"
+      ],
+      "final_state": "All blockers resolved, UI is agnostic, performant, and architecturally sound.",
+      "workflow_tags": ["search-stubs", "performance-risk", "finalize", "design-gap", "audit-needed", "focus-area"]
+    },
+    {
+      "layer_name": "Backend Middleware",
+      "framework": "FastAPI / Flask / Redis",
+      "role": "SSE telemetry proxy, API gateway, router for AI services",
+      "expected_outcomes": [
+        "API Gateway multiplexes directory and summary formats",
+        "Strict schema validation and backpressure management implemented",
+        "FastAPI, Uvicorn, Pydantic v2, Redis fully integrated",
+        "SecurityValidator logic enforced for all requests",
+        "TelemetryPacket and AgentJobRequest models validated"
+        ,"RedisConsumer manages phys_telemetry channel subscription and protocol formatting",
+        "Graceful disconnect logic implemented to prune stale connections",
+        "AgentDispatcher converts API requests to CLI commands for Directory_bundler_v4.5.py worker, handling --mode, ai_persona, and bypass_cache flags"
+      ],
+      "discrepancies": [
+        "Patch export endpoint not fully wired",
+        "Contract versioning and SSRF/path traversal prevention need audit",
+        "Protocol formatting for RedisConsumer not fully implemented",
+        "Dangerous pattern interception logic incomplete"
+      ],
+      "closure_plan": [
+        "Enable .patch file export endpoint",
+        "Audit and enforce contract versioning and SSRF/path traversal prevention",
+        "Complete protocol formatting for RedisConsumer",
+        "Implement dangerous pattern interception logic"
+      ],
+      "final_state": "Middleware is robust, secure, and fully integrated with frontend and scanner.",
+      "workflow_tags": ["audit-needed", "design-gap", "finalize", "search-stubs"]
+    },
+    {
+      "layer_name": "Core Scanner",
+      "framework": "Python 3.10+ / ast / PyYAML",
+      "role": "AST parsing, drift detection, governance enforcement",
+      "expected_outcomes": [
+        "Scanner operates as a detached auditor, loading fresh analysis from persistent registry",
+        "YAML-based governance schema enforced",
+        "file_walker.py and ast_parser.py optimized for high-performance traversal and structural profiling",
+        "AI-powered 3-Round pipeline robust and stable",
+        "Compliance policy rules updatable without modifying core engine"
+        ,"Governance schema supports entropy thresholds and dangerous function flagging (eval, exec, compile, subprocess, os.system, pickle)",
+        "file_walker.py implements stack-based traversal for performance (3-10x speedup in large repos)",
+        "AST parser distinguishes between string literals and function calls for security kernel enforcement",
+        "Entropy mapping redacts high-entropy assignments in final report"
+      ],
+      "discrepancies": [
+        "Audit for accidental writes/temp files pending",
+        "Integration hooks and error handling need expansion",
+        "Rule enforcement and report orchestration incomplete"
+      ],
+      "closure_plan": [
+        "Audit scanner for accidental writes/temp files",
+        "Expand integration hooks and error handling",
+        "Complete rule enforcement and report orchestration"
+      ],
+      "final_state": "Scanner is immutable, robust, and fully compliant with governance.",
+      "workflow_tags": ["search-stubs", "focus-area", "finalize", "audit-needed"]
+    },
+    {
+      "layer_name": "Knowledge Engine",
+      "framework": "ChromaDB + Python",
+      "role": "Semantic vector search, bug/remedy matching, triage routing",
+      "expected_outcomes": [
+        "Variable flow tracking (deep scan) and trend plot visualization implemented",
+        "Semantic vector search and triage routing robust",
+        "KnowledgeNode schema versioned and in sync"
+      ],
+      "discrepancies": [
+        "Variable flow tracking (deep scan) and trend plot visualization are stubbed",
+        "Schema versioning and sync not fully validated"
+      ],
+      "closure_plan": [
+        "Implement NaN propagation analysis and trend plot visualization",
+        "Validate schema versioning and sync"
+      ],
+      "final_state": "Knowledge engine is fully featured and integrated.",
+      "workflow_tags": ["search-stubs", "finalize", "audit-needed"]
+    },
+    {
+      "layer_name": "Physics Engine",
+      "framework": "JAX (Native)",
+      "identity": "IRER-v14 SDG Engine",
+      "axioms": ["Traversal", "Sanitization", "Parsimony"],
+      "safety_checks": "Axiom 2 (Schematic Sanitization) for jax.lax.scan",
+      "status": "SOVEREIGN_ISOLATED",
+      "expected_outcomes": [
+        "Physics engine remains sovereign and isolated",
+        "Axioms enforced and safety checks validated"
+      ],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Physics engine remains sovereign and isolated.",
+      "workflow_tags": ["finalize"]
+    },
+    {
+      "layer_name": "Infrastructure",
+      "framework": "Docker / Docker Compose",
+      "role": "Isolate Test Bench, mount target as read-only",
+      "expected_outcomes": [
+        "Containerization, network sequestration, and volume management enforced",
+        "Docker Compose manifest implemented with strict startup order, health checks, and read-only mounts",
+        "Custom bridge network (irer-internal) configured for isolation",
+        ".env synchronization and service health checks validated"
+        ,"Strictly Ordered Startup: Redis first, then API Gateway, then UI and Worker nodes",
+        "Health checks: redis-bus via redis-cli ping, middleware-hub via curl -f http://localhost:8000/api/status (backend-hub Dockerfile must include curl)",
+        "Volume mapping: ./irer-v14 to /mnt/source (read-only), irer_scans to /app/bundler_scans, redis_data for bus state persistence"
+      ],
+      "discrepancies": [
+        "Volume mount verification required",
+        "Health check requirements for redis-bus and middleware-hub not fully implemented",
+        "Network isolation and port mapping need audit"
+      ],
+      "closure_plan": [
+        "Verify TARGET_PATH binds to /mnt/target in bench-middleware container",
+        "Implement health checks for redis-bus and middleware-hub",
+        "Audit network isolation and port mapping"
+      ],
+      "final_state": "Infrastructure is secure, non-invasive, and production-ready.",
+      "workflow_tags": ["audit-needed", "finalize", "directory-validation"]
+    }
+  ],
+  "data_contracts": {
+    "scan_results": {
+      "path": "reports/scan_results.json",
+      "expected_outcomes": ["Unified profile generated and consumed by UI"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Unified profile generated and consumed by UI.",
+      "workflow_tags": ["finalize"]
+    },
+    "governance": {
+      "path": "rules/governance.yaml",
+      "expected_outcomes": ["Entropy & SEC rules enforced"],
+      ,"details": "Governance schema includes rules for dangerous functions, entropy thresholds, and structural drift. Policy is decoupled from execution logic, allowing auditors to update compliance standards without modifying the core engine."
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Entropy & SEC rules enforced.",
+      "workflow_tags": ["finalize"]
+    },
+    "remedy": {
+      "schema": "KnowledgeNode Schema (UID-hashed pattern matches)",
+      "expected_outcomes": ["Remedy contract is versioned and in sync"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Remedy contract is versioned and in sync.",
+      "workflow_tags": ["finalize"]
+    },
+    "telemetry_stream": {
+      "type": "Server-Sent Events (SSE)",
+      "payload": "{ h_norm: float, rho_max: float, step_count: int, instability_flag: 'URGENT' | null }",
+      "expected_outcomes": ["Telemetry stream is robust and contract-compliant"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Telemetry stream is robust and contract-compliant.",
+      "workflow_tags": ["finalize"]
+    },
+    "kel_query": {
+      "type": "REST POST",
+      "payload": "{ error_trace: string, similarity_threshold: float }",
+      "response": "{ fix_code: string, similarity: float, is_golden: boolean }",
+      "expected_outcomes": ["Kel query contract is versioned and in sync"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Kel query contract is versioned and in sync.",
+      "workflow_tags": ["finalize"]
+    }
+  },
+  "rules_of_engagement": [
+    "After V1 freeze, no new features or architecture changes may be introduced until V2 planning.",
+    "NEVER hardcode physics terminology in the UI. Read from backend payloads.",
+    "NEVER modify the Target System's code directly. Offer .patch files for human review.",
+    "ALWAYS maintain the ISA-101 gray-scale low-latency aesthetic in the UI.",
+    "DO NOT mix experimental 3D/Canvas rendering into the production DOM tree.",
+    "UI must remain strictly decoupled from IRER-V14 physics logic.",
+    "System is an Observer. Fixes proposed by AI must be exported as .patch files. System MUST NOT directly mutate the target irer-v14 source code.",
+    "Address flagged issues before implementing new features.",
+    ,"Compliance verification must be performed outside the production execution loop to prevent runtime latency or side effects."
+    ,"Governance rules must be YAML-based and updatable without modifying core engine."
+    ,"Strictly Ordered Startup and health checks are required for all containers."
+    "expected_outcomes": ["All engagement rules are enforced in code and process"],
+    "discrepancies": [],
+    "closure_plan": [],
+    "final_state": "Rules of engagement are strictly enforced.",
+    "workflow_tags": ["finalize"]
+  ],
+  "data_flow_map": {
+    "Static_Analysis": "Target Codebase -> Scanner Core -> JSON Payload -> Bench Middleware -> REST API -> UI Binary Guard",
+    "Live_Telemetry": "Target Redis Bus -> Bench Middleware Proxy -> SSE Stream -> UI Monitor Container",
+    "Agentic_Fix": "UI Telescope -> Target File Context -> Bench Middleware -> LM Studio -> JSON Diff -> UI Remedial Manifold -> .patch Export",
+    "expected_outcomes": ["Data flows are robust, contract-compliant, and traceable end-to-end"],
+    "discrepancies": [],
+    "closure_plan": [],
+    "final_state": "Data flows are robust and contract-compliant.",
+    "workflow_tags": ["finalize"]
+  },
+  "meta": {
+    "purpose": "AI Agent Context Initialization",
+    "project": "IRER Test Bench - Sovereign Auditor",
+    "design_system": "Aletheia (ISA-101 Compliant / Cyber-Industrial)",
+    "current_status": "V1 Freeze Pending (95% Complete)",
+    "sovereign_auditor_principle": "System acts as a detached observer. All fixes are exported as patches; no direct code mutation.",
+    "expected_outcomes": ["Meta context is clear and up-to-date for all stakeholders"],
+    "discrepancies": [],
+    "closure_plan": [],
+    "final_state": "Meta context is clear and up-to-date.",
+    "workflow_tags": ["finalize"]
+  },
+  "implementation_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit UI components for semantic bleed-through and map all labels from backend JSON.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Integrate @viselect/vanilla for headless bulk selection in UnifiedLensExplorer.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Wrap MonitorContainer, RemedialManifold, TelemetryChart, and KEL components in React Error Boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Expand test coverage for new rules, edge cases, and error boundaries.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Ensure contract versioning and SSRF/path traversal prevention in middleware.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Audit scanner for accidental writes and temp files.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Validate CLI/subprocess exit codes and error surfacing.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Aurora shader integration for TelemetryChart (optional, V2).",
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_issues": [
+    {
+      "id": "ISSUE-001",
+      "category": "Scope Creep",
+      "title": "Chaos Mode Isolation Failure",
+      "description": "Experimental heavy 3D visualizations are present in the main production path, risking browser context window saturation and violating the V1 isolation mandate.",
+      "severity": "High",
+      "action_required": "Move src/components/chaos/* to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/chaos/CatastrophicStream.tsx", "src/components/chaos/EntropyCanvas.tsx", "src/components/chaos/TriageControls.tsx", "src/components/layout/GodViewLayout.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-002",
+      "category": "Composition",
+      "title": "Missing Forensics Dock",
+      "description": "SessionTimeLine and AxiomInspector exist independently and lack orchestration. Time and truth can drift, breaking epistemic correctness.",
+      "severity": "High",
+      "action_required": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector. Mount it in the bottom grid row of GodViewLayout.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/session/SessionTimeLine.tsx", "src/components/axioms/AxiomInspector.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-003",
+      "category": "State Management",
+      "title": "Hydration vs. Live Stream Race Condition",
+      "description": "MonitorContainer connects to the live SSE telemetry stream before establishing the historical baseline, causing timeline pop-in and missing markers.",
+      "severity": "High",
+      "action_required": "Refactor MonitorContainer to await fetchReport() (historical baseline) before calling connectSSE().",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/monitor/MonitorContainer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-004",
+      "category": "UX / Remediation",
+      "title": "Missing Patch Export Functionality",
+      "description": "The system lacks the frontend implementation to generate a downloadable .patch artifact from the backend unified diff string.",
+      "severity": "High",
+      "action_required": "Add a utility function in RemedialManifold using new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger the browser download.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/KEL/RemedialManifold.tsx", "src/components/KEL/RemedialDiffViewer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-005",
+      "category": "Architecture",
+      "title": "Semantic Bleed-Through",
+      "description": "The UI contains hardcoded physics engine jargon (e.g., 'jax.lax.scan missing init state') instead of remaining strictly agnostic and relying on backend payloads.",
+      "severity": "High",
+      "action_required": "Audit UI components and replace hardcoded string descriptions with dynamic variables like axiom.message and event.description mapped from the JSON contracts.",
+      "blocking_v1": true,
+      "status": "Pending",
+      "location": ["src/components/axioms/AxiomInspector.tsx", "src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "id": "ISSUE-006",
+      "category": "Performance",
+      "title": "Lack of Headless Bulk Selection",
+      "description": "UnifiedLensExplorer does not currently utilize headless DOM selection, risking React fiber tree locking during bulk selection of friction points.",
+      "severity": "Medium",
+      "action_required": "Integrate '@viselect/vanilla' inside a useRef hook within UnifiedLensExplorer to handle bounding-box selection outside of the React lifecycle.",
+      "blocking_v1": false,
+      "status": "Pending",
+      "location": ["src/components/KEL/UnifiedLensExplorer.tsx"],
+      "source_review": "current_review.md: review 1"
+    }
+  ],
+  "component_status": {
+      "expected_outcomes": ["Component status is tracked and blockers are resolved before freeze"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "All components are operational and blockers resolved.",
+      "workflow_tags": ["finalize"]
+    "completion_estimate": "95%",
+    "v1_freeze_blockers": ["ISSUE-001", "ISSUE-002", "ISSUE-003", "ISSUE-004", "ISSUE-005"],
+    "components": {
+      "GodViewLayout": "Operational with scope creep",
+      "MonitorContainer": "Race condition detected",
+      "ForensicsDock": "Missing composition",
+      "RemedialManifold": "Incomplete patch export UX",
+      "UnifiedLensExplorer": "Performance bottleneck, semantic bleed-through",
+      "ChaosMode": "Experimental, needs isolation"
+    }
+  },
+  "error_boundaries": {
+      "expected_outcomes": ["Error boundaries are implemented and audited for all critical components"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Error boundaries are robust and prevent system crashes.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "strategy": "Wrap MonitorContainer and RemedialManifold in React Error Boundaries to catch localized network/stream failures and render degraded-state placeholders.",
+    "components": ["MonitorContainer", "RemedialManifold", "TelemetryChart", "KEL components"]
+  },
+  "patch_export_ux": {
+      "expected_outcomes": ["Patch export UX is implemented and validated"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Patch export UX is robust and user-friendly.",
+      "workflow_tags": ["finalize"],
+      "description": "Frontend must implement Blob-based download utility triggered by the 'Export Patch' button to generate a downloadable .patch file.",
+      "implementation": "Use new Blob([patchData], { type: 'text/x-patch' }) and a hidden <a> tag to trigger download.",
+      "remediation_boundary": "Patch export is the only allowed remediation for V1. No direct mutation of target codebase."
+    },
+  "bulk_selection_performance": {
+      "expected_outcomes": ["Bulk selection performance is optimized and headless DOM selection implemented"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Bulk selection is performant and scalable.",
+      "workflow_tags": ["performance-risk", "finalize"],
+      "description": "UnifiedLensExplorer must use headless DOM selection (@viselect/vanilla) to prevent React fiber locking during bulk selection.",
+      "implementation": "Integrate @viselect/vanilla inside a useRef hook within UnifiedLensExplorer.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "This feature is non-blocking for V1 freeze."
+    },
+  "visual_enhancements": {
+      "expected_outcomes": ["Aurora shaders and visual enhancements are implemented as specified"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Visual enhancements are complete and performant.",
+      "workflow_tags": ["finalize"],
+      "aurora_shaders": "Optional GPU-accelerated fragment shaders for TelemetryChart to offload CPU and enhance ambient telemetry visuals.",
+      "optional_v1": true,
+      "blocking_v1": false,
+      "note": "Aurora shaders and further enhancements are non-blocking for V1 freeze."
+    },
+  "synchronization_logic": {
+      "expected_outcomes": ["Synchronization logic is implemented and timeline/axiom mapping is robust"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Synchronization logic is robust and prevents time-truth drift.",
+      "workflow_tags": ["finalize", "focus-area"],
+      "forensics_dock": "ForensicsDock must synchronize timeline and axiom state, ensuring causality mapping and epistemic correctness.",
+      "details": "SessionTimeLine and AxiomInspector should share a unified state container. Timeline scrub actions must update axiom state, and axiom validation should reference the current timeline context. This prevents time-truth drift and ensures operator can map axiom failures to simulation timeframes.",
+      "stateless_v1": true,
+      "sync_logic_v2": "Active timeline/axiom synchronization deferred to V2."
+    },
+  "contract_versioning_security": {
+      "expected_outcomes": ["Contract versioning and security protocols are enforced and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Contract versioning and security are robust and compliant.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "notes": "Ensure data contracts are versioned and in sync across frontend, middleware, and backend. Enforce SSRF/path traversal prevention, volume management, and immutable scanning.",
+    "versioning": "All API payloads and schemas must include version fields. Frontend and backend must validate contract versions before processing.",
+    "security": "Middleware must validate all incoming paths, prevent SSRF, and ensure volume mounts are read-only. Scanner must audit for accidental writes and temp files."
+  },
+  "test_coverage_error_handling": {
+      "expected_outcomes": ["Test coverage and error handling are expanded and audited"],
+      "discrepancies": [],
+      "closure_plan": [],
+      "final_state": "Test coverage and error handling are robust and comprehensive.",
+      "workflow_tags": ["audit-needed", "finalize"]
+    "requirements": "Expand test coverage for new rules and edge cases. Audit integration hooks and error handling to ensure all exceptions are logged and surfaced.",
+    "integration_hooks": "CLI/subprocess calls must return correct exit codes and surface all exceptions to middleware.",
+    "logging": "All exceptions and errors must be logged and surfaced to the UI for operator review.",
+    "coverage": "Tests must cover new rules, edge cases, and error boundaries."
+  },
+  "v1_freeze_checklist": [
+    {
+      "item": "Isolate ChaosMode components to src/_experimental/chaos/ and strip imports from GodViewLayout.tsx.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Create ForensicsDock.tsx to wrap and synchronize SessionTimeLine and AxiomInspector.",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Refactor MonitorContainer to await fetchReport() before connectSSE().",
+      "source_review": "current_review.md: review 1"
+    },
+    {
+      "item": "Implement Blob-based patch export utility in RemedialManifold.",
+      "source_review": "current_review

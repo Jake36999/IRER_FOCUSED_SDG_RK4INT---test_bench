@@ -1,0 +1,31 @@
+import numpy as np
+import pytest
+from unittest.mock import patch
+from validation.analytics import compute_tda_betti_numbers, perform_multi_ray_fft, validate_artifact
+
+@pytest.fixture
+def dummy_data():
+    return np.random.rand(10, 10, 10)
+
+def test_compute_tda_betti_numbers_with_noise(dummy_data):
+    with patch('validation.analytics.ripser') as mock_ripser:
+        mock_ripser.return_value = {'dgms': []}
+        result = compute_tda_betti_numbers(dummy_data)
+        assert result is not None
+
+def test_compute_tda_betti_numbers_with_sphere():
+    sphere_data = np.zeros((10, 10, 10))
+    sphere_data[5, 5, 5] = 1  # Simple representation of a sphere
+    with patch('validation.analytics.ripser') as mock_ripser:
+        mock_ripser.return_value = {'dgms': []}
+        result = compute_tda_betti_numbers(sphere_data)
+        assert result is not None
+
+def test_perform_multi_ray_fft_shape(dummy_data):
+    result = perform_multi_ray_fft(dummy_data)
+    assert result.shape == (10, 10, 10)  # Adjust based on expected output shape
+
+def test_validate_artifact_instability():
+    h_norm = 0.1
+    result = validate_artifact(h_norm)
+    assert result == "Instability"

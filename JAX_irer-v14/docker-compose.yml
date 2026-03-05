@@ -1,0 +1,165 @@
+version: '3.8'
+
+services:
+  # --- DATA PLANE (State & Storage) ---
+  
+  # The Nervous System (Job Queue)
+  redis:
+    image: redis:7-alpine
+    container_name: irer_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - irer-mesh
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # The Knowledge Extraction Log (KEL) - Structured Governance
+  postgres:
+    image: postgres:15-alpine
+    container_name: irer_postgres
+    environment:
+      POSTGRES_USER: irer_admin
+      POSTGRES_PASSWORD: irer_secure_password
+      POSTGRES_DB: irer_kel
+    ports:
+      - "5432:5432"
+    networks:
+      - irer-mesh
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U irer_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Object Store (S3 Compatible) - For 4D HDF5 Artifacts
+  minio:
+    image: minio/minio
+    container_name: irer_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: irer_minio_admin
+      MINIO_ROOT_PASSWORD: irer_minio_password
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console
+    networks:
+      - irer-mesh
+    volumes:
+      - minio_data:/data
+
+  # --- CONTROL PLANE (The Brain) ---
+
+  # The Orchestrator (Hunter / Producer)
+  orchestrator:
+    build: 
+      context: ./orchestrator
+      dockerfile: Dockerfile
+    container_name: irer_orchestrator
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=irer_admin
+      - DB_PASS=irer_secure_password
+    volumes:
+      - ./orchestrator:/app # Hot-reload for dev
+    networks:
+      - irer-mesh
+
+  # The Face (Read-Only API)
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: irer_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - DB_HOST=postgres
+      - DB_USER=irer_admin
+      - DB_PASS=irer_secure_password
+    volumes:
+      - ./api:/app
+    networks:
+      - irer-mesh
+
+  # --- COMPUTE PLANE (The Muscle) ---
+
+  # The SDG Physics Worker (Consumer)
+  worker:
+    build: 
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: irer_worker_1
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    environment:
+      - REDIS_HOST=redis
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=irer_minio_admin
+      - MINIO_SECRET_KEY=irer_minio_password
+      - WORKER_ID=worker_node_01
+    volumes:
+      - ./worker:/app
+    # Uncomment 'deploy' block below for NVIDIA GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    networks:
+      - irer-mesh
+
+  # The Semantic Validator (Gatekeeper)
+  validation:
+    build:
+      context: ./validation
+      dockerfile: Dockerfile
+    container_name: irer_validator
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    environment:
+      - REDIS_HOST=redis
+      - MINIO_ENDPOINT=minio:9000
+    volumes:
+      - ./validation:/app
+    networks:
+      - irer-mesh
+
+# --- NETWORKS & VOLUMES ---
+networks:
+  irer-mesh:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
+  minio_data:

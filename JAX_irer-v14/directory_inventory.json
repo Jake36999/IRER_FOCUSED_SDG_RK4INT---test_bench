@@ -1,0 +1,95 @@
+{
+  "root_files": [
+    "directory_inventory.py",
+    "docker-compose.yml",
+    "IRER_stack_brief.json",
+    "README.md",
+    "Refactoring + test_suite_analysis Transcripts (compiled.).txt",
+    "system_handover.json",
+    "The Aletheia-IRER compiled documents.txt"
+  ],
+  "inventory": {
+    "api": [
+      "api\\fastapi_app.py",
+      "api\\README.md",
+      "api\\requirements.txt"
+    ],
+    "data": [
+      "data\\postgres_migration.sql",
+      "data\\README.md"
+    ],
+    "orchestrator": [
+      "orchestrator\\dockerfile",
+      "orchestrator\\hunter.py",
+      "orchestrator\\kel.py",
+      "orchestrator\\README.md",
+      "orchestrator\\requirements.txt",
+      "orchestrator\\service.py"
+    ],
+    "redis": [
+      "redis\\README.md"
+    ],
+    "validation": [
+      "validation\\analytics.py",
+      "validation\\check_invariance.py",
+      "validation\\dockerfile",
+      "validation\\map_stability.py",
+      "validation\\map_stability_envelope.py",
+      "validation\\README.md",
+      "validation\\requirements.txt",
+      "validation\\service.py",
+      "validation\\validation_pipeline.py",
+      "validation\\tests\\test_analytics.py",
+      "validation\\tests\\test_analytics.py  # (replace with comprehensive pytest suite)"
+    ],
+    "worker": [
+      "worker\\README.md",
+      "worker\\requirements.txt",
+      "worker\\simstate.py",
+      "worker\\worker_v14_sdg.py",
+      "worker\\ir_physics\\kernels.py",
+      "worker\\ir_physics\\models.py",
+      "worker\\ir_physics\\solver.py",
+      "worker\\ir_physics\\stability_envelope.py",
+      "worker\\ir_physics\\__init__.py",
+      "worker\\tests\\test_gf1_math.py",
+      "worker\\tests\\test_solver.py",
+      "worker\\worker_bundle_20260218_032800\\worker_bundle_20260218_032800.yaml"
+    ]
+  },
+  "metadata": {
+    "api": {
+      "README.md": "api\\README.md",
+      "requirements.txt": "api\\requirements.txt"
+    },
+    "data": {
+      "README.md": "data\\README.md"
+    },
+    "orchestrator": {
+      "README.md": "orchestrator\\README.md",
+      "requirements.txt": "orchestrator\\requirements.txt",
+      "dockerfile": "orchestrator\\dockerfile"
+    },
+    "redis": {
+      "README.md": "redis\\README.md"
+    },
+    "validation": {
+      "README.md": "validation\\README.md",
+      "requirements.txt": "validation\\requirements.txt",
+      "dockerfile": "validation\\dockerfile",
+      "tests": [
+        "validation\\tests\\test_analytics.py",
+        "validation\\tests\\test_analytics.py  # (replace with comprehensive pytest suite)"
+      ]
+    },
+    "worker": {
+      "README.md": "worker\\README.md",
+      "requirements.txt": "worker\\requirements.txt",
+      "tests": [
+        "worker\\tests\\test_gf1_math.py",
+        "worker\\tests\\test_solver.py"
+      ],
+      "worker_bundle_20260218_032800.yaml": "worker\\worker_bundle_20260218_032800\\worker_bundle_20260218_032800.yaml"
+    }
+  }
+}

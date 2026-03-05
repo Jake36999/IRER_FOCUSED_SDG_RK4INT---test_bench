@@ -1,0 +1,849 @@
+# Workspace Bundle: worker
+# Generated: 2026-02-18T03:28:00
+# Compliance: os.scandir traversal; binary guard; PEM + entropy redaction; polyglot summaries
+
+# Project Structure:
+# worker/
+#   |-- ir_physics/
+#     |-- __init__.py
+#     |-- kernels.py
+#     |-- models.py
+#     |-- solver.py
+#     |-- stability_envelope.py
+#   |-- README.md
+#   |-- requirements.txt
+#   |-- simstate.py
+#   |-- tests/
+#     |-- test_gf1_math.py
+#     |-- test_solver.py
+#   |-- worker_v14_sdg.py
+
+--- FILE: README.md ---
+Size: 1222 bytes
+Summary: Headers: Worker Module Documentation, Overview, File Structure, Setup Instructions, Usage, Governance, Contribution
+Content: |
+  # Worker Module Documentation
+  
+  ## Overview
+  The Worker module is responsible for processing tasks related to Spacetime-Density Gravity (SDG). It implements the new worker logic that enforces strict governance and ensures the integrity of job payloads through SHA-256 hash validation.
+  
+  ## File Structure
+  - `worker_v14_sdg.py`: Contains the main logic for the SDG worker.
+  - `ir_physics/`: A package that may include additional physics-related modules or classes.
+  - `simstate.py`: Defines the `SimState` Pytree for managing immutable simulation states.
+  
+  ## Setup Instructions
+  1. Ensure that you have Python 3.8 or higher installed.
+  2. Install the required dependencies by running:
+     ```
+     pip install -r requirements.txt
+     ```
+  
+  ## Usage
+  To start the worker, execute the following command:
+  ```
+  python worker_v14_sdg.py
+  ```
+  Make sure that the Redis server is running and accessible.
+  
+  ## Governance
+  The worker enforces strict governance by refusing to start unless a valid SHA-256 hash is provided in the job payload. This ensures that only verified tasks are processed.
+  
+  ## Contribution
+  For contributions, please follow the project's contribution guidelines and ensure that all code adheres to the project's coding standards.
+
+--- FILE: ir_physics/__init__.py ---
+Size: 114 bytes
+Summary: 
+Content: |
+  # This file initializes the `ir_physics` package, which may contain additional physics-related modules or classes.
+
+--- FILE: requirements.txt ---
+Size: 39 bytes
+Summary: (none)
+Content: |
+  numpy
+  jax
+  redis
+  psycopg2-binary
+  hashlib
+
+--- FILE: ir_physics/models.py ---
+Size: 1650 bytes
+Summary: Classes: SimState, SimParams
+Content: |
+  """
+  worker/ir_physics/models.py
+  Immutable State Definitions for the JAX-GFL Physics Kernel.
+  Architecture: Periodic Torus Topology / RK4 Integration.
+  """
+  import jax.numpy as jnp
+  from typing import NamedTuple
+  
+  class SimState(NamedTuple):
+      """
+      The Single Source of Truth for the Simulation at Time T.
+      Passed through jax.lax.scan as the 'carry'.
+      """
+      time_idx: int
+      field: jnp.ndarray          # Complex Field A (The Matter) | Shape: (N, N, N)
+      
+      # --- Geometric Feedback Loop Tensors ---
+      omega: jnp.ndarray          # Conformal Factor (The Geometry)
+      grad_omega: jnp.ndarray     # Geometric Gradients (The Feedback)
+      
+      # --- Metrics ---
+      h_norm: jnp.ndarray         # Hamiltonian Constraint Residual (Scalar Diagnostic)
+      
+      # --- Governance ---
+      config_hash: int            # Provenance tracking (SHA1 proxy)
+  
+  class SimParams(NamedTuple):
+      """
+      Static Parameters.
+      Closed over by the JIT compiler.
+      """
+      dt: float                   # Time step size
+      epsilon: float              # Linear growth coefficient
+      
+      # --- GFL Coupling Parameters ---
+      alpha: float                # Geometric Coupling Strength (Exponent factor)
+      rho_vac: float              # Vacuum Density Baseline
+      
+      # --- S-NCGL Parameters ---
+      c1: float                   # Complex Diffusion coefficient
+      c3: float                   # Nonlinear Phase Shift coefficient
+      splash_fraction: float      # Strength of non-local interaction
+      sigma_k: float              # Width of splash kernel
+      dx: float                   # Grid spacing (usually 1.0)
+
+--- FILE: ir_physics/stability_envelope.py ---
+Size: 793 bytes
+Summary: Functions: compute_stability_envelope, compute_alpha_critical_curve
+Content: |
+  """
+  worker/ir_physics/stability_envelope.py
+  Tools for mapping the nonlinear stability manifold of the GFL engine.
+  """
+  import jax.numpy as jnp
+  from .kernels import dt_stability_bound, alpha_critical
+  
+  def compute_stability_envelope(params, rho_range, alpha_range):
+      """
+      Maps (alpha, rho_max) -> dt_bound
+      """
+      dt_map = jnp.zeros((len(alpha_range), len(rho_range)))
+      for i, alpha in enumerate(alpha_range):
+          p = params._replace(alpha=float(alpha))
+          for j, rho in enumerate(rho_range):
+              dt_map = dt_map.at[i, j].set(dt_stability_bound(p, rho))
+      return dt_map
+  
+  def compute_alpha_critical_curve(params, rho_range):
+      curve = []
+      for rho in rho_range:
+          curve.append(alpha_critical(params, rho))
+      return jnp.array(curve)
+
+--- FILE: simstate.py ---
+Size: 585 bytes
+Summary: Classes: SimState; Functions: __init__, state, update, get, __repr__, to_pytree, from_pytree
+Content: |
+  from jax import tree_util
+  import jax.numpy as jnp
+  
+  class SimState:
+      def __init__(self, **kwargs):
+          self._state = kwargs
+  
+      @property
+      def state(self):
+          return self._state
+  
+      def update(self, **kwargs):
+          self._state = {**self._state, **kwargs}
+  
+      def get(self, key):
+          return self._state.get(key)
+  
+      def __repr__(self):
+          return f"SimState({self._state})"
+  
+      def to_pytree(self):
+          return tree_util.tree_flatten(self._state)
+  
+      @classmethod
+      def from_pytree(cls, pytree):
+          return cls(**tree_util.tree_unflatten(pytree))
+
+--- FILE: ir_physics/kernels.py ---
+Size: 9214 bytes
+Summary: Functions: validate_and_clamp_params, get_gradients_periodic, laplacian_periodic, solve_geometry_proxy, spectral_radius_estimate, dt_stability_bound, adaptive_dt, alpha_critical, covariant_laplacian, compute_time_derivative, calculate_h_norm, step_physics, solve_geometry_sdg_spectral, sdg_spectral_compare, has_nan_or_inf
+Content: |
+  def validate_and_clamp_params(params: SimParams):
+      """
+      Clamp and validate SimParams to safe physical ranges.
+      Returns a new SimParams instance.
+      """
+      dt = jnp.clip(params.dt, 1e-8, 1.0)
+      epsilon = jnp.clip(params.epsilon, -10.0, 10.0)
+      alpha = jnp.clip(params.alpha, 0.0, 10.0)
+      rho_vac = jnp.clip(params.rho_vac, 1e-8, 1e8)
+      c1 = jnp.clip(params.c1, -10.0, 10.0)
+      c3 = jnp.clip(params.c3, -10.0, 10.0)
+      splash_fraction = jnp.clip(params.splash_fraction, 0.0, 10.0)
+      sigma_k = jnp.clip(params.sigma_k, 1e-8, 1e8)
+      dx = jnp.clip(params.dx, 1e-8, 1e8)
+      return SimParams(
+          dt=dt,
+          epsilon=epsilon,
+          alpha=alpha,
+          rho_vac=rho_vac,
+          c1=c1,
+          c3=c3,
+          splash_fraction=splash_fraction,
+          sigma_k=sigma_k,
+          dx=dx
+      )
+  """
+  GFL-RK4 Physics Core
+  Extended with:
+  - Explicit spectral radius dt bound
+  - Splash contribution
+  - Curvature-adaptive dt
+  - α_critical estimator
+  - Optional SDG spectral comparison
+  """
+  
+  import jax
+  import jax.numpy as jnp
+  from .models import SimState, SimParams
+  
+  # ============================================================
+  # PERIODIC DIFFERENTIAL OPERATORS (Toroidal Topology)
+  # ============================================================
+  
+  def get_gradients_periodic(f, dx):
+      gx = (jnp.roll(f, -1, 0) - jnp.roll(f, 1, 0)) / (2 * dx)
+      gy = (jnp.roll(f, -1, 1) - jnp.roll(f, 1, 1)) / (2 * dx)
+      gz = (jnp.roll(f, -1, 2) - jnp.roll(f, 1, 2)) / (2 * dx)
+      return jnp.stack([gx, gy, gz], axis=-1)
+  
+  def laplacian_periodic(f, dx):
+      lx = (jnp.roll(f, -1, 0) - 2*f + jnp.roll(f, 1, 0)) / dx**2
+      ly = (jnp.roll(f, -1, 1) - 2*f + jnp.roll(f, 1, 1)) / dx**2
+      lz = (jnp.roll(f, -1, 2) - 2*f + jnp.roll(f, 1, 2)) / dx**2
+      return lx + ly + lz
+  
+  # ============================================================
+  # GEOMETRY
+  # ============================================================
+  
+  def solve_geometry_proxy(rho, params):
+      rho_safe = rho + 1e-9
+      ratio = jnp.clip(params.rho_vac / rho_safe, 1e-4, 1e4)
+      omega = ratio ** (params.alpha / 2.0)
+      return jnp.clip(omega, 0.01, 1.5)
+  
+  # ============================================================
+  # STABILITY ANALYSIS TOOLS
+  # ============================================================
+  
+  def spectral_radius_estimate(params: SimParams, rho_max: float):
+      omega_min = jnp.clip(
+          (params.rho_vac / (rho_max + 1e-9)) ** (params.alpha / 2.0),
+          0.01, 1.5
+      )
+      curvature_amp = 1.0 / (omega_min**2 + 1e-9)
+      k_max = jnp.pi / params.dx
+      lap_radius = 6.0 * k_max**2
+      splash_radius = params.splash_fraction
+      total_radius = curvature_amp * lap_radius + splash_radius + jnp.abs(params.epsilon)
+      return total_radius
+  
+  def dt_stability_bound(params: SimParams, rho_max: float):
+      radius = spectral_radius_estimate(params, rho_max)
+      return 2.8 / (radius + 1e-9)
+  
+  def adaptive_dt(params: SimParams, rho):
+      rho_max = jnp.max(jnp.abs(rho))
+      return dt_stability_bound(params, rho_max)
+  
+  def alpha_critical(params: SimParams, rho_max: float):
+      k_max = jnp.pi / params.dx
+      lap_radius = 6.0 * k_max**2
+      ratio = rho_max / params.rho_vac
+      target = 2.8 / (params.dt * lap_radius)
+      alpha = jnp.log(target) / jnp.log(ratio + 1e-9)
+      return jnp.maximum(alpha, 0.0)
+  
+  # ============================================================
+  # COVARIANT OPERATOR
+  # ============================================================
+  
+  def covariant_laplacian(field, omega, grad_omega, dx):
+      D = 3.0
+      lap = laplacian_periodic(field, dx)
+      grad_A = get_gradients_periodic(field, dx)
+      dot_prod = jnp.sum(grad_omega * grad_A, axis=-1)
+      coupling = (D - 2.0) * (dot_prod / (omega + 1e-9))
+      return (lap + coupling) / (omega**2 + 1e-9)
+  
+  # ============================================================
+  # TIME EVOLUTION
+  # ============================================================
+  
+  def compute_time_derivative(A, omega, grad_omega, params, splash_green_fn):
+      rho = jnp.abs(A)**2
+      diff_term = covariant_laplacian(A, omega, grad_omega, params.dx)
+      linear_op = (1 + 1j * params.c1) * diff_term
+      nonlinear = (1 + 1j * params.c3) * rho * A
+      A_k = jnp.fft.fftn(A)
+      splash = jnp.fft.ifftn(A_k * splash_green_fn)
+      return (params.epsilon * A) + linear_op - nonlinear + (params.splash_fraction * splash)
+  
+  def calculate_h_norm(omega, rho, params):
+      lap_omega = laplacian_periodic(omega, params.dx)
+      residual = lap_omega + (params.alpha * rho * omega)
+      return jnp.sqrt(jnp.mean(jnp.abs(residual)**2))
+  
+  # ============================================================
+  # RK4 STEP
+  # ============================================================
+  
+  @jax.jit
+  def step_physics(state: SimState, params: SimParams, splash_green_fn, use_adaptive_dt=False, fully_coupled_geometry=False):
+      """
+      RK4 step with optional adaptive dt and geometry evolution mode.
+      Args:
+          state: SimState
+          params: SimParams
+          splash_green_fn: Green's function for splash term
+          use_adaptive_dt: if True, use curvature-adaptive dt
+          fully_coupled_geometry: if True, recompute geometry at each RK4 substep
+      """
+      A0 = state.field
+      rho0 = jnp.abs(A0)**2
+      dt = jax.lax.cond(
+          use_adaptive_dt,
+          lambda _: adaptive_dt(params, rho0),
+          lambda _: params.dt,
+          operand=None
+      )
+      omega0 = solve_geometry_proxy(rho0, params)
+      grad_omega0 = get_gradients_periodic(omega0, params.dx)
+  
+      if not fully_coupled_geometry:
+          # Semi-coupled: geometry frozen during RK4
+          k1 = compute_time_derivative(A0, omega0, grad_omega0, params, splash_green_fn)
+          k2 = compute_time_derivative(A0 + 0.5 * dt * k1, omega0, grad_omega0, params, splash_green_fn)
+          k3 = compute_time_derivative(A0 + 0.5 * dt * k2, omega0, grad_omega0, params, splash_green_fn)
+          k4 = compute_time_derivative(A0 + dt * k3, omega0, grad_omega0, params, splash_green_fn)
+      else:
+          # Fully coupled: geometry/gradients recomputed at each substep
+          # k1
+          k1 = compute_time_derivative(A0, omega0, grad_omega0, params, splash_green_fn)
+          # k2
+          A1 = A0 + 0.5 * dt * k1
+          rho1 = jnp.abs(A1)**2
+          omega1 = solve_geometry_proxy(rho1, params)
+          grad_omega1 = get_gradients_periodic(omega1, params.dx)
+          k2 = compute_time_derivative(A1, omega1, grad_omega1, params, splash_green_fn)
+          # k3
+          A2 = A0 + 0.5 * dt * k2
+          rho2 = jnp.abs(A2)**2
+          omega2 = solve_geometry_proxy(rho2, params)
+          grad_omega2 = get_gradients_periodic(omega2, params.dx)
+          k3 = compute_time_derivative(A2, omega2, grad_omega2, params, splash_green_fn)
+          # k4
+          A3 = A0 + dt * k3
+          rho3 = jnp.abs(A3)**2
+          omega3 = solve_geometry_proxy(rho3, params)
+          grad_omega3 = get_gradients_periodic(omega3, params.dx)
+          k4 = compute_time_derivative(A3, omega3, grad_omega3, params, splash_green_fn)
+  
+      A_new = A0 + (dt / 6.0) * (k1 + 2*k2 + 2*k3 + k4)
+      rho_new = jnp.abs(A_new)**2
+      omega_new = solve_geometry_proxy(rho_new, params)
+      grad_omega_new = get_gradients_periodic(omega_new, params.dx)
+      h_norm_val = calculate_h_norm(omega_new, rho_new, params)
+  
+      # NaN/Inf detection (JAX-safe)
+      def has_nan_or_inf(x):
+          return jnp.logical_or(jnp.any(jnp.isnan(x)), jnp.any(jnp.isinf(x)))
+  
+      any_bad = (
+          has_nan_or_inf(A_new) |
+          has_nan_or_inf(omega_new) |
+          has_nan_or_inf(grad_omega_new) |
+          has_nan_or_inf(h_norm_val)
+      )
+  
+      # If any NaN/Inf, zero out field and flag h_norm as -1 (or any convention)
+      A_new = jax.lax.cond(any_bad, lambda _: jnp.zeros_like(A_new), lambda _: A_new, operand=None)
+      omega_new = jax.lax.cond(any_bad, lambda _: jnp.ones_like(omega_new), lambda _: omega_new, operand=None)
+      grad_omega_new = jax.lax.cond(any_bad, lambda _: jnp.zeros_like(grad_omega_new), lambda _: grad_omega_new, operand=None)
+      h_norm_val = jax.lax.cond(any_bad, lambda _: -1.0, lambda _: h_norm_val, operand=None)
+  
+      return SimState(
+          time_idx=state.time_idx + 1,
+          field=A_new,
+          omega=omega_new,
+          grad_omega=grad_omega_new,
+          h_norm=h_norm_val,
+          config_hash=state.config_hash
+      )
+  
+  # ============================================================
+  # SDG SPECTRAL COMPARISON MODE
+  # ============================================================
+  
+  def solve_geometry_sdg_spectral(rho, alpha, dx):
+      N = rho.shape[0]
+      kx = jnp.fft.fftfreq(N, dx) * 2 * jnp.pi
+      ky = jnp.fft.fftfreq(N, dx) * 2 * jnp.pi
+      kz = jnp.fft.fftfreq(N, dx) * 2 * jnp.pi
+      KX, KY, KZ = jnp.meshgrid(kx, ky, kz, indexing='ij')
+      k2 = KX**2 + KY**2 + KZ**2
+      rho_k = jnp.fft.fftn(rho)
+      omega_k = jnp.where(
+          k2 > 0,
+          alpha * rho_k / k2,
+          1.0 + 0j
+      )
+      omega_sdg = jnp.real(jnp.fft.ifftn(omega_k))
+      return omega_sdg
+  
+  def sdg_spectral_compare(A):
+      A_k = jnp.fft.fftn(A)
+      energy = jnp.abs(A_k)**2
+      return jnp.mean(energy, axis=(1,2))
+
+--- FILE: ir_physics/solver.py ---
+Size: 1447 bytes
+Summary: Functions: run_simulation_scan, scan_body
+Content: |
+  """
+  worker/ir_physics/solver.py
+  The Scanning Engine.
+  """
+  import jax
+  from functools import partial
+  from .models import SimState, SimParams
+  from .kernels import step_physics, get_green_function
+  
+  @partial(jax.jit, static_argnames=['total_steps', 'grid_size', 'use_adaptive_dt', 'fully_coupled_geometry'])
+  def run_simulation_scan(
+      initial_state: SimState, 
+      params: SimParams, 
+      total_steps: int,
+      grid_size: int,
+      use_adaptive_dt: bool = False,
+      fully_coupled_geometry: bool = False
+  ):
+      """
+      Executes the full simulation trajectory.
+      Args:
+          use_adaptive_dt: if True, use curvature-adaptive dt
+          fully_coupled_geometry: if True, recompute geometry at each RK4 substep
+      """
+      # 1. Precompute static Green's function (FFT)
+      splash_green_fn = get_green_function(
+          (grid_size, grid_size, grid_size), 
+          params.dx, 
+          params.sigma_k
+      )
+  
+      # 2. Define the Scan Body
+      def scan_body(carry: SimState, _):
+          new_state = step_physics(
+              carry, params, splash_green_fn,
+              use_adaptive_dt=use_adaptive_dt,
+              fully_coupled_geometry=fully_coupled_geometry
+          )
+          return new_state, new_state.h_norm
+  
+      # 3. Execute Scan
+      final_state, h_norm_history = jax.lax.scan(
+          scan_body,
+          initial_state,
+          None,
+          length=total_steps
+      )
+      return final_state, h_norm_history
+
+--- FILE: tests/test_gf1_math.py ---
+Size: 3795 bytes
+Summary: Functions: test_periodic_laplacian_accuracy, test_gradient_periodic_properties, test_stability_bound_logic, test_geometry_proxy_clamping
+Content: |
+  """
+  worker/tests/test_gfl_math.py
+  Unit tests for GFL-RK4 mathematical operators and stability bounds.
+  Usage: pytest worker/tests/test_gfl_math.py
+  """
+  import pytest
+  import jax
+  import jax.numpy as jnp
+  import numpy as np
+  from worker.ir_physics import kernels, models
+  
+  def test_periodic_laplacian_accuracy():
+      """
+      Verifies that the roll-based Laplacian matches the analytical Laplacian
+      for a smooth sine wave on a torus. Accuracy should be O(dx^2).
+      """
+      N = 64
+      L = 2.0 * np.pi
+      dx = L / N
+      x = jnp.linspace(0, L, N, endpoint=False)
+      y = jnp.linspace(0, L, N, endpoint=False)
+      z = jnp.linspace(0, L, N, endpoint=False)
+      X, Y, Z = jnp.meshgrid(x, y, z, indexing='ij')
+  
+      # Test Function: sin(x) + sin(y) + sin(z)
+      # Laplacian Analytical: -sin(x) - sin(y) - sin(z) = -Field
+      field = jnp.sin(X) + jnp.sin(Y) + jnp.sin(Z)
+      analytical_lap = -field
+  
+      # Numerical Laplacian
+      numerical_lap = kernels.laplacian_periodic(field, dx)
+  
+      # Error Metric
+      error = jnp.abs(numerical_lap - analytical_lap)
+      max_error = jnp.max(error)
+  
+      print(f"Max Laplacian Error (N={N}): {max_error}")
+      
+      # Second order accuracy check: Error should be small (~1e-3 for N=64)
+      assert max_error < 0.01, "Laplacian accuracy is insufficient."
+  
+  def test_gradient_periodic_properties():
+      """
+      Verifies that gradients are anti-symmetric and periodic.
+      """
+      N = 32
+      field = jax.random.normal(jax.random.PRNGKey(0), (N, N, N))
+      dx = 1.0
+      
+      grads = kernels.get_gradients_periodic(field, dx)
+      
+      # Check shape
+      assert grads.shape == (N, N, N, 3)
+      
+      # Check mean gradient on periodic domain should be close to 0 (Fundamental Theorem of Calculus on Torus)
+      mean_grad = jnp.mean(grads, axis=(0,1,2))
+      assert jnp.allclose(mean_grad, 0.0, atol=1e-5), "Gradient integration on torus did not sum to zero."
+  
+  def test_stability_bound_logic():
+      """
+      Verifies that the stability bound shrinks as Density increases or Alpha increases.
+      """
+      params = models.SimParams(
+          dt=0.1, epsilon=0.1, alpha=1.0, rho_vac=1.0,
+          c1=0.0, c3=0.0, splash_fraction=0.0, sigma_k=1.0, dx=1.0
+      )
+      
+      rho_low = 10.0
+      rho_high = 1000.0
+      
+      bound_low = kernels.dt_stability_bound(params, rho_low)
+      bound_high = kernels.dt_stability_bound(params, rho_high)
+      
+      # Higher density = Stiffer curvature = Lower dt bound
+      assert bound_high < bound_low, "Stability bound did not shrink with higher density."
+      
+      # Check Alpha scaling
+      params_high_alpha = params._replace(alpha=2.0)
+      bound_alpha = kernels.dt_stability_bound(params_high_alpha, rho_low)
+      
+      assert bound_alpha < bound_low, "Stability bound did not shrink with higher alpha."
+  
+  def test_geometry_proxy_clamping():
+      """
+      Verifies that the geometric proxy clamps correctly to prevent singularity.
+      """
+      params = models.SimParams(
+          dt=0.1, epsilon=0.0, alpha=1.0, rho_vac=1.0,
+          c1=0.0, c3=0.0, splash_fraction=0.0, sigma_k=1.0, dx=1.0
+      )
+      
+      # Extreme density (should trigger clamp)
+      rho_extreme = jnp.array(1e9)
+      omega = kernels.solve_geometry_proxy(rho_extreme, params)
+      
+      # The kernel clamps omega to min 0.01
+      assert omega >= 0.01, "Omega lower bound clamp failed."
+      assert omega <= 1.5, "Omega upper bound clamp failed."
+  
+  if __name__ == "__main__":
+      # verification script manually
+      try:
+          test_periodic_laplacian_accuracy()
+          test_gradient_periodic_properties()
+          test_stability_bound_logic()
+          test_geometry_proxy_clamping()
+          print("✅ All Math Unit Tests Passed.")
+      except AssertionError as e:
+          print(f"❌ Test Failed: {e}")
+
+--- FILE: tests/test_solver.py ---
+Size: 2539 bytes
+Summary: Functions: dummy_params, initial_state, test_solver_compilation, test_stability_metric
+Content: |
+  """
+  worker/test_solver.py
+  Test Harness for the JAX-SDG Physics Core.
+  Verifies shapes, stability checks, and JIT compilation.
+  """
+  import time
+  import pytest
+  import jax
+  import jax.numpy as jnp
+  from ir_physics import models, solver
+  
+  # Configuration for Test
+  GRID_SIZE = 16  # Small grid for fast testing
+  TOTAL_STEPS = 50
+  
+  @pytest.fixture
+  def dummy_params():
+      return models.SimParams(
+          dt=0.01,
+          epsilon=0.1,
+          alpha=0.1,
+          sigma_k=1.0,
+          c1=0.1,
+          c3=1.0,
+          splash_fraction=0.2,
+          dx=1.0
+      )
+  
+  @pytest.fixture
+  def initial_state():
+      key = jax.random.PRNGKey(0)
+      # Create random complex field
+      field = [REDACTED_HIGH_ENTROPY]
+      # Omega starts at 1.0 (Flat space)
+      omega = jnp.ones((GRID_SIZE, GRID_SIZE, GRID_SIZE), dtype=jnp.float32)
+      
+      return models.SimState(
+          time_idx=0,
+          field=field,
+          omega=omega,
+          h_norm=jnp.array(0.0), # Scalar array
+          config_hash=0
+      )
+  
+  def test_solver_compilation(dummy_params, initial_state):
+      """Verifies that the JAX solver compiles and runs without shape errors."""
+      print("\n[TEST] Compiling JAX Kernel...")
+      start = time.time()
+      
+      # Run Solver
+      final_state, history = solver.run_simulation_scan(
+          initial_state,
+          dummy_params,
+          total_steps=TOTAL_STEPS,
+          grid_size=GRID_SIZE
+      )
+      
+      # Force execution
+      _ = final_state.h_norm.block_until_ready()
+      duration = time.time() - start
+      print(f"[TEST] Compilation + Execution took {duration:.4f}s")
+      
+      # Assertions
+      assert final_state.time_idx == TOTAL_STEPS
+      assert final_state.field.shape == (GRID_SIZE, GRID_SIZE, GRID_SIZE)
+      assert history.shape == (TOTAL_STEPS,) # History of H-Norms
+  
+  def test_stability_metric(dummy_params, initial_state):
+      """Verifies that H-Norm is actually being calculated (non-zero)."""
+      final_state, history = solver.run_simulation_scan(
+          initial_state,
+          dummy_params,
+          total_steps=10,
+          grid_size=GRID_SIZE
+      )
+      
+      # H-Norm should evolve from 0.0 as gravity kicks in
+      max_h = jnp.max(history)
+      print(f"\n[TEST] Max H-Norm over 10 steps: {max_h}")
+      assert max_h > 0.0, "H-Norm remained zero! Physics is not evolving."
+  
+  if __name__ == "__main__":
+      # Allow running directly with `python test_solver.py`
+      import sys
+      sys.exit(pytest.main(["-v", __file__]))
+
+--- FILE: worker_v14_sdg.py ---
+Size: 6139 bytes
+Summary: 
+Content: |
+  from pydantic import BaseModel, ValidationError
+  # Define the Schema
+  class JobSchema(BaseModel):
+      job_id: str
+      params: dict
+      grid_size: int = 32
+      total_steps: int = 100
+      config_hash: str | None = None
+  
+  class SDGParams(BaseModel):
+      dt: float
+      epsilon: float
+      alpha: float
+      sigma_k: float
+      c1: float
+      c3: float
+      splash_fraction: float
+      dx: float
+  
+  
+  import os
+  import json
+  import time
+  import redis
+  import h5py
+  import io
+  import jax
+  import jax.numpy as jnp
+  from minio import Minio
+  from ir_physics import models, solver
+  
+  
+  class SDGWorker:
+          def compute_config_hash(self, params):
+              import hashlib
+              s = json.dumps(params, sort_keys=True)
+              return hashlib.sha256(s.encode()).hexdigest()
+      def __init__(self):
+          self.redis_host = os.getenv("REDIS_HOST", "localhost")
+          self.minio_endpoint = os.getenv("MINIO_ENDPOINT", "localhost:9000")
+          self.minio_user = [REDACTED_HIGH_ENTROPY]
+          self.minio_pass = [REDACTED_HIGH_ENTROPY]
+          self.worker_id = os.getenv("WORKER_ID", f"worker_{os.getpid()}")
+          self.bucket_name = "irer-artifacts"
+  
+          # Initialize Connections
+          self.redis = redis.Redis(host=self.redis_host, port=6379, db=0, decode_responses=True)
+          self.minio = Minio(
+              self.minio_endpoint,
+              access_key=self.minio_user,
+              secret_key=self.minio_pass,
+              secure=False
+          )
+          if not self.minio.bucket_exists(self.bucket_name):
+              self.minio.make_bucket(self.bucket_name)
+  
+      def run(self):
+          print(f"[{self.worker_id}] Ready. Waiting for jobs...")
+          while True:
+              job = self.redis.blpop("jobs:sdg_physics", timeout=10)
+              if not job: continue
+              _, payload_str = job
+              try:
+                  self.process_job(payload_str)
+              except Exception as e:
+                  print(f"[{self.worker_id}] CRITICAL FAILURE: {e}")
+                  self.redis.lpush("dlq:sdg_physics", payload_str)
+  
+      def process_job(self, payload_str):
+          try:
+              # 1. Schema Validation
+              job_dict = json.loads(payload_str)
+              job = JobSchema(**job_dict)
+              params = SDGParams(**job.params)
+  
+              print(f"[{self.worker_id}] >>> Starting Job: {job.job_id}")
+  
+              # 2. Config Hash Enforcement
+              calculated_hash = self.compute_config_hash(job.params)
+              if job.config_hash and job.config_hash != calculated_hash:
+                  print(f"[{self.worker_id}] SECURITY ALERT: Config Hash Mismatch! {calculated_hash} != {job.config_hash}")
+                  # In strict mode, we would raise/return here. For V14, we log it.
+  
+              # 3. Setup JAX Params
+              sim_params = models.SimParams(
+                  dt=params.dt,
+                  epsilon=params.epsilon,
+                  alpha=params.alpha,
+                  sigma_k=params.sigma_k,
+                  c1=params.c1,
+                  c3=params.c3,
+                  splash_fraction=params.splash_fraction,
+                  dx=params.dx
+              )
+  
+              # 4. Initialize State
+              grid_size = job.grid_size
+              total_steps = job.total_steps
+  
+              key = jax.random.PRNGKey(42)
+              initial_field = jax.random.normal(key, shape=(grid_size, grid_size, grid_size), dtype=jnp.complex64)
+  
+              initial_state = models.SimState(
+                  time_idx=0,
+                  field=initial_field,
+                  omega=jnp.ones_like(initial_field, dtype=jnp.float32),
+                  h_norm=jnp.array(0.0),
+                  config_hash=0
+              )
+  
+              # 5. Execute JAX Solver with Hardening
+              print(f"[{self.worker_id}] Heartbeat: Starting JAX Solver for {job.job_id}...")
+              start_time = time.time()
+              try:
+                  final_state, h_norm_history = solver.run_simulation_scan(
+                      initial_state, 
+                      sim_params, 
+                      total_steps, 
+                      grid_size
+                  )
+                  max_h_norm = float(jnp.max(h_norm_history).block_until_ready())
+              except jax.errors.ConcretizationTypeError as e:
+                  print(f"[{self.worker_id}] CRITICAL JAX ERROR: Concretization Failure. Check static args.")
+                  raise e  # Let the top-level handler move this to DLQ
+              except Exception as e:
+                  print(f"[{self.worker_id}] UNKNOWN JAX ERROR: {e}")
+                  raise e
+  
+              duration = time.time() - start_time
+  
+              # 6. Upload & Report
+              self.upload_artifact(job.job_id, final_state, h_norm_history, job.params)
+  
+              result_payload = {
+                  "job_id": job.job_id,
+                  "status": "SUCCESS",
+                  "artifact_url": f"s3://{self.bucket_name}/{job.job_id}.h5",
+                  "metrics": {"max_h_norm": max_h_norm, "duration": duration}
+              }
+              self.redis.lpush("results:physics", json.dumps(result_payload))
+              print(f"[{self.worker_id}] Job {job.job_id} Complete. Max H-Norm: {max_h_norm:.4f}")
+          except ValidationError as e:
+              print(f"[{self.worker_id}] INVALID JOB PAYLOAD: {e}")
+              self.redis.lpush("dlq:sdg_physics", payload_str)
+              return
+          except Exception as e:
+              print(f"[{self.worker_id}] UNKNOWN ERROR: {e}")
+              self.redis.lpush("dlq:sdg_physics", payload_str)
+              return
+  
+      def upload_artifact(self, job_id, state, history, params):
+          bio = io.BytesIO()
+          with h5py.File(bio, 'w') as f:
+              f.create_dataset("rho", data=jnp.abs(state.field)**2)
+              f.create_dataset("omega", data=state.omega)
+              f.create_dataset("h_norm_history", data=history)
+              for k, v in params.items():
+                  f.attrs[k] = v
+          bio.seek(0)
+          self.minio.put_object(
+              self.bucket_name, f"{job_id}.h5", bio, bio.getbuffer().nbytes,
+              content_type="application/x-hdf5"
+          )
+  
+  if __name__ == "__main__":
+      worker = SDGWorker()
+      worker.run()

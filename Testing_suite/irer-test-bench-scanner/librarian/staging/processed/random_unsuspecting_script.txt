@@ -1,0 +1,5 @@
+import jax
+def evolve_metric(state)
+    # This is a risky loop pattern
+    val = jax.lax.scan(lambda c, x c+x, state, None)
+    return val

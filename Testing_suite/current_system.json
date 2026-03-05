@@ -1,0 +1,45 @@
+{
+  "frontend": {
+    "phase_1": "Descriptive analysis of workbench-ui: grid-based GodViewLayout, modular React components, partial container/presentational separation, React context for state, Tailwind CSS, SSE-driven telemetry, RemedialManifold for remediation, CommandPalette and ESC for accessibility, experimental chaos components present.",
+    "phase_2": {
+      "chaos_mode": "Not fully isolated from main tree.",
+      "forensics_dock": "Not yet implemented.",
+      "hydration_race": "MonitorContainer connects SSE before baseline loaded.",
+      "patch_export": "Patch download not wired.",
+      "agnostic_labels": "Hardcoded domain terms remain.",
+      "bulk_selection": "No headless DOM selection.",
+      "error_boundaries": "Needs review.",
+      "aurora_shaders": "Not implemented, optional."
+    }
+  },
+  "middleware": {
+    "phase_1": "FastAPI gateway, Redis pub/sub for telemetry, Pydantic validation, async subprocess for scanner, patch generation, session events API, CORS, path validation, SSRF prevention, strict data contracts, error boundaries.",
+    "phase_2": {
+      "telemetry_contract": "Ensure all fields present.",
+      "patch_pipeline": "Check endpoint and payload match frontend.",
+      "session_events": "Ensure GET/POST for timeline markers.",
+      "kel_query": "Confirm recurrence/resolution/similarity fields.",
+      "scanner": "Confirm output path and error handling.",
+      "error_boundaries": "Audit Redis/SSE disconnects.",
+      "security_validator": "Review for SSRF/path traversal.",
+      "volume_management": "Check for accidental writes.",
+      "contract_versioning": "Ensure models are versioned and in sync.",
+      "experimental_features": "No scope creep observed."
+    }
+  },
+  "backend": {
+    "phase_1": "Read-only observer, YAML-driven governance, iterative file traversal, AST profiling, AI orchestrator, entropy and forbidden pattern detection, produces JSON/Markdown reports, invoked by middleware.",
+    "phase_2": {
+      "immutable_scanning": "Audit for accidental writes/temp files.",
+      "governance_schema": "Ensure all rules required by frontend/middleware.",
+      "entropy_pattern_logic": "Audit threshold and pattern matching.",
+      "ast_profiling": "Confirm all node types/signatures extracted.",
+      "ai_pipeline": "Handle disconnects/retries gracefully.",
+      "output_consistency": "scan_results.json and scan_summary.md must be in sync.",
+      "test_coverage": "Expand for new rules and edge cases.",
+      "integration_hooks": "CLI/subprocess must return correct exit codes.",
+      "error_handling": "All exceptions must be logged and surfaced.",
+      "performance": "Monitor for regressions on large repos."
+    }
+  }
+}

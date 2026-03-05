@@ -1,0 +1,5 @@
+numpy
+jax
+redis
+psycopg2-binary
+hashlib
