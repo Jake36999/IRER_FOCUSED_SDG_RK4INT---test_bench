@@ -45,7 +45,7 @@ class GeneticHunter:
                 "job_id": job_id,
                 "generation": self.generation,
                 "params": params,
-                "grid_size": 32,      # Fixed for now, scale up later
+                "grid_size": 128,     # Scale higher subject to available VRAM/OOM tolerance
                 "total_steps": 1000,  # JAX Scan length
                 "config_hash": config_hash
             }

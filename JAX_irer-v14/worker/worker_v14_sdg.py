@@ -3,7 +3,7 @@ from pydantic import BaseModel, ValidationError
 class JobSchema(BaseModel):
     job_id: str
     params: dict
-    grid_size: int = 32
+    grid_size: int = 128
     total_steps: int = 100
     config_hash: str | None = None
 

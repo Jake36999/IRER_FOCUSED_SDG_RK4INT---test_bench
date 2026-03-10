@@ -20,7 +20,9 @@
 
 ## Overview
 
-IRER solves a complex-scalar-field PDE on a 32³ grid using 4th-order Runge-Kutta integration, then validates whether the resulting field satisfies a geometric Hamiltonian constraint. An evolutionary hunter continuously generates candidate parameter sets, runs batches of simulations in parallel, scores each run, and promotes the best-performing configurations to the next generation — all governed by an append-only PostgreSQL ledger.
+IRER solves a complex-scalar-field PDE on a 128³ grid using 4th-order Runge-Kutta integration, then validates whether the resulting field satisfies a geometric Hamiltonian constraint. An evolutionary hunter continuously generates candidate parameter sets, runs batches of simulations in parallel, scores each run, and promotes the best-performing configurations to the next generation — all governed by an append-only PostgreSQL ledger.
+
+The grid resolution is theoretically scalable beyond 128³; the practical upper bound is determined by available VRAM (GPU memory). Increasing the grid size scales memory consumption cubically, so larger resolutions require proportionally more GPU capacity before triggering out-of-memory (OOM) errors.
 
 **Key capabilities**
 
@@ -43,7 +45,7 @@ The simulation evolves a complex scalar field **A** on a 3-D lattice:
 ∂A/∂t = ε·A + (1 + i·c₁)·∇²_cov·A − (1 + i·c₃)·ρ·A + splash
 
 where:
-  A         — complex scalar field  (32 × 32 × 32)
+  A         — complex scalar field  (128 × 128 × 128, default; scalable subject to VRAM)
   ρ = |A|²  — local density
   ∇²_cov    — covariant Laplacian with geometric feedback ω
   splash    — FFT non-local coupling (Green's function weight)
@@ -95,7 +97,7 @@ H = ∇²ω + α·ρ·ω ≈ 0    (max_h_norm < 1e-5)
                          │
 ┌────────────────────────▼────────────────────────────────┐
 │  Worker Pool  (Muscle)                                  │
-│  JAX RK4 solver  ·  32³ grid  ·  1000 steps            │
+│  JAX RK4 solver  ·  128³ grid (scalable)  ·  1000 steps │
 │  Uploads 4-D HDF5 artifacts → MinIO                    │
 └────────────────────────┬────────────────────────────────┘
                          │
