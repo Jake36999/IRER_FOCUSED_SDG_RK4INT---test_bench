@@ -1,0 +1,480 @@
+{
+  "schema_version": "V13-Sandbox-Enhancement",
+  "design_philosophy": "Monolithic execution, zero-infrastructure overhead, highly falsifiable, AI-steered.",
+  "orchestration_target": "golden_hunter_low_SSE_bundle",
+  "components": [
+    {
+      "component_id": "god_view_lite_logger",
+      "target_file": "worker_unified.py (or psi_simulation loop)",
+      "purpose": "Streams live telemetry to a local file for asynchronous UI observation without Redis or SSE.",
+      "dependencies": ["json", "os"],
+      "implementation_blueprint": [
+        "def write_telemetry(step, h_norm, entropy, filepath='telemetry.jsonl'):",
+        "    payload = {'step': step, 'h_norm': float(h_norm), 'entropy': float(entropy)}",
+        "    with open(filepath, 'a') as f:",
+        "        f.write(json.dumps(payload) + '\\n')"
+      ],
+      "integration_instructions": "Inject this function call every N steps inside the Runge-Kutta or main integration loop. The React UI or a Python plotter can simply 'tail -f' this file to render live charts."
+    },
+    {
+      "component_id": "dynamic_kill_switch",
+      "target_file": "worker_unified.py (inside integration loop)",
+      "purpose": "Triggers early termination of physics simulations if energy gradients explode, saving compute time.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def check_stability_kill_switch(current_energy, initial_energy, threshold=1.5):",
+        "    if current_energy > (initial_energy * threshold) or np.isnan(current_energy):",
+        "        return True",
+        "    return False"
+      ],
+      "integration_instructions": "Compute the total field energy at step 0. Evaluate every 50 steps. If True, execute a 'break' statement, return an SSE of 999.0, and cleanly exit the worker function to allow the hunter to proceed."
+    },
+    {
+      "component_id": "ai_parameter_steer",
+      "target_file": "aste_hunter.py",
+      "purpose": "Replaces standard genetic mutation with active LLM reasoning when the search space gets stuck.",
+      "dependencies": ["requests", "json"],
+      "implementation_blueprint": [
+        "def query_local_llm_for_parameters(failed_params_list, lm_studio_url='http://localhost:1234/v1/chat/completions'):",
+        "    prompt = f'The following parameter sets resulted in NaN explosions: {failed_params_list}. Suggest a new, narrower bounding box for D, alpha, and eta to achieve convergence.'",
+        "    payload = {",
+        "        'messages': [{'role': 'user', 'content': prompt}],",
+        "        'temperature': 0.2",
+        "    }",
+        "    response = requests.post(lm_studio_url, json=payload)",
+        "    return response.json()['choices'][0]['message']['content']"
+      ],
+      "integration_instructions": "Track sequential SSE 999.0 failures in the orchestrator. If the fail count exceeds 5, trigger this function to dynamically override the genetic algorithm's next mutation generation."
+    },
+    {
+      "component_id": "numpy_lazy_fallback",
+      "target_file": "ir_physics/backend.py",
+      "purpose": "Strips out strict JAX compilation requirements for easier local debugging with print statements.",
+      "dependencies": ["importlib", "os"],
+      "implementation_blueprint": [
+        "def get_compute_backend():",
+        "    use_jax = os.getenv('USE_JAX', 'false').lower() == 'true'",
+        "    if use_jax:",
+        "        import jax.numpy as xp",
+        "    else:",
+        "        import numpy as xp",
+        "    return xp"
+      ],
+      "integration_instructions": "Replace all explicit 'import jax.numpy as jnp' calls with 'xp = get_compute_backend()'. This allows the developer to toggle execution modes purely via terminal environment variables."
+    },
+    {
+      "component_id": "native_phase_scramble_null_test",
+      "target_file": "aletheia_diagnostics.py (or directly in aste_hunter.py)",
+      "purpose": "Mathematically ensures that a low SSE score is derived from physical structure, not numerical pareidolia.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def phase_scramble_validation(final_rho_field):",
+        "    fft_field = np.fft.fftn(final_rho_field)",
+        "    random_phases = np.exp(1j * np.random.uniform(0, 2*np.pi, fft_field.shape))",
+        "    scrambled_fft = np.abs(fft_field) * random_phases",
+        "    scrambled_rho = np.abs(np.fft.ifftn(scrambled_fft))",
+        "    # Calculate SSE on scrambled_rho here",
+        "    return scrambled_sse"
+      ],
+      "integration_instructions": "When the hunter discovers a configuration yielding an SSE < 0.2, immediately run this function on the output artifact. If the 'scrambled_sse' is ALSO < 0.2, flag the run as a false positive (pareidolia) and reject it."
+    }
+  ]
+}   
+  "schema_version": "V13-Sandbox-Enhancement-Part2",
+  "design_philosophy": "Scientific falsifiability, geometric stability, structured logging.",
+  "orchestration_target": "golden_hunter_low_SSE_bundle",
+  "components": [
+    {
+      "component_id": "multi_ray_sampling",
+      "target_file": "worker_unified.py (spectral analysis phase)",
+      "purpose": "Extracts 1D slices from the 2D field to prevent multi-dimensional FFT smearing.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def multi_ray_fft(rho_field, num_rays=8):",
+        "    center = np.array(rho_field.shape) // 2",
+        "    spectra = []",
+        "    for angle in np.linspace(0, np.pi, num_rays, endpoint=False):",
+        "        # Extract 1D slice along angle using scipy.ndimage.map_coordinates",
+        "        # Perform 1D FFT on slice",
+        "        # append to spectra",
+        "    return np.mean(spectra, axis=0)"
+      ],
+      "integration_instructions": "Replace the standard np.fft.fftn call in the evaluation phase with this function to calculate a cleaner, grid-agnostic Prime-Log SSE."
+    },
+    {
+      "component_id": "betti_topology_tracker",
+      "target_file": "worker_unified.py (validation phase)",
+      "purpose": "Enforces the geometric stability mandate by counting connected components.",
+      "dependencies": ["scipy.ndimage", "numpy"],
+      "implementation_blueprint": [
+        "def validate_topology(rho_field, threshold=0.5, max_components=50):",
+        "    binary_field = rho_field > threshold",
+        "    labeled_array, num_features = scipy.ndimage.label(binary_field)",
+        "    if num_features > max_components or num_features == 0:",
+        "        return False # Fails geometric stability",
+        "    return True"
+      ],
+      "integration_instructions": "Run this immediately after the simulation loop finishes. If it returns False, assign a massive penalty to the SSE (e.g., 998.0) to teach the Hunter to avoid fragmented parameter basins."
+    },
+    {
+      "component_id": "invariance_monitor",
+      "target_file": "worker_unified.py (inside integration loop)",
+      "purpose": "Validates that the field dynamics respect conservation laws.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def check_invariance(current_rho, initial_mass, expected_dissipation_rate, step, dt):",
+        "    current_mass = np.sum(current_rho)",
+        "    expected_mass = initial_mass * np.exp(-expected_dissipation_rate * step * dt)",
+        "    if abs(current_mass - expected_mass) > (0.1 * expected_mass):",
+        "        return False # Conservation violated",
+        "    return True"
+      ],
+      "integration_instructions": "Evaluate every 100 steps. If False, break the integration loop early. This indicates the dt is too large for the current parameter coupling."
+    },
+    {
+      "component_id": "kel_lite_ledger",
+      "target_file": "aste_hunter.py",
+      "purpose": "Provides structured, queryable context for AI parameter steering.",
+      "dependencies": ["json", "datetime"],
+      "implementation_blueprint": [
+        "def log_to_kel(params, sse_score, termination_reason, filepath='kel_archive.jsonl'):",
+        "    entry = {",
+        "        'timestamp': datetime.datetime.now().isoformat(),",
+        "        'parameters': params,",
+        "        'sse': float(sse_score),",
+        "        'reason': termination_reason",
+        "    }",
+        "    with open(filepath, 'a') as f:",
+        "        f.write(json.dumps(entry) + '\\n')"
+      ],
+      "integration_instructions": "Replace basic print/logging statements in the hunter evaluation step. Pass this structured file directly into the context window of the AI Copilot when requesting new parameters."
+    }
+  ]
+}{
+  "schema_version": "V13-ASTE-Steering-Upgrades",
+  "design_philosophy": "Physics-constrained evolutionary search, trivial-solution prevention, dynamic fitness penalties.",
+  "orchestration_target": "aste_hunter.py and worker_unified.py",
+  "components": [
+    {
+      "component_id": "nonlinear_balance_tracker",
+      "target_file": "worker_unified.py (inside integration loop)",
+      "purpose": "Calculates the ratio of competing nonlinear terms to prevent trivial parameter dominance.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def calculate_balance_ratio(rho_field, alpha_param, lambda_param):",
+        "    # Using the theoretical V(rho) = (-alpha/2)*rho^2 + (lambda/4)*rho^4",
+        "    term1 = np.abs((alpha_param / 2.0) * rho_field**2)",
+        "    term2 = np.abs((lambda_param / 4.0) * rho_field**4)",
+        "    # Add small epsilon to prevent division by zero",
+        "    ratio = np.mean(term1) / (np.mean(term2) + 1e-10)",
+        "    return ratio"
+      ],
+      "integration_instructions": "Sample this ratio every 100 steps. If the ratio consistently stays outside a [0.1, 10.0] bound, trigger early termination and return a specific 'Balance Imbalance' penalty to the Hunter."
+    },
+    {
+      "component_id": "energy_oscillation_reward",
+      "target_file": "worker_unified.py (post-simulation analysis)",
+      "purpose": "Analyzes the energy history array to differentiate between trivial decay and active, stable emergence.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def evaluate_energy_dynamics(energy_history_array):",
+        "    # Calculate the rate of change",
+        "    delta_e = np.diff(energy_history_array)",
+        "    drift = np.abs(np.mean(delta_e)) # High drift = bad",
+        "    variance = np.var(delta_e)       # High variance = active oscillation",
+        "    # We want low drift, but non-zero variance",
+        "    oscillation_score = variance / (drift + 1e-5)",
+        "    return oscillation_score"
+      ],
+      "integration_instructions": "Pass the oscillation_score back to ASTE alongside the SSE. The Hunter should use a blended fitness function: Fitness = (Prime_Log_SSE) - (W * oscillation_score). This teaches the AI to favor dynamic stability over frozen states."
+    },
+    {
+      "component_id": "sequential_gauntlet_evaluator",
+      "target_file": "aste_hunter.py (fitness evaluation function)",
+      "purpose": "Restructures the genetic algorithm to evaluate physical validity in strict, sequential gates.",
+      "dependencies": [],
+      "implementation_blueprint": [
+        "def calculate_total_fitness(worker_result):",
+        "    if worker_result['failed_energy_kill_switch']:",
+        "        return 999.0 # Gate 1 Failure",
+        "    if worker_result['failed_topology_check']:",
+        "        return 500.0 # Gate 2 Failure",
+        "    if worker_result['balance_ratio'] > 10.0 or worker_result['balance_ratio'] < 0.1:",
+        "        return 250.0 # Gate 3 Failure",
+        "    # If it survives the physical constraints, evaluate the spectral target",
+        "    return worker_result['prime_log_sse']"
+      ],
+      "integration_instructions": "Refactor the Hunter's objective function to use this tiered scoring system. This radically improves the signal-to-noise ratio for the genetic algorithm's evolutionary memory."
+    }
+  ]
+}{
+  "schema_version": "V13-Advanced-Analytics-Expansion",
+  "design_philosophy": "Quantum phase coherence, fractal geometry validation, and grid-invariance testing.",
+  "orchestration_target": "worker_unified.py and aletheia_diagnostics.py",
+  "components": [
+    {
+      "component_id": "phase_coherence_score",
+      "target_file": "worker_unified.py (post-simulation analysis)",
+      "purpose": "Calculates the spatial gradient of the complex phase to ensure phase-locking and prevent hidden chaos.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def calculate_pcs(complex_field):",
+        "    # Extract the phase angle: theta = np.angle(complex_field)",
+        "    phase = np.angle(complex_field)",
+        "    # Calculate spatial gradients of the phase (wrap around 2*pi)",
+        "    grad_x = np.angle(np.exp(1j * np.diff(phase, axis=0, append=phase[0:1, :])))",
+        "    grad_y = np.angle(np.exp(1j * np.diff(phase, axis=1, append=phase[:, 0:1])))",
+        "    # PCS is the inverse of the mean absolute gradient (higher is smoother/more coherent)",
+        "    mean_grad = np.mean(np.abs(grad_x)) + np.mean(np.abs(grad_y))",
+        "    return 1.0 / (mean_grad + 1e-5)"
+      ],
+      "integration_instructions": "Extract the raw complex field (before converting to rho = |A|^2). Pass the PCS back to the Hunter. Runs with high SSE but low PCS must be penalized as numerical artifacts."
+    },
+    {
+      "component_id": "fractal_dimension_box_counting",
+      "target_file": "aletheia_diagnostics.py",
+      "purpose": "Computes the Minkowski-Bouligand dimension to verify scale-invariant critical emergence.",
+      "dependencies": ["numpy", "scipy"],
+      "implementation_blueprint": [
+        "def compute_fractal_dimension(rho_field, threshold=0.5):",
+        "    # Binarize the field",
+        "    Z = (rho_field > threshold)",
+        "    # Minimal dimension of image",
+        "    p = min(Z.shape)",
+        "    # Greatest power of 2 less than or equal to p",
+        "    n = 2**np.floor(np.log(p)/np.log(2))",
+        "    # Extract the exponent of successive box sizes",
+        "    sizes = 2**np.arange(int(np.log(n)/np.log(2)), 1, -1)",
+        "    counts = []",
+        "    for size in sizes:",
+        "        # reshape and count boxes containing 'True'",
+        "        count = np.sum(Z.reshape(Z.shape[0]//size, size, Z.shape[1]//size, size).max(axis=(1,3)))",
+        "        counts.append(count)",
+        "    # Fit a line to log(sizes) vs log(counts) to find the dimension",
+        "    coeffs = np.polyfit(np.log(sizes), np.log(counts), 1)",
+        "    return -coeffs[0] # The fractal dimension"
+      ],
+      "integration_instructions": "Execute this metric on the final output artifact. A result approaching ~1.5 - 1.8 indicates complex critical boundary formation, satisfying the Collapse Dynamics requirement."
+    },
+    {
+      "component_id": "fss_grid_invariance_harness",
+      "target_file": "aste_hunter.py (validation block)",
+      "purpose": "Proves that a discovered resonant sweet spot is not an artifact of a specific matrix size.",
+      "dependencies": ["subprocess"],
+      "implementation_blueprint": [
+        "def verify_grid_invariance(best_params, original_N=64):",
+        "    fss_scores = []",
+        "    for test_N in [original_N // 2, original_N * 2]:",
+        "        # Override N_GRID in params",
+        "        best_params['N_GRID'] = test_N",
+        "        # Dispatch synchronous worker run",
+        "        result_sse = run_worker_synchronous(best_params)",
+        "        fss_scores.append(result_sse)",
+        "    # If variance between scores is > 20%, fail the invariance check",
+        "    variance = np.var(fss_scores)",
+        "    return variance < (0.2 * np.mean(fss_scores))"
+      ],
+      "integration_instructions": "Only trigger this computationally heavy check when a 'Golden Run' (SSE < 0.2) is found. If it fails grid invariance, reject the run and force the Hunter to keep searching."
+    }
+  ]
+}{
+  "schema_version": "V13-Advanced-Analytics-Expansion",
+  "design_philosophy": "Quantum phase coherence, fractal geometry validation, and grid-invariance testing.",
+  "orchestration_target": "worker_unified.py and aletheia_diagnostics.py",
+  "components": [
+    {
+      "component_id": "phase_coherence_score",
+      "target_file": "worker_unified.py (post-simulation analysis)",
+      "purpose": "Calculates the spatial gradient of the complex phase to ensure phase-locking and prevent hidden chaos.",
+      "dependencies": ["numpy"],
+      "implementation_blueprint": [
+        "def calculate_pcs(complex_field):",
+        "    # Extract the phase angle: theta = np.angle(complex_field)",
+        "    phase = np.angle(complex_field)",
+        "    # Calculate spatial gradients of the phase (wrap around 2*pi)",
+        "    grad_x = np.angle(np.exp(1j * np.diff(phase, axis=0, append=phase[0:1, :])))",
+        "    grad_y = np.angle(np.exp(1j * np.diff(phase, axis=1, append=phase[:, 0:1])))",
+        "    # PCS is the inverse of the mean absolute gradient (higher is smoother/more coherent)",
+        "    mean_grad = np.mean(np.abs(grad_x)) + np.mean(np.abs(grad_y))",
+        "    return 1.0 / (mean_grad + 1e-5)"
+      ],
+      "integration_instructions": "Extract the raw complex field (before converting to rho = |A|^2). Pass the PCS back to the Hunter. Runs with high SSE but low PCS must be penalized as numerical artifacts."
+    },
+    {
+      "component_id": "fractal_dimension_box_counting",
+      "target_file": "aletheia_diagnostics.py",
+      "purpose": "Computes the Minkowski-Bouligand dimension to verify scale-invariant critical emergence.",
+      "dependencies": ["numpy", "scipy"],
+      "implementation_blueprint": [
+        "def compute_fractal_dimension(rho_field, threshold=0.5):",
+        "    # Binarize the field",
+        "    Z = (rho_field > threshold)",
+        "    # Minimal dimension of image",
+        "    p = min(Z.shape)",
+        "    # Greatest power of 2 less than or equal to p",
+        "    n = 2**np.floor(np.log(p)/np.log(2))",
+        "    # Extract the exponent of successive box sizes",
+        "    sizes = 2**np.arange(int(np.log(n)/np.log(2)), 1, -1)",
+        "    counts = []",
+        "    for size in sizes:",
+        "        # reshape and count boxes containing 'True'",
+        "        count = np.sum(Z.reshape(Z.shape[0]//size, size, Z.shape[1]//size, size).max(axis=(1,3)))",
+        "        counts.append(count)",
+        "    # Fit a line to log(sizes) vs log(counts) to find the dimension",
+        "    coeffs = np.polyfit(np.log(sizes), np.log(counts), 1)",
+        "    return -coeffs[0] # The fractal dimension"
+      ],
+      "integration_instructions": "Execute this metric on the final output artifact. A result approaching ~1.5 - 1.8 indicates complex critical boundary formation, satisfying the Collapse Dynamics requirement."
+    },
+    {
+      "component_id": "fss_grid_invariance_harness",
+      "target_file": "aste_hunter.py (validation block)",
+      "purpose": "Proves that a discovered resonant sweet spot is not an artifact of a specific matrix size.",
+      "dependencies": ["subprocess"],
+      "implementation_blueprint": [
+        "def verify_grid_invariance(best_params, original_N=64):",
+        "    fss_scores = []",
+        "    for test_N in [original_N // 2, original_N * 2]:",
+        "        # Override N_GRID in params",
+        "        best_params['N_GRID'] = test_N",
+        "        # Dispatch synchronous worker run",
+        "        result_sse = run_worker_synchronous(best_params)",
+        "        fss_scores.append(result_sse)",
+        "    # If variance between scores is > 20%, fail the invariance check",
+        "    variance = np.var(fss_scores)",
+        "    return variance < (0.2 * np.mean(fss_scores))"
+      ],
+      "integration_instructions": "Only trigger this computationally heavy check when a 'Golden Run' (SSE < 0.2) is found. If it fails grid invariance, reject the run and force the Hunter to keep searching."
+    }
+  ]
+}{
+  "schema_version": "V13-Cognitive-Physics-Synthesis",
+  "design_philosophy": "Parallel collapse consensus, prime-harmonic geometry, and dynamic criticality.",
+  "orchestration_target": "worker_unified.py and aletheia_diagnostics.py",
+  "components": [
+    {
+      "component_id": "resonance_merge_consensus",
+      "target_file": "worker_unified.py (post-simulation analysis)",
+      "purpose": "Applies the Vij = cos(θi - θj) operator across spatial quadrants to measure parallel phase-locking.",
+      "dependencies": ["numpy", "itertools"],
+      "implementation_blueprint": [
+        "def compute_resonance_merge_consensus(complex_field):",
+        "    # Split the field into 4 quadrants",
+        "    h, w = complex_field.shape",
+        "    quads = [",
+        "        complex_field[0:h//2, 0:w//2], complex_field[0:h//2, w//2:],",
+        "        complex_field[h//2:, 0:w//2], complex_field[h//2:, w//2:]",
+        "    ]",
+        "    # Calculate mean phase (theta) for each quadrant",
+        "    thetas = [np.angle(np.mean(q)) for q in quads]",
+        "    # Apply Vij = cos(theta_i - theta_j) across all unique pairs",
+        "    import itertools",
+        "    v_ij_scores = []",
+        "    for t1, t2 in itertools.combinations(thetas, 2):",
+        "        v_ij_scores.append(np.cos(t1 - t2))",
+        "    # Return average consensus (1.0 = perfect phase lock, < 0 = fragmentation)",
+        "    return np.mean(v_ij_scores)"
+      ],
+      "integration_instructions": "This operationalizes the 'Interaction Hamiltonian' from the ARCS blueprint. Pass this score back to the Hunter. If consensus is negative, the substrate cannot support coherent memory, heavily penalizing the fitness."
+    },
+    {
+      "component_id": "prime_bragg_signature",
+      "target_file": "worker_unified.py (spectral validation)",
+      "purpose": "Validates that detected Bragg lattice peaks perfectly align with Prime-Log harmonic radii.",
+      "dependencies": ["numpy", "scipy.ndimage"],
+      "implementation_blueprint": [
+        "def validate_prime_bragg_lattice(rho_field, prime_targets):",
+        "    # prime_targets = np.log([2, 3, 5, 7, 11])",
+        "    fft_2d = np.abs(np.fft.fftshift(np.fft.fft2(rho_field)))",
+        "    center = np.array(fft_2d.shape) // 2",
+        "    fft_2d[center[0]-2:center[0]+3, center[1]-2:center[1]+3] = 0 # null DC",
+        "    ",
+        "    # Find peak coordinates",
+        "    peak_threshold = np.max(fft_2d) * 0.8",
+        "    peak_coords = np.argwhere(fft_2d > peak_threshold)",
+        "    if len(peak_coords) == 0: return 999.0",
+        "    ",
+        "    # Calculate radial distances of peaks from center",
+        "    peak_radii = [np.linalg.norm(coord - center) for coord in peak_coords]",
+        "    ",
+        "    # Measure minimum distance from peak radii to the nearest prime_target",
+        "    bragg_prime_sse = 0",
+        "    for r in peak_radii:",
+        "        closest_prime = min(prime_targets, key=lambda p: abs(p - r))",
+        "        bragg_prime_sse += (r - closest_prime)**2",
+        "        ",
+        "    return bragg_prime_sse / len(peak_radii)"
+      ],
+      "integration_instructions": "This replaces the blind 1D Multi-Ray FFT. It forces the evolutionary search to find parameters that generate a 2D crystalline lattice whose physical spacing is strictly dictated by the distribution of prime numbers."
+    },
+    {
+      "component_id": "critical_breathing_index",
+      "target_file": "worker_unified.py (inside integration loop)",
+      "purpose": "Measures the cross-correlation between energy oscillation and fractal dimension scaling.",
+      "dependencies": ["numpy", "scipy.stats"],
+      "implementation_blueprint": [
+        "def track_critical_breathing(energy_history, df_history):",
+        "    # Ensure we have enough history to measure correlation",
+        "    if len(energy_history) < 50: return 0.0",
+        "    # We want high variance (breathing) but positive correlation",
+        "    e_variance = np.var(energy_history[-50:])",
+        "    # Calculate Pearson correlation between E(t) and D_F(t)",
+        "    correlation, _ = scipy.stats.pearsonr(energy_history[-50:], df_history[-50:])",
+        "    ",
+        "    # If correlation is near 1.0 or -1.0, the geometry is dynamically coupled to the energy",
+        "    breathing_score = e_variance * np.abs(correlation)",
+        "    return breathing_score"
+      ],
+      "integration_instructions": "This proves the substrate is a 'living' emergent system rather than a statically frozen artifact. The Hunter should seek to maximize this score."
+    }
+  ]
+}{
+  "schema_version": "V13-Lattice-Identification-Suite",
+  "design_philosophy": "Topological crystallography, spatial periodicity, and substrate-memory encoding.",
+  "orchestration_target": "worker_unified.py and extract_topology_metrics.py",
+  "components": [
+    {
+      "component_id": "centroid_radial_distribution",
+      "target_file": "extract_topology_metrics.py",
+      "purpose": "Calculates the g(r) spatial distribution of topological components to detect crystalline spacing.",
+      "dependencies": ["numpy", "scipy.ndimage", "scipy.spatial.distance"],
+      "implementation_blueprint": [
+        "def compute_rdf(rho_field, threshold=0.5, bins=50):",
+        "    # 1. Binarize and label features",
+        "    labeled_array, num_features = scipy.ndimage.label(rho_field > threshold)",
+        "    if num_features < 5: return 0.0 # Not enough points for a lattice",
+        "    # 2. Extract centroids of each feature",
+        "    centroids = scipy.ndimage.center_of_mass(rho_field, labeled_array, range(1, num_features+1))",
+        "    # 3. Compute pairwise distances between all centroids",
+        "    distances = scipy.spatial.distance.pdist(centroids)",
+        "    # 4. Histogram the distances to create the RDF",
+        "    hist, bin_edges = np.histogram(distances, bins=bins, density=True)",
+        "    # 5. Measure 'peakedness' (variance of the histogram peaks) - higher means more lattice-like",
+        "    lattice_score = np.var(hist)",
+        "    return lattice_score"
+      ],
+      "integration_instructions": "Execute on large N_GRID (e.g., 128x128 or 256x256). A high lattice_score indicates the topological features have arranged into a periodic structure."
+    },
+    {
+      "component_id": "bragg_peak_crystallography",
+      "target_file": "worker_unified.py (spectral analysis phase)",
+      "purpose": "Uses 2D Fourier space to detect exact translational symmetry (square or hexagonal lattices).",
+      "dependencies": ["numpy", "scipy.ndimage"],
+      "implementation_blueprint": [
+        "def detect_bragg_peaks(rho_field):",
+        "    # 1. 2D FFT and shift to center",
+        "    fft_2d = np.abs(np.fft.fftshift(np.fft.fft2(rho_field)))",
+        "    # 2. Nullify the massive DC component at the absolute center to see the actual peaks",
+        "    center_x, center_y = np.array(fft_2d.shape) // 2",
+        "    fft_2d[center_x-2:center_x+3, center_y-2:center_y+3] = 0",
+        "    # 3. Threshold to find only the brightest spots (peaks)",
+        "    peak_threshold = np.max(fft_2d) * 0.5",
+        "    binary_peaks = fft_2d > peak_threshold",
+        "    # 4. Count the distinct peaks",
+        "    labeled_peaks, num_peaks = scipy.ndimage.label(binary_peaks)",
+        "    return num_peaks"
+      ],
+      "integration_instructions": "Return num_peaks to the Hunter. If num_peaks == 4 (square lattice) or num_peaks == 6 (hexagonal lattice), apply a massive bonus to the fitness score, as the ASTE has successfully engineered a cognitive substrate."
+    }
+  ]
+}

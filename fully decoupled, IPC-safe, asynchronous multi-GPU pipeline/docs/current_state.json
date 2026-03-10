@@ -1,0 +1,36 @@
+{
+  "analysis_plan": {
+    "summary": "Review and document exception safety, concurrency, atomicity, and race conditions in the four core files.",
+    "core_files_review": {
+      "adaptive_hunt_orchestrator.py": {
+        "role": "The Conductor",
+        "what_to_look_for": "Exception Boundaries and Blocking calls.",
+        "risk": "If the JAX worker throws a NaN (numerical explosion) or an Out-of-Memory (OOM) error, does the orchestrator catch it, log the failure to the database, and move to the next config? Or does the entire script crash?",
+        "fix": "Ensure the subprocess.run calls to worker_unified.py and gif_pipeline_manager.py have try/except blocks and timeout limits."
+      },
+      "aste_hunter.py": {
+        "role": "The Memory Core",
+        "what_to_look_for": "SQLite Concurrency and Context Managers.",
+        "risk": "The dreaded sqlite3.OperationalError: database is locked. If your FastAPI backend is reading the database to update the UI at the exact millisecond the Orchestrator is writing the new generation results, SQLite will lock up.",
+        "fix": "Ensure every single SQL execution is wrapped in a with self._get_connection() as conn: block, and consider adding a timeout sqlite3.connect(DB_FILENAME, timeout=10.0)."
+      },
+      "worker_unified.py": {
+        "role": "The Hot Plane",
+        "what_to_look_for": "Absolute JAX Purity.",
+        "risk": "Any stray standard Python print(), if, or for loop inside a function decorated with @jax.jit will force JAX to recompile on every single simulation step, reducing your GPU to a crawl.",
+        "fix": "Use jax.debug.print for internal logging, and ensure all conditionals inside JIT use jax.lax.cond."
+      },
+      "gif_pipeline_manager.py": {
+        "role": "The OS Bridge",
+        "what_to_look_for": "File I/O Race Conditions.",
+        "risk": "The FastAPI watchdog might detect that new_best.gif was created the millisecond the file is instantiated, but before subprocess.run actually finishes writing the binary data. The UI will try to load a half-written file and crash the image tile.",
+        "fix": "Ensure the render script writes to a temporary file (e.g., temp_new.gif) and then uses os.rename('temp_new.gif', 'new_best.gif') as the final atomic operation."
+      }
+    },
+    "steps": [
+      "Review each file for the listed risks and focus areas.",
+      "Document findings and fixes in this file and/or code comments.",
+      "Verify all subprocess, DB, JAX, and file I/O operations are robust."
+    ]
+  }
+}

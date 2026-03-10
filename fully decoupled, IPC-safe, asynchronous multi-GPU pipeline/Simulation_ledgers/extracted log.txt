@@ -1,0 +1,1873 @@
+
+--- Running Adaptive Hunt Orchestrator (Extended Hunt) ---
+--- ASTE ORCHESTRATOR V1.0 [BOOTSTRAP] ---
+Orchestrator: I/O directories ensured: input_configs, simulation_data, provenance_reports
+[Hunter] Initialized. No prior runs found in simulation_ledger.csv
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 0
+========================================================
+[Hunter] No population found. Generating random Generation 0.
+[Orchestrator] Registering 10 new jobs for Gen 0...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB ce31152669... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ce31152669 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ce31152669 OK.
+--- ORCHESTRATOR: JOB ce31152669 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 88995035f4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 88995035f4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 88995035f4 OK.
+--- ORCHESTRATOR: JOB 88995035f4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 94e87f3bc4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 94e87f3bc4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 94e87f3bc4 OK.
+--- ORCHESTRATOR: JOB 94e87f3bc4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e5e056b425... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e5e056b425 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e5e056b425 OK.
+--- ORCHESTRATOR: JOB e5e056b425 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 7446e2c56d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 7446e2c56d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 7446e2c56d OK.
+--- ORCHESTRATOR: JOB 7446e2c56d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e5ce370a94... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e5ce370a94 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e5ce370a94 OK.
+--- ORCHESTRATOR: JOB e5ce370a94 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 7d0e6796d3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 7d0e6796d3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 7d0e6796d3 OK.
+--- ORCHESTRATOR: JOB 7d0e6796d3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 172ccfee0b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 172ccfee0b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 172ccfee0b OK.
+--- ORCHESTRATOR: JOB 172ccfee0b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB c7210db49a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker c7210db49a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator c7210db49a OK.
+--- ORCHESTRATOR: JOB c7210db49a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d7b1ad8cce... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d7b1ad8cce OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d7b1ad8cce OK.
+--- ORCHESTRATOR: JOB d7b1ad8cce SUCCEEDED ---
+
+[Orchestrator] GENERATION 0 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: e5e056b425... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 1
+========================================================
+[Hunter] Breeding Generation 1...
+[Orchestrator] Registering 10 new jobs for Gen 1...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB b14d268e4a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b14d268e4a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b14d268e4a OK.
+--- ORCHESTRATOR: JOB b14d268e4a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 335c9c9a0b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 335c9c9a0b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 335c9c9a0b OK.
+--- ORCHESTRATOR: JOB 335c9c9a0b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b9bd9f9e8f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b9bd9f9e8f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b9bd9f9e8f OK.
+--- ORCHESTRATOR: JOB b9bd9f9e8f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4e501acf1c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4e501acf1c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4e501acf1c OK.
+--- ORCHESTRATOR: JOB 4e501acf1c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8bda513ac2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8bda513ac2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8bda513ac2 OK.
+--- ORCHESTRATOR: JOB 8bda513ac2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e01f114d12... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e01f114d12 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e01f114d12 OK.
+--- ORCHESTRATOR: JOB e01f114d12 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB f5bbb903f2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker f5bbb903f2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator f5bbb903f2 OK.
+--- ORCHESTRATOR: JOB f5bbb903f2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 021dc3e172... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 021dc3e172 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 021dc3e172 OK.
+--- ORCHESTRATOR: JOB 021dc3e172 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8d333ff233... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8d333ff233 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8d333ff233 OK.
+--- ORCHESTRATOR: JOB 8d333ff233 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 02a4aa1039... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 02a4aa1039 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 02a4aa1039 OK.
+--- ORCHESTRATOR: JOB 02a4aa1039 SUCCEEDED ---
+
+[Orchestrator] GENERATION 1 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: e5e056b425... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 2
+========================================================
+[Hunter] Breeding Generation 2...
+[Orchestrator] Registering 10 new jobs for Gen 2...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 10d411f013... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 10d411f013 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 10d411f013 OK.
+--- ORCHESTRATOR: JOB 10d411f013 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 425618a712... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 425618a712 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 425618a712 OK.
+--- ORCHESTRATOR: JOB 425618a712 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 87f461fa61... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 87f461fa61 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 87f461fa61 OK.
+--- ORCHESTRATOR: JOB 87f461fa61 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0b85e7ee7a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0b85e7ee7a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0b85e7ee7a OK.
+--- ORCHESTRATOR: JOB 0b85e7ee7a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e8a46d7124... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e8a46d7124 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e8a46d7124 OK.
+--- ORCHESTRATOR: JOB e8a46d7124 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB a0f3324fc6... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker a0f3324fc6 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator a0f3324fc6 OK.
+--- ORCHESTRATOR: JOB a0f3324fc6 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6bf362d377... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6bf362d377 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6bf362d377 OK.
+--- ORCHESTRATOR: JOB 6bf362d377 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 70af86cfc0... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 70af86cfc0 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 70af86cfc0 OK.
+--- ORCHESTRATOR: JOB 70af86cfc0 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4d0da0ebb4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4d0da0ebb4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4d0da0ebb4 OK.
+--- ORCHESTRATOR: JOB 4d0da0ebb4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9016115cf5... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9016115cf5 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9016115cf5 OK.
+--- ORCHESTRATOR: JOB 9016115cf5 SUCCEEDED ---
+
+[Orchestrator] GENERATION 2 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: e5e056b425... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 3
+========================================================
+[Hunter] Breeding Generation 3...
+[Orchestrator] Registering 10 new jobs for Gen 3...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB ce3a3c0463... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ce3a3c0463 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ce3a3c0463 OK.
+--- ORCHESTRATOR: JOB ce3a3c0463 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8827e67d30... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8827e67d30 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8827e67d30 OK.
+--- ORCHESTRATOR: JOB 8827e67d30 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 2ceaa96e4f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 2ceaa96e4f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 2ceaa96e4f OK.
+--- ORCHESTRATOR: JOB 2ceaa96e4f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d735582eef... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d735582eef OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d735582eef OK.
+--- ORCHESTRATOR: JOB d735582eef SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6a1d32ca2f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6a1d32ca2f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6a1d32ca2f OK.
+--- ORCHESTRATOR: JOB 6a1d32ca2f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB eb648137ba... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker eb648137ba OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator eb648137ba OK.
+--- ORCHESTRATOR: JOB eb648137ba SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 12420a6c86... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 12420a6c86 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 12420a6c86 OK.
+--- ORCHESTRATOR: JOB 12420a6c86 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 96b4e2b85c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 96b4e2b85c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 96b4e2b85c OK.
+--- ORCHESTRATOR: JOB 96b4e2b85c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b5dad8cd62... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b5dad8cd62 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b5dad8cd62 OK.
+--- ORCHESTRATOR: JOB b5dad8cd62 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 12501c128f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 12501c128f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 12501c128f OK.
+--- ORCHESTRATOR: JOB 12501c128f SUCCEEDED ---
+
+[Orchestrator] GENERATION 3 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 4
+========================================================
+[Hunter] Breeding Generation 4...
+[Orchestrator] Registering 10 new jobs for Gen 4...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 00d0b36b07... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 00d0b36b07 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 00d0b36b07 OK.
+--- ORCHESTRATOR: JOB 00d0b36b07 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e8d764b2d4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e8d764b2d4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e8d764b2d4 OK.
+--- ORCHESTRATOR: JOB e8d764b2d4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 95e81f0954... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 95e81f0954 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 95e81f0954 OK.
+--- ORCHESTRATOR: JOB 95e81f0954 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 188a1e5e22... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 188a1e5e22 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 188a1e5e22 OK.
+--- ORCHESTRATOR: JOB 188a1e5e22 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 75862c0b82... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 75862c0b82 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 75862c0b82 OK.
+--- ORCHESTRATOR: JOB 75862c0b82 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 04115450b0... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 04115450b0 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 04115450b0 OK.
+--- ORCHESTRATOR: JOB 04115450b0 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 43c0fa108a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 43c0fa108a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 43c0fa108a OK.
+--- ORCHESTRATOR: JOB 43c0fa108a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB f156f88201... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker f156f88201 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator f156f88201 OK.
+--- ORCHESTRATOR: JOB f156f88201 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB c7217b8f3d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker c7217b8f3d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator c7217b8f3d OK.
+--- ORCHESTRATOR: JOB c7217b8f3d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB fbf465fd03... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fbf465fd03 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fbf465fd03 OK.
+--- ORCHESTRATOR: JOB fbf465fd03 SUCCEEDED ---
+
+[Orchestrator] GENERATION 4 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 5
+========================================================
+[Hunter] Breeding Generation 5...
+[Orchestrator] Registering 10 new jobs for Gen 5...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB ce45ce0289... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ce45ce0289 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ce45ce0289 OK.
+--- ORCHESTRATOR: JOB ce45ce0289 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 2480ea5c43... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 2480ea5c43 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 2480ea5c43 OK.
+--- ORCHESTRATOR: JOB 2480ea5c43 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0da9de63d8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0da9de63d8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0da9de63d8 OK.
+--- ORCHESTRATOR: JOB 0da9de63d8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6f03a0ce9e... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6f03a0ce9e OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6f03a0ce9e OK.
+--- ORCHESTRATOR: JOB 6f03a0ce9e SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB ac57a7e727... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ac57a7e727 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ac57a7e727 OK.
+--- ORCHESTRATOR: JOB ac57a7e727 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 66dad28676... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 66dad28676 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 66dad28676 OK.
+--- ORCHESTRATOR: JOB 66dad28676 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d55b66be87... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d55b66be87 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d55b66be87 OK.
+--- ORCHESTRATOR: JOB d55b66be87 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8df1439c6d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8df1439c6d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8df1439c6d OK.
+--- ORCHESTRATOR: JOB 8df1439c6d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0700956876... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0700956876 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0700956876 OK.
+--- ORCHESTRATOR: JOB 0700956876 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 71ec909cf3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 71ec909cf3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 71ec909cf3 OK.
+--- ORCHESTRATOR: JOB 71ec909cf3 SUCCEEDED ---
+
+[Orchestrator] GENERATION 5 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 6
+========================================================
+[Hunter] Breeding Generation 6...
+[Orchestrator] Registering 10 new jobs for Gen 6...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB cd4727093a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker cd4727093a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator cd4727093a OK.
+--- ORCHESTRATOR: JOB cd4727093a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3593c62f34... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3593c62f34 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3593c62f34 OK.
+--- ORCHESTRATOR: JOB 3593c62f34 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b68fb995c3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b68fb995c3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b68fb995c3 OK.
+--- ORCHESTRATOR: JOB b68fb995c3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1d3d348c5b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1d3d348c5b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1d3d348c5b OK.
+--- ORCHESTRATOR: JOB 1d3d348c5b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d0dc570f61... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d0dc570f61 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d0dc570f61 OK.
+--- ORCHESTRATOR: JOB d0dc570f61 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 723a9e6fcc... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 723a9e6fcc OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 723a9e6fcc OK.
+--- ORCHESTRATOR: JOB 723a9e6fcc SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 7f8bd1dd85... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 7f8bd1dd85 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 7f8bd1dd85 OK.
+--- ORCHESTRATOR: JOB 7f8bd1dd85 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0c085eb2d7... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0c085eb2d7 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0c085eb2d7 OK.
+--- ORCHESTRATOR: JOB 0c085eb2d7 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b551762ecd... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b551762ecd OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b551762ecd OK.
+--- ORCHESTRATOR: JOB b551762ecd SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b4c567b4de... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b4c567b4de OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b4c567b4de OK.
+--- ORCHESTRATOR: JOB b4c567b4de SUCCEEDED ---
+
+[Orchestrator] GENERATION 6 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 7
+========================================================
+[Hunter] Breeding Generation 7...
+[Orchestrator] Registering 10 new jobs for Gen 7...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 801ae1f2bd... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 801ae1f2bd OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 801ae1f2bd OK.
+--- ORCHESTRATOR: JOB 801ae1f2bd SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 45adb3b002... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 45adb3b002 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 45adb3b002 OK.
+--- ORCHESTRATOR: JOB 45adb3b002 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB af983ccb6d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker af983ccb6d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator af983ccb6d OK.
+--- ORCHESTRATOR: JOB af983ccb6d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 5c94ad6d86... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5c94ad6d86 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5c94ad6d86 OK.
+--- ORCHESTRATOR: JOB 5c94ad6d86 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB a1b2dfef93... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker a1b2dfef93 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator a1b2dfef93 OK.
+--- ORCHESTRATOR: JOB a1b2dfef93 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4e24a96932... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4e24a96932 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4e24a96932 OK.
+--- ORCHESTRATOR: JOB 4e24a96932 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8b87373e10... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8b87373e10 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8b87373e10 OK.
+--- ORCHESTRATOR: JOB 8b87373e10 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 119aa594ef... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 119aa594ef OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 119aa594ef OK.
+--- ORCHESTRATOR: JOB 119aa594ef SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d6f95a5363... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d6f95a5363 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d6f95a5363 OK.
+--- ORCHESTRATOR: JOB d6f95a5363 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 35d7793e60... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 35d7793e60 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 35d7793e60 OK.
+--- ORCHESTRATOR: JOB 35d7793e60 SUCCEEDED ---
+
+[Orchestrator] GENERATION 7 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 8
+========================================================
+[Hunter] Breeding Generation 8...
+[Orchestrator] Registering 10 new jobs for Gen 8...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 82a7c2ae6a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 82a7c2ae6a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 82a7c2ae6a OK.
+--- ORCHESTRATOR: JOB 82a7c2ae6a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8b17ee22e8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8b17ee22e8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8b17ee22e8 OK.
+--- ORCHESTRATOR: JOB 8b17ee22e8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 30094f4c95... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 30094f4c95 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 30094f4c95 OK.
+--- ORCHESTRATOR: JOB 30094f4c95 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1ca1c8e615... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1ca1c8e615 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1ca1c8e615 OK.
+--- ORCHESTRATOR: JOB 1ca1c8e615 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8943ed1bc4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8943ed1bc4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8943ed1bc4 OK.
+--- ORCHESTRATOR: JOB 8943ed1bc4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 7be04baee2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 7be04baee2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 7be04baee2 OK.
+--- ORCHESTRATOR: JOB 7be04baee2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e3c32edd9b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e3c32edd9b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e3c32edd9b OK.
+--- ORCHESTRATOR: JOB e3c32edd9b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d774167e75... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d774167e75 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d774167e75 OK.
+--- ORCHESTRATOR: JOB d774167e75 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9582ffbda5... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9582ffbda5 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9582ffbda5 OK.
+--- ORCHESTRATOR: JOB 9582ffbda5 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e60e055977... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e60e055977 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e60e055977 OK.
+--- ORCHESTRATOR: JOB e60e055977 SUCCEEDED ---
+
+[Orchestrator] GENERATION 8 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 9
+========================================================
+[Hunter] Breeding Generation 9...
+[Orchestrator] Registering 10 new jobs for Gen 9...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 263df90a63... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 263df90a63 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 263df90a63 OK.
+--- ORCHESTRATOR: JOB 263df90a63 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6a508a5b01... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6a508a5b01 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6a508a5b01 OK.
+--- ORCHESTRATOR: JOB 6a508a5b01 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 09a608bc5c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 09a608bc5c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 09a608bc5c OK.
+--- ORCHESTRATOR: JOB 09a608bc5c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 848ba48f2b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 848ba48f2b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 848ba48f2b OK.
+--- ORCHESTRATOR: JOB 848ba48f2b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 48edfcf4a2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 48edfcf4a2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 48edfcf4a2 OK.
+--- ORCHESTRATOR: JOB 48edfcf4a2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB bf5a0502cf... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker bf5a0502cf OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator bf5a0502cf OK.
+--- ORCHESTRATOR: JOB bf5a0502cf SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4e6ecfbfc1... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4e6ecfbfc1 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4e6ecfbfc1 OK.
+--- ORCHESTRATOR: JOB 4e6ecfbfc1 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 769b97972e... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 769b97972e OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 769b97972e OK.
+--- ORCHESTRATOR: JOB 769b97972e SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9acd67cb36... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9acd67cb36 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9acd67cb36 OK.
+--- ORCHESTRATOR: JOB 9acd67cb36 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d70ad632b8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d70ad632b8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d70ad632b8 OK.
+--- ORCHESTRATOR: JOB d70ad632b8 SUCCEEDED ---
+
+[Orchestrator] GENERATION 9 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 10
+========================================================
+[Hunter] Breeding Generation 10...
+[Orchestrator] Registering 10 new jobs for Gen 10...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB f16a0f6711... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker f16a0f6711 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator f16a0f6711 OK.
+--- ORCHESTRATOR: JOB f16a0f6711 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 71483ae7ef... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 71483ae7ef OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 71483ae7ef OK.
+--- ORCHESTRATOR: JOB 71483ae7ef SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6183375838... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6183375838 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6183375838 OK.
+--- ORCHESTRATOR: JOB 6183375838 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 14dcc714dc... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 14dcc714dc OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 14dcc714dc OK.
+--- ORCHESTRATOR: JOB 14dcc714dc SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e0f51d4d45... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e0f51d4d45 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e0f51d4d45 OK.
+--- ORCHESTRATOR: JOB e0f51d4d45 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4d0b5e5820... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4d0b5e5820 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4d0b5e5820 OK.
+--- ORCHESTRATOR: JOB 4d0b5e5820 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1e9c7220a8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1e9c7220a8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1e9c7220a8 OK.
+--- ORCHESTRATOR: JOB 1e9c7220a8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 221bc8e12b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 221bc8e12b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 221bc8e12b OK.
+--- ORCHESTRATOR: JOB 221bc8e12b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1201476ad9... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1201476ad9 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1201476ad9 OK.
+--- ORCHESTRATOR: JOB 1201476ad9 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8676693624... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8676693624 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8676693624 OK.
+--- ORCHESTRATOR: JOB 8676693624 SUCCEEDED ---
+
+[Orchestrator] GENERATION 10 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 11
+========================================================
+[Hunter] Breeding Generation 11...
+[Orchestrator] Registering 10 new jobs for Gen 11...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 27d20ff4c8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 27d20ff4c8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 27d20ff4c8 OK.
+--- ORCHESTRATOR: JOB 27d20ff4c8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4078d419b3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4078d419b3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4078d419b3 OK.
+--- ORCHESTRATOR: JOB 4078d419b3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3252ae61aa... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3252ae61aa OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3252ae61aa OK.
+--- ORCHESTRATOR: JOB 3252ae61aa SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6ee9228a07... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6ee9228a07 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6ee9228a07 OK.
+--- ORCHESTRATOR: JOB 6ee9228a07 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 7946417ff5... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 7946417ff5 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 7946417ff5 OK.
+--- ORCHESTRATOR: JOB 7946417ff5 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB fa0ce9b0c1... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fa0ce9b0c1 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fa0ce9b0c1 OK.
+--- ORCHESTRATOR: JOB fa0ce9b0c1 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 29fc327ed8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 29fc327ed8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 29fc327ed8 OK.
+--- ORCHESTRATOR: JOB 29fc327ed8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB aa2532c23e... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker aa2532c23e OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator aa2532c23e OK.
+--- ORCHESTRATOR: JOB aa2532c23e SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 29c05c03e4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 29c05c03e4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 29c05c03e4 OK.
+--- ORCHESTRATOR: JOB 29c05c03e4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB ee3ff5b68f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ee3ff5b68f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ee3ff5b68f OK.
+--- ORCHESTRATOR: JOB ee3ff5b68f SUCCEEDED ---
+
+[Orchestrator] GENERATION 11 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 12
+========================================================
+[Hunter] Breeding Generation 12...
+[Orchestrator] Registering 10 new jobs for Gen 12...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 707d71856f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 707d71856f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 707d71856f OK.
+--- ORCHESTRATOR: JOB 707d71856f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4c72752662... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4c72752662 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4c72752662 OK.
+--- ORCHESTRATOR: JOB 4c72752662 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 075a256dcf... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 075a256dcf OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 075a256dcf OK.
+--- ORCHESTRATOR: JOB 075a256dcf SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 5e038971d8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5e038971d8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5e038971d8 OK.
+--- ORCHESTRATOR: JOB 5e038971d8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 6a02606ea8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 6a02606ea8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 6a02606ea8 OK.
+--- ORCHESTRATOR: JOB 6a02606ea8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 5c06cae25c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5c06cae25c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5c06cae25c OK.
+--- ORCHESTRATOR: JOB 5c06cae25c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB a28fe8fa58... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker a28fe8fa58 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator a28fe8fa58 OK.
+--- ORCHESTRATOR: JOB a28fe8fa58 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB edaa66a720... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker edaa66a720 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator edaa66a720 OK.
+--- ORCHESTRATOR: JOB edaa66a720 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 513bd0647f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 513bd0647f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 513bd0647f OK.
+--- ORCHESTRATOR: JOB 513bd0647f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3a7482c5f8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3a7482c5f8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3a7482c5f8 OK.
+--- ORCHESTRATOR: JOB 3a7482c5f8 SUCCEEDED ---
+
+[Orchestrator] GENERATION 12 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 13
+========================================================
+[Hunter] Breeding Generation 13...
+[Orchestrator] Registering 10 new jobs for Gen 13...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 1a2b9e270a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1a2b9e270a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1a2b9e270a OK.
+--- ORCHESTRATOR: JOB 1a2b9e270a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 036678e940... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 036678e940 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 036678e940 OK.
+--- ORCHESTRATOR: JOB 036678e940 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e837517113... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e837517113 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e837517113 OK.
+--- ORCHESTRATOR: JOB e837517113 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB fc804dfd00... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fc804dfd00 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fc804dfd00 OK.
+--- ORCHESTRATOR: JOB fc804dfd00 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9c52de0c5d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9c52de0c5d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9c52de0c5d OK.
+--- ORCHESTRATOR: JOB 9c52de0c5d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9c69e3ba05... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9c69e3ba05 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9c69e3ba05 OK.
+--- ORCHESTRATOR: JOB 9c69e3ba05 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB cf4323c60e... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker cf4323c60e OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator cf4323c60e OK.
+--- ORCHESTRATOR: JOB cf4323c60e SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB ddeca31452... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ddeca31452 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ddeca31452 OK.
+--- ORCHESTRATOR: JOB ddeca31452 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 368eede0c2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 368eede0c2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 368eede0c2 OK.
+--- ORCHESTRATOR: JOB 368eede0c2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b11dc9d823... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b11dc9d823 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b11dc9d823 OK.
+--- ORCHESTRATOR: JOB b11dc9d823 SUCCEEDED ---
+
+[Orchestrator] GENERATION 13 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 14
+========================================================
+[Hunter] Breeding Generation 14...
+[Orchestrator] Registering 10 new jobs for Gen 14...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB fc8c79ee16... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fc8c79ee16 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fc8c79ee16 OK.
+--- ORCHESTRATOR: JOB fc8c79ee16 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1deef0b299... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1deef0b299 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1deef0b299 OK.
+--- ORCHESTRATOR: JOB 1deef0b299 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB ca29c6d79a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ca29c6d79a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ca29c6d79a OK.
+--- ORCHESTRATOR: JOB ca29c6d79a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB abc481270a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker abc481270a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator abc481270a OK.
+--- ORCHESTRATOR: JOB abc481270a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1cfbb03bcb... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1cfbb03bcb OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1cfbb03bcb OK.
+--- ORCHESTRATOR: JOB 1cfbb03bcb SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b7ff99fac3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b7ff99fac3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b7ff99fac3 OK.
+--- ORCHESTRATOR: JOB b7ff99fac3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB c46cdbc436... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker c46cdbc436 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator c46cdbc436 OK.
+--- ORCHESTRATOR: JOB c46cdbc436 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 05bbb9f859... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 05bbb9f859 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 05bbb9f859 OK.
+--- ORCHESTRATOR: JOB 05bbb9f859 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 381209fc20... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 381209fc20 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 381209fc20 OK.
+--- ORCHESTRATOR: JOB 381209fc20 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 805dd0c9c1... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 805dd0c9c1 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 805dd0c9c1 OK.
+--- ORCHESTRATOR: JOB 805dd0c9c1 SUCCEEDED ---
+
+[Orchestrator] GENERATION 14 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 15
+========================================================
+[Hunter] Breeding Generation 15...
+[Orchestrator] Registering 10 new jobs for Gen 15...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 5e3523dd9a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5e3523dd9a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5e3523dd9a OK.
+--- ORCHESTRATOR: JOB 5e3523dd9a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 88688c3237... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 88688c3237 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 88688c3237 OK.
+--- ORCHESTRATOR: JOB 88688c3237 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 798a3816dc... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 798a3816dc OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 798a3816dc OK.
+--- ORCHESTRATOR: JOB 798a3816dc SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 5ae9b7f268... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5ae9b7f268 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5ae9b7f268 OK.
+--- ORCHESTRATOR: JOB 5ae9b7f268 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 63d33f33fa... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 63d33f33fa OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 63d33f33fa OK.
+--- ORCHESTRATOR: JOB 63d33f33fa SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 67bb35fb83... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 67bb35fb83 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 67bb35fb83 OK.
+--- ORCHESTRATOR: JOB 67bb35fb83 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 31c1dbd8d3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 31c1dbd8d3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 31c1dbd8d3 OK.
+--- ORCHESTRATOR: JOB 31c1dbd8d3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d9ccd0c718... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d9ccd0c718 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d9ccd0c718 OK.
+--- ORCHESTRATOR: JOB d9ccd0c718 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9a77d70aa5... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9a77d70aa5 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9a77d70aa5 OK.
+--- ORCHESTRATOR: JOB 9a77d70aa5 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 5ce0aae12a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 5ce0aae12a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 5ce0aae12a OK.
+--- ORCHESTRATOR: JOB 5ce0aae12a SUCCEEDED ---
+
+[Orchestrator] GENERATION 15 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 16
+========================================================
+[Hunter] Breeding Generation 16...
+[Orchestrator] Registering 10 new jobs for Gen 16...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB fcedf7abda... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fcedf7abda OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fcedf7abda OK.
+--- ORCHESTRATOR: JOB fcedf7abda SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB e39ba00f34... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker e39ba00f34 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator e39ba00f34 OK.
+--- ORCHESTRATOR: JOB e39ba00f34 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4fe8537149... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4fe8537149 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4fe8537149 OK.
+--- ORCHESTRATOR: JOB 4fe8537149 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0472a3e127... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0472a3e127 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0472a3e127 OK.
+--- ORCHESTRATOR: JOB 0472a3e127 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB bf9d8a4896... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker bf9d8a4896 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator bf9d8a4896 OK.
+--- ORCHESTRATOR: JOB bf9d8a4896 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB f8228ae2f8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker f8228ae2f8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator f8228ae2f8 OK.
+--- ORCHESTRATOR: JOB f8228ae2f8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 92151710a2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 92151710a2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 92151710a2 OK.
+--- ORCHESTRATOR: JOB 92151710a2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 0e33d06fc5... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 0e33d06fc5 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 0e33d06fc5 OK.
+--- ORCHESTRATOR: JOB 0e33d06fc5 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 802802375f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 802802375f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 802802375f OK.
+--- ORCHESTRATOR: JOB 802802375f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 930211be40... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 930211be40 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 930211be40 OK.
+--- ORCHESTRATOR: JOB 930211be40 SUCCEEDED ---
+
+[Orchestrator] GENERATION 16 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 17
+========================================================
+[Hunter] Breeding Generation 17...
+[Orchestrator] Registering 10 new jobs for Gen 17...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 2c262f9ef4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 2c262f9ef4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 2c262f9ef4 OK.
+--- ORCHESTRATOR: JOB 2c262f9ef4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b212a3ff27... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b212a3ff27 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b212a3ff27 OK.
+--- ORCHESTRATOR: JOB b212a3ff27 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 843723e5cc... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 843723e5cc OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 843723e5cc OK.
+--- ORCHESTRATOR: JOB 843723e5cc SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b0d4e31e8d... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b0d4e31e8d OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b0d4e31e8d OK.
+--- ORCHESTRATOR: JOB b0d4e31e8d SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3bbf1311e0... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3bbf1311e0 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3bbf1311e0 OK.
+--- ORCHESTRATOR: JOB 3bbf1311e0 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 36241f3721... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 36241f3721 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 36241f3721 OK.
+--- ORCHESTRATOR: JOB 36241f3721 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB db88906021... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker db88906021 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator db88906021 OK.
+--- ORCHESTRATOR: JOB db88906021 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB db5cb94906... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker db5cb94906 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator db5cb94906 OK.
+--- ORCHESTRATOR: JOB db5cb94906 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 269c291a70... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 269c291a70 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 269c291a70 OK.
+--- ORCHESTRATOR: JOB 269c291a70 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 4ae9f7d986... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 4ae9f7d986 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 4ae9f7d986 OK.
+--- ORCHESTRATOR: JOB 4ae9f7d986 SUCCEEDED ---
+
+[Orchestrator] GENERATION 17 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 18
+========================================================
+[Hunter] Breeding Generation 18...
+[Orchestrator] Registering 10 new jobs for Gen 18...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 8e7181f6f3... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8e7181f6f3 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8e7181f6f3 OK.
+--- ORCHESTRATOR: JOB 8e7181f6f3 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB bbfd330f9a... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker bbfd330f9a OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator bbfd330f9a OK.
+--- ORCHESTRATOR: JOB bbfd330f9a SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3a4f585e89... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3a4f585e89 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3a4f585e89 OK.
+--- ORCHESTRATOR: JOB 3a4f585e89 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9a0cc69ea4... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9a0cc69ea4 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9a0cc69ea4 OK.
+--- ORCHESTRATOR: JOB 9a0cc69ea4 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 91c9a28aec... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 91c9a28aec OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 91c9a28aec OK.
+--- ORCHESTRATOR: JOB 91c9a28aec SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 1906c2f4e2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 1906c2f4e2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 1906c2f4e2 OK.
+--- ORCHESTRATOR: JOB 1906c2f4e2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 3154be679b... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 3154be679b OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 3154be679b OK.
+--- ORCHESTRATOR: JOB 3154be679b SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 73f55032d2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 73f55032d2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 73f55032d2 OK.
+--- ORCHESTRATOR: JOB 73f55032d2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB d49a7853da... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker d49a7853da OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator d49a7853da OK.
+--- ORCHESTRATOR: JOB d49a7853da SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB a16f3e3426... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker a16f3e3426 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator a16f3e3426 OK.
+--- ORCHESTRATOR: JOB a16f3e3426 SUCCEEDED ---
+
+[Orchestrator] GENERATION 18 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+    ASTE ORCHESTRATOR: STARTING GENERATION 19
+========================================================
+[Hunter] Breeding Generation 19...
+[Orchestrator] Registering 10 new jobs for Gen 19...
+[Hunter] Registered 10 new jobs in ledger.
+
+--- ORCHESTRATOR: STARTING JOB 680aa5d91c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 680aa5d91c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 680aa5d91c OK.
+--- ORCHESTRATOR: JOB 680aa5d91c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 8d47d02fa2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 8d47d02fa2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 8d47d02fa2 OK.
+--- ORCHESTRATOR: JOB 8d47d02fa2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB fce83a7f3c... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fce83a7f3c OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fce83a7f3c OK.
+--- ORCHESTRATOR: JOB fce83a7f3c SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 77b4872db8... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 77b4872db8 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 77b4872db8 OK.
+--- ORCHESTRATOR: JOB 77b4872db8 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 747005c36f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 747005c36f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 747005c36f OK.
+--- ORCHESTRATOR: JOB 747005c36f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 380ab65c01... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 380ab65c01 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 380ab65c01 OK.
+--- ORCHESTRATOR: JOB 380ab65c01 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB fa7627ac1f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker fa7627ac1f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator fa7627ac1f OK.
+--- ORCHESTRATOR: JOB fa7627ac1f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB b389e8931f... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker b389e8931f OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator b389e8931f OK.
+--- ORCHESTRATOR: JOB b389e8931f SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB 9f692e53b2... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker 9f692e53b2 OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator 9f692e53b2 OK.
+--- ORCHESTRATOR: JOB 9f692e53b2 SUCCEEDED ---
+
+--- ORCHESTRATOR: STARTING JOB ca8db587ce... ---
+[Orchestrator] -> Calling Worker: worker_unified.py
+[Orchestrator] <- Worker ca8db587ce OK.
+[Orchestrator] -> Calling Validator: validation_pipeline.py
+[Orchestrator] <- Validator ca8db587ce OK.
+--- ORCHESTRATOR: JOB ca8db587ce SUCCEEDED ---
+
+[Orchestrator] GENERATION 19 COMPLETE.
+[Orchestrator] Notifying Hunter to process results...
+[Hunter] Processing 10 new results from provenance_reports...
+[Hunter] Successfully processed and updated 10 runs.
+[Orch] Best Run So Far: d735582eef... (SSE: 0.129466)
+
+========================================================
+--- ASTE ORCHESTRATOR: ALL GENERATIONS COMPLETE ---
+========================================================
+
+--- Inspecting results of Extended Hunt ---
+
+Contents of simulation_ledger.csv after extended hunt:
+                                           config_hash  log_prime_sse  \
+0    ce31152669a68df9bad0cf37b184eefa95e58b79df1882...     999.000000   
+1    88995035f4d04a32242a78b2f44105c85e9424c9bfebef...     999.000000   
+2    94e87f3bc47b0d502f53cf43aa226eb5868c794a6ae256...     999.000000   
+3    e5e056b4253495c16f57387848b4850e5dba8b264ddc09...       0.129466   
+4    7446e2c56d094a0ebe7caa484c48000042f3329ef8aa3c...       0.129466   
+..                                                 ...            ...   
+195  380ab65c016f959b5cd4a35d598eaea9959ff9b9f0fdd4...       0.129466   
+196  fa7627ac1f82011d98c04a054cc5f466b26d8d4791972d...     999.000000   
+197  b389e8931f9ff82c9ab25526f442df944bb17c32261cd7...       0.129466   
+198  9f692e53b2b7da76a19135759c2d5993e9196d5ff00814...     999.000000   
+199  ca8db587ce7708f779335b43e9a7dbf8f902539460ee8e...       0.129466   
+
+        fitness  generation   param_D  param_eta  param_rho_vac  \
+0      0.000000           0  0.682014   0.057243       0.645992   
+1      0.000000           0  2.036685   0.828829       1.658612   
+2      0.000000           0  4.947304   0.072385       1.188878   
+3    206.998142           0  1.012850   0.359479       1.749510   
+4    206.998142           0  2.478937   0.227160       1.029793   
+..          ...         ...       ...        ...            ...   
+195  206.998142          19  2.478937   0.072385       1.188878   
+196    0.000000          19  1.870101   0.227160       1.749510   
+197  207.198142          19  1.085990   0.359479       1.749510   
+198    0.000000          19  2.478937   0.015493       1.749510   
+199  206.998142          19  2.478937   0.072385       1.749510   
+
+     param_a_coupling  sse_null_phase_scramble  sse_null_target_shuffle  \
+0            0.639941               999.000000                    999.0   
+1            0.769760               999.000000                    999.0   
+2            2.691047                 0.129466                    999.0   
+3            2.027627               997.000000                    996.0   
+4            0.104708               997.000000                    996.0   
+..                ...                      ...                      ...   
+195          0.104708               997.000000                    996.0   
+196          0.104708               999.000000                    999.0   
+197          2.027627               999.000000                    996.0   
+198          0.696688               999.000000                    999.0   
+199          0.104708               997.000000                    996.0   
+
+     n_peaks_found_main         failure_reason_main  n_peaks_found_null_a  \
+0                     0  No peaks found in spectrum                     0   
+1                     0  No peaks found in spectrum                     0   
+2                     0  No peaks found in spectrum                     1   
+3                     1                         NaN                     1   
+4                     1                         NaN                     1   
+..                  ...                         ...                   ...   
+195                   1                         NaN                     1   
+196                   0  No peaks found in spectrum                     0   
+197                   1                         NaN                     0   
+198                   0  No peaks found in spectrum                     0   
+199                   1                         NaN                     1   
+
+                            failure_reason_null_a  n_peaks_found_null_b  \
+0                      No peaks found in spectrum                     0   
+1                      No peaks found in spectrum                     0   
+2                                             NaN                     0   
+3    Null A failed to differentiate from main SSE                     1   
+4    Null A failed to differentiate from main SSE                     1   
+..                                            ...                   ...   
+195  Null A failed to differentiate from main SSE                     1   
+196                    No peaks found in spectrum                     0   
+197                    No peaks found in spectrum                     1   
+198                    No peaks found in spectrum                     0   
+199  Null A failed to differentiate from main SSE                     1   
+
+                            failure_reason_null_b  
+0                      No peaks found in spectrum  
+1                      No peaks found in spectrum  
+2                      No peaks found in spectrum  
+3    Null B failed to differentiate from main SSE  
+4    Null B failed to differentiate from main SSE  
+..                                            ...  
+195  Null B failed to differentiate from main SSE  
+196                    No peaks found in spectrum  
+197  Null B failed to differentiate from main SSE  
+198                    No peaks found in spectrum  
+199  Null B failed to differentiate from main SSE  
+
+[200 rows x 16 columns]
+
+Best performing run after extended hunt:
+config_hash                d735582eef3f368b75e8e6627deb1cf36bcb0ac92ccc66...
+log_prime_sse                                                       0.129466
+fitness                                                           207.198142
+generation                                                                 3
+param_D                                                             2.478937
+param_eta                                                           0.072385
+param_rho_vac                                                       1.188878
+param_a_coupling                                                    0.104708
+sse_null_phase_scramble                                                999.0
+sse_null_target_shuffle                                                996.0
+n_peaks_found_main                                                         1
+failure_reason_main                                                      NaN
+n_peaks_found_null_a                                                       0
+failure_reason_null_a                             No peaks found in spectrum
+n_peaks_found_null_b                                                       1
+failure_reason_null_b           Null B failed to differentiate from main SSE
+Name: 33, dtype: object
+
+Checking created directories and files after extended hunt:
+- Directory 'simulation_data' exists.
+  First file in 'simulation_data': rho_history_e60e0559775ad88320c4d89b4e6a79c8b8819835e32b727f4f12e1369488436c.h5
+- Directory 'input_configs' exists.
+  First file in 'input_configs': config_73f55032d2d073bf2954811ddce8b617add4379413a81007b5e12448e0e89472.json
+- Directory 'provenance_reports' exists.
+  First file in 'provenance_reports': 30094f4c95c74dcfbb59aab028604139a8abdf9b295ae8ffb7866c83bb64b470_quantule_events.csv
+
+========================================================
+--- ASTE ORCHESTRATOR: ALL GENERATIONS COMPLETE ---
+========================================================
+
+--- Inspecting results ---
+
+Contents of simulation_ledger.csv:
+                                         config_hash  log_prime_sse  \
+0  15d92a62d8fa114647e9cb5796d9ab1f5eade5613106ab...     999.000000   
+1  8025372cc16f87f0b838d013e259aea31b9ccc12c1fd35...       0.129466   
+2  5bd494a194fe517e83cdaec0e34a1e6dfe6dab23222b74...       0.129466   
+3  bcb412f50e347bb2c20a5778c5e701ea8fd002dd33a6b4...       0.129466   
+4  bb75b30c2e97afd3a50f4b6efa182c99b0d18e7fd881d9...     999.000000   
+5  93974f0d297887f6a80377c1a6f1f170ae88b5abfb9d0e...     999.000000   
+6  5d8df210482ab894420e8f150d2b9c533d04a31f74806a...       0.129466   
+7  5340440858c2b8b1b4d15939f3c59d730f914fe7b5f34a...     999.000000   
+
+      fitness  generation   param_D  param_eta  param_rho_vac  \
+0    0.000000           0  3.699223   0.354605       0.426677   
+1  207.198142           0  4.739672   0.652381       0.443795   
+2  206.998142           0  0.216841   0.895143       0.949141   
+3  207.198142           0  4.734381   0.343972       1.410606   
+4    0.000000           1  4.739672   0.652381       0.443795   
+5    0.000000           1  4.734381   0.343972       1.410606   
+6  206.998142           1  4.734381   0.343972       1.410606   
+7    0.000000           1  4.739672   0.652381       0.443795   
+
+   param_a_coupling  sse_null_phase_scramble  sse_null_target_shuffle  \
+0          2.093869                 0.129466                    999.0   
+1          1.121650               999.000000                    996.0   
+2          1.212255               997.000000                    996.0   
+3          0.210584               999.000000                    996.0   
+4          1.121650                 0.129466                    999.0   
+5          0.210584                 0.129466                    999.0   
+6          0.210584               997.000000                    996.0   
+7          1.121650                 0.129466                    999.0   
+
+   n_peaks_found_main         failure_reason_main  n_peaks_found_null_a  \
+0                   0  No peaks found in spectrum                     1   
+1                   1                         NaN                     0   
+2                   1                         NaN                     1   
+3                   1                         NaN                     0   
+4                   0  No peaks found in spectrum                     1   
+5                   0  No peaks found in spectrum                     1   
+6                   1                         NaN                     1   
+7                   0  No peaks found in spectrum                     1   
+
+                          failure_reason_null_a  n_peaks_found_null_b  \
+0                                           NaN                     0   
+1                    No peaks found in spectrum                     1   
+2  Null A failed to differentiate from main SSE                     1   
+3                    No peaks found in spectrum                     1   
+4                                           NaN                     0   
+5                                           NaN                     0   
+6  Null A failed to differentiate from main SSE                     1   
+7                                           NaN                     0   
+
+                          failure_reason_null_b  
+0                    No peaks found in spectrum  
+1  Null B failed to differentiate from main SSE  
+2  Null B failed to differentiate from main SSE  
+3  Null B failed to differentiate from main SSE  
+4                    No peaks found in spectrum  
+5                    No peaks found in spectrum  
+6  Null B failed to differentiate from main SSE  
+7                    No peaks found in spectrum  
+
+Best performing run:
+config_hash                8025372cc16f87f0b838d013e259aea31b9ccc12c1fd35...
+log_prime_sse                                                       0.129466
+fitness                                                           207.198142
+generation                                                                 0
+param_D                                                             4.739672
+param_eta                                                           0.652381
+param_rho_vac                                                       0.443795
+param_a_coupling                                                     1.12165
+sse_null_phase_scramble                                                999.0
+sse_null_target_shuffle                                                996.0
+n_peaks_found_main                                                         1
+failure_reason_main                                                      NaN
+n_peaks_found_null_a                                                       0
+failure_reason_null_a                             No peaks found in spectrum
+n_peaks_found_null_b                                                       1
+failure_reason_null_b           Null B failed to differentiate from main SSE
+Name: 1, dtype: object
+
+Checking created directories and files:
+- Directory 'simulation_data' exists.
+  First file in 'simulation_data': rho_history_bcb412f50e347bb2c20a5778c5e701ea8fd002dd33a6b4a26e4307e504a82683.h5
+- Directory 'input_configs' exists.
+  First file in 'input_configs': config_15d92a62d8fa114647e9cb5796d9ab1f5eade5613106abcd0b9361c1b533200e.json
+- Directory 'provenance_reports' exists.
+  First file in 'provenance_reports': provenance_15d92a62d8fa114647e9cb5796d9ab1f5eade5613106abcd0b9361c1b533200e.json

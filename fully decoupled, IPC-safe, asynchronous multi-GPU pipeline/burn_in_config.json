@@ -1,0 +1,69 @@
+{
+  "hunt_name": "BURN_IN_STRESS_TEST_001",
+  "db_path": "sqlite_database.db",
+  "data_dir": "simulation_data",
+  "snapshot_dir": "pareto_snapshots",
+  "archive_dir": "archive_runs",
+  "provenance_dir": "provenance_reports",
+  "config_dir": "input_configs",
+  "population_size": 64,
+  "min_queue_depth": 64,
+  "poll_interval": 1,
+  "bleed_workers": 2,
+  "artifact_gc_min_age_seconds": 0,
+  "job_lease_timeout_seconds": 120,
+  "result_lease_timeout_seconds": 120,
+  "worker_heartbeat_ttl_seconds": 30,
+  "max_queue_depth": 500,
+  "simulation": {
+    "N_grid": 120,
+    "L_domain": 10.0,
+    "T_steps": 1200,
+    "dt": 0.005,
+    "collapse_threshold": 10000000000.0
+  },
+  "evolution": {
+    "population_size": 64,
+    "generations": 1000,
+    "mutation_rate": 0.15,
+    "crossover_rate": 0.5,
+    "survival_fraction": 0.25,
+    "predator_sweep_frequency": 5
+  },
+  "orchestrator_limits": {
+    "job_timeout_seconds": 120,
+    "worker_heartbeat_timeout": 30,
+    "max_queue_depth": 500
+  },
+  "artifact_management": {
+    "retention_policy": "elite_only",
+    "max_disk_gb": 10,
+    "trigger_bleed_threshold_gb": 8
+  },
+  "bounds": {
+    "param_D": [
+      0.1,
+      5.0
+    ],
+    "param_eta": [
+      0.01,
+      1.0
+    ],
+    "param_rho_vac": [
+      0.0,
+      2.0
+    ],
+    "param_a_coupling": [
+      0.1,
+      4.0
+    ],
+    "param_s": [
+      -1.0,
+      1.0
+    ],
+    "param_f": [
+      -0.5,
+      0.5
+    ]
+  }
+}

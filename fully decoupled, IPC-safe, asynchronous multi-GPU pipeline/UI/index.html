@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRER V14 | Sovereign Auditor</title>
+    <style>
+        /* --- Aletheia Design System (ISA-101 Compliant) --- */
+        :root {
+            --cyber-black: #0a0a0a;
+            --ui-neutral: #1e293b;
+            --status-safe: #22c55e;      /* Terminal Green */
+            --status-warning: #f59e0b;   /* Amber */
+            --status-danger: #ef4444;    /* Critical Red */
+            --jax-magenta: #d946ef;      /* JAX Primitive Warning */
+            --action-primary: #0070ff;   /* Ocean Blue */
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-subtle: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--cyber-black);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- 1. Diagnostic Context Bar (Tier 1) --- */
+        .diagnostic-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--ui-neutral);
+            padding: 12px 24px;
+            border-bottom: 2px solid var(--border-subtle);
+            font-size: 0.85rem;
+            z-index: 100;
+        }
+
+        .sys-pulse {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Redundant Coding: Shapes + Colors */
+        .pulse-icon {
+            width: 14px; height: 14px;
+            background-color: var(--status-safe);
+            border-radius: 50%; /* Circle = Safe */
+            box-shadow: 0 0 8px var(--status-safe);
+            transition: all 0.3s ease;
+        }
+        .pulse-icon.warning {
+            background-color: var(--status-warning);
+            border-radius: 0;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* Triangle = Warning */
+            box-shadow: 0 0 8px var(--status-warning);
+        }
+        .pulse-icon.critical {
+            background-color: var(--status-danger);
+            border-radius: 0; /* Square = Critical */
+            clip-path: none;
+            box-shadow: 0 0 12px var(--status-danger);
+            animation: pulse-danger 1s infinite;
+        }
+
+        @keyframes pulse-danger {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .sys-metrics { display: flex; gap: 24px; color: var(--text-muted); }
+        .sys-metrics span { border-right: 1px solid var(--border-subtle); padding-right: 24px; }
+        .sys-metrics span:last-child { border: none; }
+
+        .action-group { display: flex; gap: 12px; }
+
+        button {
+            font-family: inherit;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            text-transform: uppercase;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        button:hover:not(:disabled) { opacity: 0.85; }
+        button:disabled { cursor: not-allowed; opacity: 0.4; filter: grayscale(80%); }
+
+        .btn-primary { background: var(--action-primary); color: #fff; }
+        .btn-danger { background: var(--status-danger); color: #fff; }
+        .btn-outline { background: var(--ui-neutral); border: 1px solid var(--border-subtle); color: #fff; }
+
+        /* --- 2. God View Layout Grid (Tier 2/3) --- */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 350px;
+            gap: 24px;
+            padding: 24px;
+            flex-grow: 1;
+            min-height: 0;
+        }
+
+        .irer-panel {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: rgba(30, 41, 59, 0.9);
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-subtle);
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        /* --- Left Pane: Friction Stream (KEL) --- */
+        #friction-stream {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .irer-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-left: 4px solid var(--ui-neutral);
+            padding: 14px;
+            font-size: 0.85rem;
+            border-radius: 0 4px 4px 0;
+        }
+        .irer-card.urgent { border-left-color: var(--status-danger); background: rgba(239, 68, 68, 0.08); }
+        .irer-card.unindexed { border-left-color: var(--status-warning); background: rgba(245, 158, 11, 0.08); }
+        .card-title { font-weight: bold; margin-bottom: 6px; color: #fff; }
+        .card-meta { color: var(--text-muted); font-size: 0.75rem; margin-bottom: 8px;}
+        .card-action { color: var(--action-primary); font-size: 0.75rem; cursor: pointer; text-transform: uppercase; }
+        .card-action:hover { text-decoration: underline; }
+
+        /* --- Center Pane: Telemetry & Log --- */
+        .live-score-container {
+            padding: 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.2);
+        }
+        .score-label { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; }
+        .score-value { 
+            font-size: 4.5rem; 
+            color: var(--status-safe); 
+            text-shadow: 0 0 25px rgba(34, 197, 94, 0.2); 
+            line-height: 1;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .score-value.danger {
+            color: var(--status-danger);
+            text-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .falsifiability-radar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .radar-node { text-align: center; }
+        .radar-label { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 1px; }
+        .radar-val { font-size: 1.1rem; font-weight: bold; }
+
+        .evolution-tracker {
+            padding: 10px 30px;
+            background: rgba(0,0,0,0.6);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        #terminal-output {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            background: #050505;
+        }
+
+        .log-ts { color: #475569; margin-right: 10px; }
+        .log-info { color: var(--text-main); }
+        .log-warn { color: var(--status-warning); }
+        .log-crit { color: var(--status-danger); font-weight: bold; }
+        .log-jax { color: var(--jax-magenta); font-style: italic; }
+
+        /* --- Right Pane: Remedial Manifold & Config --- */
+        textarea#config-input {
+            flex-grow: 1;
+            background: #080808;
+            color: var(--action-primary);
+            border: none;
+            padding: 20px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            resize: none;
+            line-height: 1.5;
+        }
+        textarea#config-input:focus { outline: none; }
+
+        /* Ghost Tracer Overlay (Axiom 2 Schema Verification) */
+        .ghost-tracer {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid var(--jax-magenta);
+            color: var(--jax-magenta);
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.2);
+            display: none;
+            z-index: 1000;
+            pointer-events: none; /* Non-blocking */
+        }
+
+        /* --- Split Window GIF Render Tile --- */
+        .render-panel {
+            grid-column: 1 / -1; /* Span full width */
+            margin: 0 24px 24px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .split-view-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            flex-grow: 1;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+        }
+
+        .render-window {
+            background: #050505;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .render-window.highlight {
+            border-color: var(--action-primary);
+            box-shadow: 0 0 15px rgba(0, 112, 255, 0.15);
+        }
+
+        .render-label {
+            background: var(--ui-neutral);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            padding: 8px 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .render-label span.badge {
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+
+        .render-window.highlight .render-label {
+            background: rgba(0, 112, 255, 0.2);
+            color: #fff;
+            border-bottom-color: var(--action-primary);
+        }
+
+        .render-display {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--border-subtle);
+            font-size: 0.85rem;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Overlay text when awaiting data */
+        .render-display[data-loaded="false"]::before {
+            content: "AWAITING RENDER CYCLE...";
+            font-family: 'JetBrains Mono', monospace;
+            animation: pulse-danger 2s infinite;
+        }
+
+        /* --- 3. Lower Wall: Validation Metrics (Tier 4) --- */
+        .metrics-wall {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 2 rows of 4 looks cleaner for 8 metrics */
+            gap: 15px;
+            padding: 0 24px 24px 24px;
+            flex-shrink: 0; /* Prevents squishing by upper panels */
+        }
+
+        .metric-tile {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-top: 3px solid var(--ui-neutral);
+            border-radius: 4px;
+            padding: 12px 16px;
+            text-align: center;
+            box-shadow: inset 0 2px 15px rgba(0,0,0,0.3);
+            transition: border-color 0.3s ease;
+        }
+        
+        /* State Modifiers for Tiles */
+        .metric-tile.safe { border-top-color: var(--status-safe); }
+        .metric-tile.warning { border-top-color: var(--status-warning); }
+        .metric-tile.critical { border-top-color: var(--status-danger); }
+
+        .metric-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.05);
+        }
+        
+        .metric-value.safe { color: var(--status-safe); text-shadow: 0 0 10px rgba(34,197,94,0.15); }
+        .metric-value.warn { color: var(--status-warning); text-shadow: 0 0 10px rgba(245,158,11,0.15); }
+        
+        /* Modal Background */
+        #triage-modal {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(4px);
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Axiom 2 Ghost Tracer Overlay -->
+    <div id="ghost-tracer" class="ghost-tracer">
+        [AXIOM 2] Schematic Risk: JAX Primitive Missing Init State
+    </div>
+
+    <!-- Tier 1: Diagnostic Context Bar -->
+    <header class="diagnostic-bar">
+        <div class="sys-pulse">
+            <div id="pulse-indicator" class="pulse-icon"></div>
+            <span id="pulse-text" style="color: var(--status-safe);">SYSTEM STABLE</span>
+        </div>
+        <div class="sys-metrics">
+            <span>JAX ENV: v0.4.20</span>
+            <span>VECTORS: 1,204</span>
+            <span id="anomaly-count">ANOMALIES: 0</span>
+        </div>
+        <div class="action-group">
+            <button id="triage-map-btn" class="btn-outline" onclick="openTriageModal()">📊 View Heatmaps</button>
+            <button id="abort-btn" class="btn-danger" onclick="abortHunt()" disabled>■ Abort Protocol</button>
+            <button id="start-btn" class="btn-primary" onclick="initializeHunt()">▶ Run Triage</button>
+        </div>
+    </header>
+
+    <!-- Tier 2/3: God View Layout -->
+    <main class="layout-grid">
+        
+        <!-- Left Pane: Friction Stream (KEL) -->
+        <section class="irer-panel">
+            <div class="panel-header">Friction Stream (KEL)</div>
+            <div id="friction-stream">
+                <div class="irer-card" style="opacity: 0.4;">
+                    <div class="card-meta">Awaiting telemetry...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Center Pane: Sovereign Auditor View -->
+        <section class="irer-panel">
+            <div class="panel-header">System Stability Index & Telemetry</div>
+            <div class="live-score-container">
+                <div class="score-label">Log-Prime SSE (Attractor Baseline)</div>
+                <div class="score-value" id="best-score">999.000000</div>
+            </div>
+            
+            <!-- Falsifiability Gap Radar -->
+            <div class="falsifiability-radar">
+                <div class="radar-node">
+                    <div class="radar-label">MAIN SSE</div>
+                    <div class="radar-val" id="radar-main" style="color: var(--status-safe);">--</div>
+                </div>
+                <div class="radar-node">
+                    <div class="radar-label">NULL A (PHASE)</div>
+                    <div class="radar-val" id="radar-null-a" style="color: var(--text-muted);">--</div>
+                </div>
+                <div class="radar-node">
+                    <div class="radar-label">NULL B (SHUFFLE)</div>
+                    <div class="radar-val" id="radar-null-b" style="color: var(--text-muted);">--</div>
+                </div>
+                <div class="radar-node">
+                    <div class="radar-label">FALSIFIABILITY Δ</div>
+                    <div class="radar-val" id="radar-delta" style="color: var(--action-primary);">--</div>
+                </div>
+            </div>
+
+            <!-- Evolutionary Generation Tracker -->
+            <div class="evolution-tracker">
+                <span>GENERATION: <strong style="color: #fff;" id="evo-gen">0</strong></span>
+                <span>POPULATION: <strong style="color: #fff;" id="evo-pop">0 / 0</strong></span>
+                <span>LINEAGE: <span style="color: var(--action-primary);" id="evo-parents">Genesis Block</span></span>
+            </div>
+
+            <div id="terminal-output"></div>
+        </section>
+
+        <!-- Right Pane: Operational Config -->
+        <section class="irer-panel">
+            <div class="panel-header">Remedial Manifold Config</div>
+            <textarea id="config-input" spellcheck="false">
+{
+  "param_D": 1.496168,
+  "param_eta": 0.903363,
+  "param_rho_vac": 0.951774,
+  "param_a_coupling": 0.241607,
+  "global_seed": 42,
+  "simulation": {
+    "N_grid": 16,
+    "L_domain": 10.0,
+    "T_steps": 50
+  }
+}</textarea>
+        </section>
+
+    </main>
+
+    <!-- Tier 3.5: Visual Topology Rendering -->
+    <section class="render-panel">
+        <div class="split-view-container">
+            <div class="render-window" id="render-win-a">
+                <div class="render-label">Historical Baseline <span class="badge" style="background: var(--ui-neutral);">IDLE</span></div>
+                <div class="render-display" id="render-disp-a" data-loaded="false"></div>
+            </div>
+            <div class="render-window highlight" id="render-win-b">
+                <div class="render-label">Active Simulation <span class="badge" style="background: var(--action-primary);">LIVE</span></div>
+                <div class="render-display" id="render-disp-b" data-loaded="false"></div>
+            </div>
+            <div class="render-window" id="render-win-comp">
+                <div class="render-label">Topological Delta <span class="badge" style="background: var(--status-warning);">ANALYZING</span></div>
+                <div class="render-display" id="render-disp-comp" data-loaded="false"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tier 4: Lower Wall (Validation Metrics Tiles) -->
+    <section class="metrics-wall">
+        <div class="metric-tile safe" id="tile-pcs">
+            <div class="metric-label">Phase Coherence (PCS)</div>
+            <div class="metric-value safe" id="val-pcs">1.000000</div>
+        </div>
+        <div class="metric-tile safe" id="tile-pli">
+            <div class="metric-label">Localization (PLI)</div>
+            <div class="metric-value safe" id="val-pli">1.000000</div>
+        </div>
+        <div class="metric-tile safe" id="tile-ic">
+            <div class="metric-label">Informational Comp (IC)</div>
+            <div class="metric-value safe" id="val-ic">0.00e+00</div>
+        </div>
+        <div class="metric-tile safe" id="tile-rbal">
+            <div class="metric-label">Nonlinear Balance (R)</div>
+            <div class="metric-value safe" id="val-rbal">0.9998</div>
+        </div>
+        <div class="metric-tile warning" id="tile-tsym">
+            <div class="metric-label">Tensor Symmetry Err</div>
+            <div class="metric-value warn" id="val-tsym">1.15e-07</div>
+        </div>
+        <div class="metric-tile safe" id="tile-fdim">
+            <div class="metric-label">Fractal Dimension</div>
+            <div class="metric-value safe" id="val-fdim">2.140</div>
+        </div>
+        <!-- TDA Taxonomy Census -->
+        <div class="metric-tile" id="tile-qtheta">
+            <div class="metric-label">Synchronizers (Q_θ)</div>
+            <div class="metric-value" id="val-qtheta" style="color: var(--jax-magenta);">0</div>
+        </div>
+        <div class="metric-tile" id="tile-qnu">
+            <div class="metric-label">Entropy Sinks (Q_ν)</div>
+            <div class="metric-value" id="val-qnu" style="color: var(--action-primary);">0</div>
+        </div>
+    </section>
+
+    <!-- Triage Visualizer Modal -->
+    <div id="triage-modal">
+        <div style="background: var(--ui-neutral); padding: 25px; border: 1px solid var(--action-primary); border-radius: 6px; max-width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <h3 style="margin-bottom: 20px; color: var(--text-main); font-family: sans-serif; text-transform: uppercase; letter-spacing: 2px;">Parameter Stability Basins</h3>
+            <!-- Assuming image is served from your backend at this route -->
+            <img id="latest-heatmap" src="/static/ASTE_V11_Triage_Heatmaps.png" alt="Triage Heatmap: Waiting for Backend Generation..." style="max-width: 100%; max-height: 70vh; border: 1px solid var(--border-subtle); display: block; margin: 0 auto; background: #000; min-width: 600px; min-height: 300px; color: var(--text-muted); line-height: 300px;">
+            <button class="btn-danger" style="margin-top: 25px; padding: 10px 30px;" onclick="closeTriageModal()">Dismiss Auditor View</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const startBtn = document.getElementById('start-btn');
+        const abortBtn = document.getElementById('abort-btn');
+        const configInput = document.getElementById('config-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const bestScoreDisplay = document.getElementById('best-score');
+        const pulseIndicator = document.getElementById('pulse-indicator');
+        const pulseText = document.getElementById('pulse-text');
+        const frictionStream = document.getElementById('friction-stream');
+        const anomalyCountEl = document.getElementById('anomaly-count');
+        const ghostTracer = document.getElementById('ghost-tracer');
+
+        // Validation Metric Elements
+        const valPcs = document.getElementById('val-pcs');
+        const valPli = document.getElementById('val-pli');
+        const valIc = document.getElementById('val-ic');
+        const valRbal = document.getElementById('val-rbal');
+        const valTsym = document.getElementById('val-tsym');
+        const valFdim = document.getElementById('val-fdim');
+        const valQTheta = document.getElementById('val-qtheta');
+        const valQNu = document.getElementById('val-qnu');
+
+        // Radar & Tracker Elements
+        const radarMain = document.getElementById('radar-main');
+        const radarNullA = document.getElementById('radar-null-a');
+        const radarNullB = document.getElementById('radar-null-b');
+        const radarDelta = document.getElementById('radar-delta');
+        const evoGen = document.getElementById('evo-gen');
+        const evoPop = document.getElementById('evo-pop');
+        const evoParents = document.getElementById('evo-parents');
+
+        let anomalyCount = 0;
+        let wsSocket = null;
+        let isAborted = false;
+
+        // --- Event Bus Architecture (Decoupled Messaging) ---
+        class EventBus {
+            constructor() {
+                this.listeners = {};
+            }
+            subscribe(eventType, callback) {
+                if (!this.listeners[eventType]) {
+                    this.listeners[eventType] = [];
+                }
+                this.listeners[eventType].push(callback);
+            }
+            publish(eventType, data) {
+                // 1. Internal callback execution
+                if (this.listeners[eventType]) {
+                    this.listeners[eventType].forEach(cb => cb(data));
+                } else {
+                    console.warn(`[EventBus] Unhandled telemetry type: ${eventType}`);
+                }
+                
+                // 2. DOM CustomEvent broadcast (Supports Headless Auditors per Tab 16)
+                const domEvent = new CustomEvent(`irer-${eventType}`, {
+                    detail: data,
+                    bubbles: true,
+                    composed: true
+                });
+                document.dispatchEvent(domEvent);
+            }
+        }
+
+        const telemetryBus = new EventBus();
+
+        // --- UI Subscriptions to the Event Bus ---
+        
+        telemetryBus.subscribe('log', (data) => {
+            appendLog(data.message, data.level);
+        });
+
+        telemetryBus.subscribe('metrics', (data) => {
+            // Core SSE
+            if (data.sse !== undefined && (data.sse < parseFloat(bestScoreDisplay.innerText) || bestScoreDisplay.innerText === "999.000000")) {
+                bestScoreDisplay.innerText = data.sse.toFixed(6);
+                radarMain.innerText = data.sse.toFixed(6);
+            }
+            
+            // Lower Wall Validation Tiles
+            if (data.pcs !== undefined) valPcs.innerText = data.pcs.toFixed(6);
+            if (data.pli !== undefined) valPli.innerText = data.pli.toFixed(6);
+            if (data.ic !== undefined) valIc.innerText = data.ic.toExponential(2);
+            if (data.r_balance !== undefined) valRbal.innerText = data.r_balance.toFixed(4);
+            if (data.tensor_sym !== undefined) valTsym.innerText = data.tensor_sym.toExponential(2);
+            if (data.fractal_dim !== undefined) valFdim.innerText = data.fractal_dim.toFixed(3);
+            if (data.q_theta !== undefined) valQTheta.innerText = data.q_theta;
+            if (data.q_nu !== undefined) valQNu.innerText = data.q_nu;
+
+            // Falsifiability Radar
+            if (data.null_a !== undefined) radarNullA.innerText = data.null_a.toFixed(1);
+            if (data.null_b !== undefined) radarNullB.innerText = data.null_b.toFixed(1);
+            
+            // Calculate Delta if we have all data
+            if (data.sse !== undefined && data.null_a !== undefined && data.null_b !== undefined) {
+                const avgNull = (data.null_a + data.null_b) / 2;
+                const delta = avgNull - data.sse;
+                radarDelta.innerText = `+${delta.toFixed(2)}`;
+                radarDelta.style.color = delta > 100 ? "var(--status-safe)" : "var(--status-warning)";
+            }
+        });
+
+        telemetryBus.subscribe('evolution', (data) => {
+            if (data.generation !== undefined) evoGen.innerText = data.generation;
+            if (data.population_idx && data.population_total) evoPop.innerText = `${data.population_idx} / ${data.population_total}`;
+            if (data.parents) evoParents.innerText = data.parents;
+        });
+
+        telemetryBus.subscribe('anomaly', (data) => {
+            addFrictionNode(data.severity, data.title, data.trace);
+            if (data.severity === 'urgent') {
+                setSystemState('critical');
+                triggerGhostTracer(data.title);
+            } else {
+                setSystemState('warning');
+            }
+        });
+
+        telemetryBus.subscribe('render', (data) => {
+            if (data.runA) updateRenderWindow('render-disp-a', data.runA);
+            if (data.runB) updateRenderWindow('render-disp-b', data.runB);
+            if (data.comp) updateRenderWindow('render-disp-comp', data.comp);
+        });
+
+        telemetryBus.subscribe('status', (data) => {
+            setSystemState(data.state);
+        });
+
+        telemetryBus.subscribe('complete', (data) => {
+            finishHunt("Convergence Achieved. System stabilized.");
+        });
+
+        // --- Helper UI Functions ---
+
+        function openTriageModal() {
+            const img = document.getElementById('latest-heatmap');
+            img.src = '/static/ASTE_V11_Triage_Heatmaps.png?' + new Date().getTime();
+            document.getElementById('triage-modal').style.display = 'flex';
+        }
+
+        function closeTriageModal() {
+            document.getElementById('triage-modal').style.display = 'none';
+        }
+
+        function appendLog(message, type = 'info') {
+            const time = new Date().toISOString().split('T')[1].slice(0,-1);
+            let cssClass = 'log-info';
+            if (type === 'warn') cssClass = 'log-warn';
+            if (type === 'crit') cssClass = 'log-crit';
+            if (type === 'jax') cssClass = 'log-jax';
+
+            const logLine = document.createElement('div');
+            logLine.innerHTML = `<span class="log-ts">[${time}]</span> <span class="${cssClass}">${message}</span>`;
+            terminalOutput.appendChild(logLine);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        function addFrictionNode(type, title, trace) {
+            anomalyCount++;
+            anomalyCountEl.innerText = `ANOMALIES: ${anomalyCount}`;
+            
+            const card = document.createElement('div');
+            card.className = `irer-card ${type}`;
+            card.innerHTML = `
+                <div class="card-title">${type === 'urgent' ? '▲' : '■'} [${type.toUpperCase()}] ${title}</div>
+                <div class="card-meta">Trace: ${trace}</div>
+                <div class="card-action">↳ Query Remedial Manifold</div>
+            `;
+            
+            if (frictionStream.children.length === 1 && frictionStream.children[0].innerText.includes('Awaiting')) {
+                frictionStream.innerHTML = '';
+            }
+            frictionStream.prepend(card);
+        }
+
+        function setSystemState(state) {
+            pulseIndicator.className = 'pulse-icon'; 
+            bestScoreDisplay.classList.remove('danger');
+
+            if (state === 'safe') {
+                pulseText.innerText = "SYSTEM STABLE";
+                pulseText.style.color = "var(--status-safe)";
+            } else if (state === 'warning') {
+                pulseIndicator.classList.add('warning'); 
+                pulseText.innerText = "DRIFT DETECTED";
+                pulseText.style.color = "var(--status-warning)";
+            } else if (state === 'critical') {
+                pulseIndicator.classList.add('critical'); 
+                pulseText.innerText = "DIVERGENCE RISK";
+                pulseText.style.color = "var(--status-danger)";
+                bestScoreDisplay.classList.add('danger');
+            }
+        }
+
+        function triggerGhostTracer(message) {
+            ghostTracer.innerText = `[AXIOM 2] Schematic Risk: ${message}`;
+            ghostTracer.style.display = 'block';
+            setTimeout(() => { ghostTracer.style.display = 'none'; }, 3000);
+        }
+
+        function updateRenderWindow(elementId, imgUrl) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.style.backgroundImage = `url('${imgUrl}?t=${new Date().getTime()}')`;
+                el.setAttribute('data-loaded', 'true');
+            }
+        }
+
+        // --- Core Execution Logistics ---
+
+        function initializeHunt() {
+            try {
+                const configPayload = JSON.parse(configInput.value); 
+                
+                if (wsSocket) wsSocket.close();
+                
+                isAborted = false;
+                startBtn.disabled = true;
+                configInput.disabled = true;
+                abortBtn.disabled = false;
+                
+                appendLog("Sovereign Auditor: Connecting to Engine Telemetry Stream via WebSocket...", 'info');
+                setSystemState('safe');
+
+                wsSocket = new WebSocket('ws://localhost:8000/ws/telemetry');
+
+                wsSocket.onopen = function() {
+                    appendLog("WebSocket Connection Established. Handing over control to FastAPI...", 'success');
+                    wsSocket.send(JSON.stringify({ event: 'START_HUNT', payload: configPayload }));
+                };
+
+                wsSocket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        // Hand off the incoming data to the event bus
+                        if (data.type) {
+                            telemetryBus.publish(data.type, data);
+                        } else {
+                            console.warn("Received malformed telemetry payload without type designation:", data);
+                        }
+                    } catch (err) {
+                        console.error("Failed to parse WebSocket message:", err);
+                    }
+                };
+
+                wsSocket.onerror = function() {
+                    appendLog("CRITICAL: WebSocket connection error.", 'crit');
+                    abortHunt();
+                };
+
+                wsSocket.onclose = function(e) {
+                    if(!e.wasClean && !isAborted) appendLog("WebSocket disconnected unexpectedly.", 'warn');
+                };
+
+            } catch (e) {
+                appendLog("Configuration Guardrail: Invalid JSON schema detected.", 'crit');
+            }
+        }
+
+        function abortHunt() {
+            isAborted = true;
+            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
+                wsSocket.send(JSON.stringify({ event: 'ABORT_HUNT' }));
+                wsSocket.close();
+            }
+            
+            appendLog("User Override: KERNEL TERMINATION SIGNAL SENT.", 'crit');
+            setSystemState('critical');
+            pulseText.innerText = "TRIAGE ABORTED";
+            
+            setTimeout(() => {
+                finishHunt("Simulation manually aborted by Sovereign Auditor.");
+                setSystemState('safe');
+                pulseText.innerText = "SYSTEM IDLE";
+            }, 1000);
+        }
+
+        function finishHunt(message) {
+            startBtn.disabled = false;
+            configInput.disabled = false;
+            abortBtn.disabled = true;
+            appendLog(`--- ${message} ---`, 'info');
+            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) wsSocket.close();
+        }
+
+        // Initialize empty state log
+        appendLog("Sovereign Auditor UI Ready. Awaiting Configuration Validation.");
+        
+        // Escape key global listener for Modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeTriageModal();
+            }
+        });
+    </script>
+</body>
+</html>

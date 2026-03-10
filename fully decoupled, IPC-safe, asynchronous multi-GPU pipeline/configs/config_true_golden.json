@@ -1,0 +1,23 @@
+{
+"param_D": 1.0,
+  "param_eta": 0.65,
+  "param_rho_vac": 1.0,
+  "param_a_coupling": 0.5,
+  "param_splash_coupling": 0.5,
+  "param_splash_fraction": -0.5, 
+  "global_seed": 42,
+  "simulation": {
+    "N_grid": 64,
+    "L_domain": 10.0,
+    "T_steps": 750,
+    "dt": 0.001
+  },
+  "db_path": "simulation_ledger.db",
+  "population_size": 5,
+  "generations": 1,
+  "provenance_dir": "provenance_reports",
+  "worker_script": "worker_unified.py",
+  "job_timeout_sec": 600,
+  "config_dir": "input_configs",
+  "data_dir": "simulation_data"
+}

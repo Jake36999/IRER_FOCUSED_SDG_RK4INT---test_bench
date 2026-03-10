@@ -1,0 +1,305 @@
+{
+  "ASTE_V11_Architecture_Readiness_Checklist": {
+    "1_Architectural_Expectations": {
+      "Dynamic_Steering": {
+        "description": "Shift from static post-hoc optimization to dynamic stability steering.",
+        "status": "EXPECTED",
+        "criteria": [
+          "Hunter penalizes low Phase Coherence Score (PCS)",
+          "Hunter rewards low Inverse Informational Current (IC)",
+          "Hunter maximizes Falsifiability Gap (Null A/B vs Main SSE)"
+        ]
+      },
+      "Scientific_Fidelity": {
+        "description": "Ensure the S-NCGL simulation obeys fundamental mathematical and physical laws.",
+        "status": "EXPECTED",
+        "criteria": [
+          "Strict CFL safety factor of 0.1 enforced in RK4 integrator",
+          "Mass/Informational potential strictly conserved during non-local splash",
+          "Emergent metric (Omega) correctly couples to the spatial Laplacian",
+          "Codebase is absolutely free of illegal operations (e.g., np.gradient) in the JIT plane"
+        ]
+      },
+      "Termination_Condition": {
+        "description": "The mathematical baseline required to declare the theory formally validated.",
+        "status": "EXPECTED",
+        "criteria": [
+          "Log-Prime Spectral Attractor SSE <= 0.001",
+          "Monte Carlo p-value mathematically proves non-randomness",
+          "Topological structures maintain a persistence lifespan > 0.5"
+        ]
+      }
+    },
+    "2_Completed_Implementations": {
+      "Physics_Engine_worker_unified_py": {
+        "status": "COMPLETED",
+        "features": [
+          "Complex Field (Psi) Evolution",
+          "Metric-Aware Laplacian (Gravity Bridge)",
+          "Fractional Spectral Kernel (Non-local Splash)",
+          "Adaptive dt stepping via max_psi_gradient"
+        ]
+      },
+      "Evolutionary_Brain_aste_hunter_py": {
+        "status": "COMPLETED",
+        "features": [
+          "SQLite Relational Database (simulation_ledger.db)",
+          "Lineage Tracking (parent_1, parent_2)",
+          "Pareto Multi-Objective Selection (SSE, PCS, IC)",
+          "Falsifiability-weighted fitness function"
+        ]
+      },
+      "Governance_ast_governance_lens_py": {
+        "status": "COMPLETED",
+        "features": [
+          "Pre-flight AST parsing",
+          "JAX purity enforcement",
+          "Cold-plane vs Hot-plane contextual loop validation"
+        ]
+      }
+    },
+    "3_Validation_and_Diagnostics_Integrations": {
+      "Topological_Data_Analysis_tda_profiler_py": {
+        "status": "INTEGRATED",
+        "metrics": ["H0/H1/H2 Betti Numbers", "Quantule Taxonomy (Q_theta, Q_nu)"]
+      },
+      "Aletheia_Diagnostics_aletheia_diagnostics_py": {
+        "status": "INTEGRATED",
+        "metrics": ["Informational Current (J_info)", "Shannon Entropy", "Total Informational Energy"]
+      },
+      "Collapse_Dynamics_collapse_dynamics_py": {
+        "status": "INTEGRATED",
+        "metrics": ["Nonlinear Balance Ratio (R)", "Cascade Correlation Length (xi)", "Fractal Dimension Box-Count"]
+      },
+      "Stress_Energy_Tensor_tensor_validation_py": {
+        "status": "INTEGRATED",
+        "metrics": ["Tensor Symmetry Error", "Perfect Fluid Reduction (Shear)"]
+      },
+      "Statistical_Defense_monte_carlo_engine_py": {
+        "status": "INTEGRATED",
+        "metrics": ["P-value (Prime-lock by chance)"]
+      },
+      "Quantum_Optics_spdc_empirical_bridge_py": {
+        "status": "INTEGRATED",
+        "metrics": ["Joint Spectral Amplitude (JSA)", "C4 Interference Contrast"]
+      }
+    },
+    "4_Finalization_and_Ignition_Steps": {
+      "Step_1_State_Clearing": {
+        "action": "Delete legacy simulation_ledger.csv and any existing simulation_ledger.db to prevent schema conflicts.",
+        "status": "COMPLETED"
+      },
+      "Step_2_Pre_Flight_Check": {
+        "action": "Run `python metrics/ast_governance_lens.py` one final time to ensure absolute codebase purity.",
+        "status": "COMPLETED"
+      },
+      "Step_3_Ignition": {
+        "action": "Execute `python adaptive_hunt_orchestrator.py` to launch Generation 0 and begin the closed-loop relational hunt.",
+        "status": "COMPLETED"
+      },
+      "Step_4_Visualization_Triage": {
+        "action": "After 5-10 generations, run `python stability_triage_visualizer.py` to identify the stable parameter basin.",
+        "status": "COMPLETED"
+      },
+      "Step_5_Target_Convergence": {
+        "action": "Manually restrict the Generation 0 randomizer bounds in `aste_hunter.py` to the identified basin and run until SSE <= 0.001 is achieved.",
+        "status": "COMPLETED"
+      }
+    },
+    "6_Finalisation_Checklist": [
+      "1. State Clearing: Remove legacy files (simulation_ledger.csv, old .db files) and ensure a clean Python environment.",
+      "2. Codebase Purity: Run ast_governance_lens.py and lint/format code (black, flake8).",
+      "3. Orchestrator Refactor: Modularize adaptive_hunt_orchestrator.py, move configs to YAML/JSON, add logging, and write unit tests.",
+      "4. Worker Engine Refactor: Decouple simulation, evaluation, and DB I/O; make parameters configurable; add error handling and documentation.",
+      "5. Analysis & Validation Pipeline: Centralize analysis scripts, standardize schemas, automate validation, and add CLI tools.",
+      "6. ASTE Adaptation & Rerun: Refactor aste_hunter.py for dynamic updates, implement feedback loop, enable checkpointing, and log all changes.",
+      "7. Finalization & Ignition: Run orchestrator, use visualizer to identify basins, restrict randomizer bounds, and run until SSE ≤ 0.001.",
+      "8. Documentation & Audit: Update docstrings, create diagrams, audit code, update requirements, and prepare reproducibility checklist.",
+      "9. Release & Maintenance: Tag a release, publish documentation, and prepare for user feedback and future maintenance.",
+      "10. Automated Testing: Ensure all modules have unit and integration tests with high coverage.",
+      "11. Continuous Integration: Set up GitHub Actions or similar CI to run tests and linting on every push.",
+      "12. Continuous Deployment: Automate deployment of documentation and releases.",
+      "13. Provenance Verification: Validate that all simulation and analysis runs generate provenance reports and quantule event logs.",
+      "14. Data Integrity: Implement hash/checksum validation for all output artifacts.",
+      "15. CLI/UX Polish: Ensure all CLI tools have clear help messages and error handling.",
+      "16. Example Notebooks: Provide Jupyter notebooks demonstrating typical workflows and analysis.",
+      "17. Quickstart Guide: Write a concise quickstart in the README for new users.",
+      "18. Archive Artifacts: Prepare a final archive of all key outputs, configs, and provenance for long-term storage.",
+      "19. DOI/Zenodo Registration: Register a DOI for the final release if publishing.",
+      "20. Security Audit: Review dependencies for vulnerabilities and update as needed.",
+      "21. License Review: Ensure all code and data have appropriate open-source licenses."
+      ,
+      "22. Web UI & Backend Integration: Test and document the FastAPI backend, Watchdog, and WebSocket workflow with the UI for end-to-end GIF update functionality.",
+      "23. WebSocket API Documentation: Document the WebSocket API and provide example payloads for frontend/backend developers.",
+      "24. Unified Configuration Management: Merge all configuration files into a single, well-documented config directory and ensure all modules/scripts use them.",
+      "25. Centralized Logging: Integrate a unified logging system across orchestrator, worker, and analysis modules, with logs written to a common location.",
+      "26. Automated Provenance & Metadata: Ensure all outputs (simulation, analysis, visualization) generate and store standardized metadata and provenance.",
+      "27. End-to-End Integration Testing: Run integration tests covering the full workflow: simulation → analysis → visualization → UI update.",
+      "28. Documentation Synchronization: Update all documentation and diagrams to reflect the latest workflow and integration points.",
+      "29. Release Packaging: Create a script or Makefile target to package the entire system (code, configs, requirements, docs, example data) for distribution or archival."
+    ],
+    "5_Refactor_and_Finalisation_Workflows": {
+      "Workflow_1_Orchestrator_Refactor": {
+        "objective": "Modularize and clarify the orchestration logic for adaptive hunting and worker management.",
+        "steps": [
+          "Audit `adaptive_hunt_orchestrator.py` for monolithic logic and implicit state.",
+          "Refactor into clear modules: job dispatch, result aggregation, error handling.",
+          "Implement configuration-driven orchestration (YAML/JSON input).",
+          "Add logging and progress reporting hooks.",
+          "Write unit tests for orchestration entry points."
+        ],
+        "status": "COMPLETED"
+      },
+      "Workflow_2_Worker_Engine_Refactor": {
+        "objective": "Isolate simulation, evaluation, and data persistence in the worker engine.",
+        "steps": [
+          "Review worker logic for tight coupling with orchestrator.",
+          "Separate simulation core, evaluation metrics, and database I/O.",
+          "Ensure all simulation parameters are externally configurable.",
+          "Add robust error/exception handling for simulation failures.",
+          "Document worker API and expected inputs/outputs."
+        ],
+        "status": "COMPLETED"
+      },
+      "Workflow_3_Analysis_and_Validation_Pipeline": {
+        "objective": "Standardize analysis and validation routines for reproducibility.",
+        "steps": [
+          "Centralize all analysis scripts (e.g., `tda_profiler.py`, `extract_sse_history.py`) into a pipeline module.",
+          "Define a standard input/output schema for analysis results.",
+          "Automate validation checks (SSE, PCS, IC, Betti numbers) post-simulation.",
+          "Integrate provenance tracking for all analysis outputs.",
+          "Add CLI entry points for batch analysis and reporting."
+        ],
+        "status": "COMPLETED"
+      },
+      "Workflow_4_ASTE_Adaptation_and_Rerun": {
+        "objective": "Enable adaptive parameter tuning and seamless rerun cycles.",
+        "steps": [
+          "Refactor `aste_hunter.py` to support dynamic parameter updates (from triage/analysis feedback).",
+          "Implement a feedback loop: analysis → parameter update → rerun.",
+          "Persist all adaptation decisions and parameter changes for auditability.",
+          "Allow for checkpointing and resumption of interrupted runs.",
+          "Document adaptation logic and rerun triggers."
+        ],
+        "status": "COMPLETED"
+      },
+      "Workflow_5_Documentation_and_Final_Code_Audit": {
+        "objective": "Ensure maintainability, reproducibility, and compliance with scientific standards.",
+        "steps": [
+          "Write or update docstrings and module-level documentation.",
+          "Create a high-level architecture diagram and workflow chart.",
+          "Perform a final codebase audit for purity (AST, JAX, illegal ops).",
+          "Update `requirements.txt` and environment setup instructions.",
+          "Prepare a reproducibility checklist and publish with the code."
+        ],
+        "status": "COMPLETED"
+      }
+    }
+  },
+  "7_Environment_Context": {
+    "os": "Windows 11 Pro (fill in actual version)",
+    "python_version": "3.10.12 (fill in actual version)",
+    "virtual_env": "venv (active: fill in if known)",
+    "package_manager": "pip (requirements.txt managed)",
+    "pip_freeze_command": "pip freeze > requirements.txt",
+    "installed_packages": "See requirements.txt and output of 'pip freeze' for full list.",
+    "hardware": {
+      "cpu": "Intel i7-12700K (fill in actual model)",
+      "ram_gb": "32 (fill in actual amount)",
+      "gpu": "NVIDIA RTX 3080 (fill in if present)"
+    },
+    "user": "jakem",
+    "workspace_root": "c:/Users/jakem/Documents/golden_hunter_low_SSE",
+    "key_directories": [
+      "Alethiea/    # Diagnostics, configs, gravity modules",
+      "metrics/     # Analysis, validation, collapse dynamics",
+      "provenance_reports/ # CSV event logs",
+      "Rho_history/ # Simulation output histories",
+      "simulation_data/   # HDF5 and other sim data",
+      "Simulation_ledgers/ # Ledger artifacts",
+      "tests/       # Unit and integration tests",
+      "visual_plotting/   # Plotting and visualization scripts"
+    ],
+    "notable_files": [
+      "aste_hunter.py            # Evolutionary brain",
+      "adaptive_hunt_orchestrator.py # Orchestration logic",
+      "worker_unified.py         # Physics engine",
+      "validation_pipeline.py    # Validation and provenance",
+      "requirements.txt          # Python dependencies",
+      "stability_triage_visualizer.py # Heatmap visualizer"
+    ],
+    "active_terminals": [
+      "Python (interactive)",
+      "powershell (system)",
+      "PowerShell Extension (VSCode)"
+    ],
+    "last_terminal_commands": [
+      "python init_aste_db.py (Exit Code: 1) # DB initialization",
+      "python plot_golden_heatmap.py (Exit Code: 0) # Visualization"
+    ],
+    "ai_assistant": "GitHub Copilot (GPT-4.1)",
+    "date": "2026-02-20",
+    "workspace_notes": [
+      "Project is organized for modular, reproducible scientific computing.",
+      "All major modules are tracked in the readiness checklist.",
+      "Environment details should be updated before final archival or handoff.",
+      "For full reproducibility, export environment with 'pip freeze' and document hardware."
+    ]
+  },
+  "6_Finalisation_Checklist_Categorized": [
+    {"task": "State Clearing: Remove legacy files (simulation_ledger.csv, old .db files) and ensure a clean Python environment.", "category": "Environment & State Preparation", "workflow": "Environment Preparation"},
+    {"task": "Codebase Purity: Run ast_governance_lens.py and lint/format code (black, flake8).", "category": "Code Quality & Purity", "workflow": "Code Quality & Audit"},
+    {"task": "Orchestrator Refactor: Modularize adaptive_hunt_orchestrator.py, move configs to YAML/JSON, add logging, and write unit tests.", "category": "Orchestration & Engine Refactor", "workflow": "Orchestrator Refactor"},
+    {"task": "Worker Engine Refactor: Decouple simulation, evaluation, and DB I/O; make parameters configurable; add error handling and documentation.", "category": "Orchestration & Engine Refactor", "workflow": "Worker Engine Refactor"},
+    {"task": "Analysis & Validation Pipeline: Centralize analysis scripts, standardize schemas, automate validation, and add CLI tools.", "category": "Analysis & Validation", "workflow": "Analysis & Validation Pipeline"},
+    {"task": "ASTE Adaptation & Rerun: Refactor aste_hunter.py for dynamic updates, implement feedback loop, enable checkpointing, and log all changes.", "category": "Adaptive Evolution", "workflow": "ASTE Adaptation & Rerun"},
+    {"task": "Finalization & Ignition: Run orchestrator, use visualizer to identify basins, restrict randomizer bounds, and run until SSE ≤ 0.001.", "category": "Execution & Convergence", "workflow": "Execution & Convergence"},
+    {"task": "Documentation & Audit: Update docstrings, create diagrams, audit code, update requirements, and prepare reproducibility checklist.", "category": "Documentation & Release", "workflow": "Documentation & Audit"},
+    {"task": "Release & Maintenance: Tag a release, publish documentation, and prepare for user feedback and future maintenance.", "category": "Documentation & Release", "workflow": "Documentation & Audit"},
+    {"task": "Automated Testing: Ensure all modules have unit and integration tests with high coverage.", "category": "Testing & CI/CD", "workflow": "Testing & CI/CD"},
+    {"task": "Continuous Integration: Set up GitHub Actions or similar CI to run tests and linting on every push.", "category": "Testing & CI/CD", "workflow": "Testing & CI/CD"},
+    {"task": "Continuous Deployment: Automate deployment of documentation and releases.", "category": "Testing & CI/CD", "workflow": "Testing & CI/CD"},
+    {"task": "Provenance Verification: Validate that all simulation and analysis runs generate provenance reports and quantule event logs.", "category": "Provenance, Data Integrity, and UX", "workflow": "Provenance & Data Integrity"},
+    {"task": "Data Integrity: Implement hash/checksum validation for all output artifacts.", "category": "Provenance, Data Integrity, and UX", "workflow": "Provenance & Data Integrity"},
+    {"task": "CLI/UX Polish: Ensure all CLI tools have clear help messages and error handling.", "category": "Provenance, Data Integrity, and UX", "workflow": "User Experience"},
+    {"task": "Example Notebooks: Provide Jupyter notebooks demonstrating typical workflows and analysis.", "category": "Examples, Guides, and Archival", "workflow": "User Experience"},
+    {"task": "Quickstart Guide: Write a concise quickstart in the README for new users.", "category": "Examples, Guides, and Archival", "workflow": "User Experience"},
+    {"task": "Archive Artifacts: Prepare a final archive of all key outputs, configs, and provenance for long-term storage.", "category": "Examples, Guides, and Archival", "workflow": "Archival & Release"},
+    {"task": "DOI/Zenodo Registration: Register a DOI for the final release if publishing.", "category": "Examples, Guides, and Archival", "workflow": "Archival & Release"},
+    {"task": "Security Audit: Review dependencies for vulnerabilities and update as needed.", "category": "Security & Licensing", "workflow": "Security & Compliance"},
+    {"task": "License Review: Ensure all code and data have appropriate open-source licenses.", "category": "Security & Licensing", "workflow": "Security & Compliance"},
+    {"task": "Web UI & Backend Integration: Test and document the FastAPI backend, Watchdog, and WebSocket workflow with the UI for end-to-end GIF update functionality.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "WebSocket API Documentation: Document the WebSocket API and provide example payloads for frontend/backend developers.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "Unified Configuration Management: Merge all configuration files into a single, well-documented config directory and ensure all modules/scripts use them.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "Centralized Logging: Integrate a unified logging system across orchestrator, worker, and analysis modules, with logs written to a common location.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "Automated Provenance & Metadata: Ensure all outputs (simulation, analysis, visualization) generate and store standardized metadata and provenance.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "End-to-End Integration Testing: Run integration tests covering the full workflow: simulation → analysis → visualization → UI update.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "Documentation Synchronization: Update all documentation and diagrams to reflect the latest workflow and integration points.", "category": "Integration & System Workflows", "workflow": "Integration & System Testing"},
+    {"task": "Release Packaging: Create a script or Makefile target to package the entire system (code, configs, requirements, docs, example data) for distribution or archival.", "category": "Examples, Guides, and Archival", "workflow": "Archival & Release"}
+  ],
+  "finalisation_context_notes": {
+    "workflow_definitions": "Each workflow groups related tasks for modular, maintainable progress tracking. For example, 'Orchestrator Refactor' covers all changes to orchestration logic, while 'Testing & CI/CD' covers automated testing and deployment. When updating or automating, address all tasks in a workflow together for consistency. This ensures that related improvements are made holistically, reducing technical debt and integration issues.",
+    "category_rationale": {
+      "Environment & State Preparation": "Ensures a clean, reproducible starting point for all experiments and runs. Prevents legacy artifacts from interfering with new results.",
+      "Code Quality & Purity": "Maintains scientific and engineering rigor by enforcing code standards and purity, especially important for JAX and AST-based workflows.",
+      "Orchestration & Engine Refactor": "Improves modularity, maintainability, and testability of the core simulation and orchestration logic.",
+      "Analysis & Validation": "Centralizes and standardizes analysis, making validation reproducible and results comparable across runs.",
+      "Adaptive Evolution": "Enables dynamic, feedback-driven parameter tuning and robust rerun cycles for evolutionary algorithms.",
+      "Execution & Convergence": "Ensures the system can reach and verify scientific targets (e.g., SSE ≤ 0.001) in a controlled, auditable way.",
+      "Documentation & Release": "Guarantees that all code, workflows, and results are well-documented and ready for handoff or publication.",
+      "Testing & CI/CD": "Automates quality assurance, reducing regressions and ensuring reliability across environments.",
+      "Provenance, Data Integrity, and UX": "Tracks the origin and integrity of all results, and ensures tools are user-friendly and robust.",
+      "Examples, Guides, and Archival": "Provides onboarding resources and ensures long-term accessibility and reproducibility of results.",
+      "Security & Licensing": "Protects users and maintainers by ensuring dependencies are safe and code/data are properly licensed.",
+      "Integration & System Workflows": "Coordinates cross-module features and ensures the system works as a unified whole."
+    },
+    "integration_points": "Many tasks require coordination between modules (e.g., configuration, logging, provenance). When making changes, update all affected scripts, configs, and documentation to maintain system integrity. For example, a change in configuration format should be reflected in all modules that read configs, and documented in the quickstart and API docs.",
+    "testing_and_validation": "Automated and integration tests should be run after any major change, especially those affecting workflows, configuration, or data integrity. Use both unit and end-to-end tests to catch regressions and integration issues early.",
+    "documentation": "Keep all documentation, diagrams, and quickstart guides synchronized with the current system state and workflows. This includes updating architecture diagrams, API docs, and user guides whenever workflows or integration points change.",
+    "archival_and_release": "Before final archival or release, verify that all provenance, metadata, and environment details are complete and reproducible. Archive all key outputs, configs, and documentation in a structured, accessible format (e.g., Zenodo, institutional repository).",
+    "security_and_compliance": "Regularly audit dependencies and licenses, especially before public release or archival. Use automated tools where possible (e.g., GitHub Dependabot, license scanners).",
+    "user_experience": "Provide clear CLI help, example notebooks, and quickstart guides to lower the barrier for new users and maintainers. Test onboarding materials with fresh environments to ensure accuracy.",
+    "tip_for_future_agents": "When adding new features or refactoring, always update the relevant workflow section and checklist items, and ensure all integration points (config, logging, provenance, docs) are kept in sync. Use the workflow assignments to prioritize and batch related improvements. Document rationale for major changes in the context notes for future maintainers."
+  }
+  }
+}

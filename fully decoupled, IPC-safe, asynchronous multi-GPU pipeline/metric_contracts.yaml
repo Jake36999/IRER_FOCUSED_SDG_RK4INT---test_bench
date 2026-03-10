@@ -1,0 +1,3 @@
+spectral_fidelity:
+  primary_harmonic_error: {max: 1.0}
+  missing_peak_penalty: {max: 6.0}

@@ -1,0 +1,31 @@
+{
+  "param_D": 1.0,
+  "param_eta": 0.65,
+  "param_rho_vac": 1.0,
+  "param_a_coupling": 0.5,
+  "param_splash_coupling": 0.5,
+  "param_splash_fraction": -0.5,
+  "global_seed": 42,
+  "simulation": {
+    "N_grid": 96,
+    "L_domain": 10.0,
+    "T_steps": 1200,
+    "dt": 0.001
+  },
+  "bounds": {
+    "param_D": [0.1, 2.0],
+    "param_eta": [0.0, 1.0],
+    "param_rho_vac": [0.5, 1.5],
+    "param_a_coupling": [0.1, 1.0],
+    "param_splash_coupling": [0.0, 1.0],
+    "param_splash_fraction": [-1.0, 0.0]
+  },
+  "db_path": "simulation_ledger.db",
+  "population_size": 8,
+  "generations": 100,
+  "provenance_dir": "provenance_reports",
+  "worker_script": "worker_cupy.py",
+  "job_timeout_sec": 3600,
+  "config_dir": "input_configs",
+  "data_dir": "simulation_data"
+}
