@@ -114,19 +114,46 @@ class QueueManager:
 
     def claim_job(self, worker_id: str) -> Optional[Dict[str, Any]]:
         """Claim a job for the worker. Returns dict with 'token' and 'payload' or None if queue empty."""
-        job_dict = self.pop_job()
-        if job_dict is None:
-            return None
-        # Generate a simple claim token
-        claim_token = f"{worker_id}_{int(time.time())}_{hash(json.dumps(job_dict))}"
-        claims = self._read_claims()
-        claims[claim_token] = {
-            "worker_id": worker_id,
-            "claimed_at": time.time(),
-            "job": job_dict,
-        }
-        self._write_claims(claims)
-        return {"token": claim_token, "payload": json.dumps(job_dict)}
+        queue_lock = FileLock(f"{self.queue_file}.lock", timeout=15)
+        claims_lock = FileLock(f"{self.claims_file}.lock", timeout=15)
+
+        # ASTE P1 gate: claim transaction is fully atomic (pop + claim registry write)
+        with queue_lock:
+            with claims_lock:
+                if not os.path.exists(self.queue_file):
+                    return None
+                with open(self.queue_file, "r", encoding="utf-8") as f:
+                    queue = json.load(f)
+                if not queue:
+                    return None
+
+                job_dict = queue.pop(0)
+                claim_token = f"{worker_id}_{int(time.time())}_{hash(json.dumps(job_dict))}"
+
+                if os.path.exists(self.claims_file):
+                    with open(self.claims_file, "r", encoding="utf-8") as f:
+                        claims_payload = json.load(f)
+                    claims = claims_payload if isinstance(claims_payload, dict) else {}
+                else:
+                    claims = {}
+
+                claims[claim_token] = {
+                    "worker_id": worker_id,
+                    "claimed_at": time.time(),
+                    "job": job_dict,
+                }
+
+                queue_tmp = f"{self.queue_file}.tmp"
+                with open(queue_tmp, "w", encoding="utf-8") as f:
+                    json.dump(queue, f, indent=2)
+                os.replace(queue_tmp, self.queue_file)
+
+                claims_tmp = f"{self.claims_file}.tmp"
+                with open(claims_tmp, "w", encoding="utf-8") as f:
+                    json.dump(claims, f, indent=2)
+                os.replace(claims_tmp, self.claims_file)
+
+                return {"token": claim_token, "payload": json.dumps(job_dict)}
 
     def complete_job(self, claim_token: str) -> bool:
         """Mark a claimed job as completed. Returns True if successful."""

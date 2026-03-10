@@ -23,12 +23,28 @@ def extract_and_classify_topology(rho_field: np.ndarray, persistence_threshold: 
     # Extract the event cloud
     coords = np.argwhere(rho_field > critical_threshold)
 
-    # Mathematical Hardening: Prevent Ripser OOM Hangs
+    # Mathematical Hardening: Deterministic grid-based spatial decimation to prevent Ripser OOM
+    # and preserve topological connectivity
     MAX_TDA_POINTS = 1000
     if len(coords) > MAX_TDA_POINTS:
-        rng = np.random.default_rng(seed)  # <-- HOTFIX: Locked PRNG
-        indices = rng.choice(len(coords), size=MAX_TDA_POINTS, replace=False)
-        coords = coords[indices]
+        grid_shape = rho_field.shape
+        reduction_factor = (len(coords) / MAX_TDA_POINTS) ** (1.0 / 3.0)
+        spatial_stride = max(1, int(np.ceil(reduction_factor)))
+        
+        sampled_coords = []
+        for z in range(0, grid_shape[0], spatial_stride):
+            for y in range(0, grid_shape[1], spatial_stride):
+                for x in range(0, grid_shape[2], spatial_stride):
+                    if rho_field[z, y, x] > critical_threshold:
+                        sampled_coords.append([z, y, x])
+        if len(sampled_coords) > 0:
+            coords = np.array(sampled_coords)
+        
+        # If grid-based sampling still exceeds limit, select highest-magnitude peaks
+        if len(coords) > MAX_TDA_POINTS:
+            peak_magnitudes = rho_field[tuple(coords.T)]
+            peak_indices = np.argsort(-peak_magnitudes)[:MAX_TDA_POINTS]
+            coords = coords[peak_indices]
 
     csv_header = "quantule_id,type,center_x,center_y,center_z,radius,magnitude"
     csv_lines = [csv_header]

@@ -108,8 +108,17 @@ def test_gate2_predator_queue_atomicity(tmp_path: Path):
 
 
 def test_gate3_origin_schema_parity(tmp_path: Path):
-    wd.DB_FILE = str(tmp_path / "simulation_ledger.db")
-
+    """Validates origin column schema parity after orchestrator initializes schema."""
+    from orchestrator.schema_utils import initialize_ledger_schema
+    
+    db_path = tmp_path / 'simulation_ledger.db'
+    
+    # Initialize ledger schema
+    initialize_ledger_schema(str(db_path))
+    
+    # Now worker can write to ledger
+    wd.DB_FILE = str(db_path)
+    
     params_pred = {
         "generation": -1,
         "origin": "PREDATOR_SWEEP",
@@ -143,3 +152,50 @@ def test_gate3_origin_schema_parity(tmp_path: Path):
     grouped = {row[0]: row[1] for row in rows}
     assert grouped.get("PREDATOR_SWEEP", 0) >= 1
     assert grouped.get("FSS_PREDICTOR", 0) >= 1
+
+
+def test_gate4_worker_ledger_bragg_column_compatibility(tmp_path: Path):
+    """Validates bragg column schema after orchestrator initializes schema."""
+    from orchestrator.schema_utils import initialize_ledger_schema
+    
+    db_path = tmp_path / 'simulation_ledger.db'
+    
+    # Initialize ledger schema
+    initialize_ledger_schema(str(db_path))
+    
+    # Now worker can write to ledger
+    wd.DB_FILE = str(db_path)
+    
+    params = {
+        "generation": 1,
+        "origin": "NATURAL",
+        "param_D": 1.0,
+        "param_eta": 0.65,
+        "param_rho_vac": 1.0,
+        "param_a_coupling": 0.2,
+        "param_splash_coupling": 0.2,
+        "param_splash_fraction": -0.5,
+    }
+    provenance = {
+        "spectral_fidelity": {
+            "log_prime_sse": 0.42,
+            "bragg_peaks_detected": 3,
+            "bragg_prime_sse": 0.11,
+            "collapse_event_count": 0,
+        },
+        "aletheia_metrics": {"pcs": 0.97},
+    }
+
+    assert wd.write_to_ledger("compat_hash", params, "SUCCESS", provenance) is True
+
+    conn = sqlite3.connect(wd.DB_FILE)
+    row = conn.execute(
+        "SELECT log_prime_sse, bragg_peaks_detected, n_bragg_peaks FROM metrics WHERE config_hash = ?",
+        ("compat_hash",),
+    ).fetchone()
+    conn.close()
+
+    assert row is not None
+    assert abs(float(row[0]) - 0.42) < 1e-9
+    assert int(row[1]) == 3
+    assert int(row[2]) == 3

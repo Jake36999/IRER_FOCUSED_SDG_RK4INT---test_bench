@@ -10,6 +10,7 @@ import os
 import json
 import logging
 import time
+import traceback
 import sys
 import subprocess
 import psutil #type: ignore
@@ -67,11 +68,15 @@ class OrchestratorEngine:
         # Polling settings
         self.poll_interval = config.get('poll_interval', 5)
         self.worker_heartbeat_ttl_seconds = float(config.get('worker_heartbeat_ttl_seconds', 90.0))
+        self.iteration_error_backoff_max_seconds = float(config.get('iteration_error_backoff_max_seconds', 60.0))
+        self.artifact_read_timeout_seconds = float(config.get('artifact_read_timeout_seconds', 120.0))
+        self.ledger_db_path = str(config.get('ledger_db_path', 'simulation_ledger.db'))
 
         # Threading
         self.running = False
         self.engine_thread: Optional[threading.Thread] = None
 
+        self._initialize_ledger_schema()
         self._load_checkpoint()
 
     def start(self):
@@ -94,8 +99,9 @@ class OrchestratorEngine:
 
     def _orchestration_loop(self):
         """Main orchestration loop."""
-        try:
-            while self.running and self.current_generation < self.generations_total:
+        consecutive_failures = 0
+        while self.running and self.current_generation < self.generations_total:
+            try:
                 # Check disk pressure
                 if self._check_disk_pressure():
                     self.logger.info("Disk pressure detected, pausing orchestration")
@@ -131,12 +137,23 @@ class OrchestratorEngine:
 
                 # Sleep before next iteration
                 time.sleep(self.poll_interval)
+                consecutive_failures = 0
 
-            self.logger.info("Orchestration loop completed")
+            except Exception as e:
+                consecutive_failures += 1
+                backoff_seconds = min(
+                    self.iteration_error_backoff_max_seconds,
+                    float(2 ** min(consecutive_failures, 5))
+                )
+                self.logger.error(
+                    "Transient orchestration iteration error. "
+                    f"failure_count={consecutive_failures}, backoff={backoff_seconds:.1f}s, error={e}"
+                )
+                self.logger.error(traceback.format_exc())
+                time.sleep(backoff_seconds)
+                continue
 
-        except Exception as e:
-            self.logger.error(f"Error in orchestration loop: {e}")
-            self.running = False
+        self.logger.info("Orchestration loop completed")
 
     def _check_disk_pressure(self) -> bool:
         """Check if disk usage exceeds threshold."""
@@ -187,7 +204,8 @@ class OrchestratorEngine:
                 # ASTE D.3 Fix: Atomic HDF5 Release Wait with network filesystem guard
                 artifact_path = result_data.get('artifact_url')
                 if artifact_path and os.path.exists(artifact_path):
-                    for _ in range(20):
+                    started = time.time()
+                    while (time.time() - started) < self.artifact_read_timeout_seconds:
                         try:
                             if os.path.getsize(artifact_path) > 0:
                                 with open(artifact_path, 'rb+'):
@@ -395,3 +413,74 @@ class OrchestratorEngine:
             os.replace(tmp_path, self.state_file)
         except Exception as exc:
             self.logger.warning(f"Could not persist orchestrator state: {exc}")
+
+    def _initialize_ledger_schema(self) -> None:
+        """Initialize simulation ledger schema once at orchestrator startup."""
+        try:
+            with sqlite3.connect(self.ledger_db_path, timeout=30.0, check_same_thread=False) as conn:
+                conn.execute("PRAGMA journal_mode=WAL;")
+                conn.execute("PRAGMA synchronous=NORMAL;")
+                conn.execute("PRAGMA busy_timeout=30000;")
+                cursor = conn.cursor()
+                cursor.execute(
+                    '''
+                    CREATE TABLE IF NOT EXISTS runs (
+                        config_hash TEXT PRIMARY KEY,
+                        generation INTEGER,
+                        status TEXT,
+                        fitness REAL,
+                        origin TEXT DEFAULT 'NATURAL',
+                        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )
+                    '''
+                )
+                cursor.execute(
+                    '''
+                    CREATE TABLE IF NOT EXISTS parameters (
+                        config_hash TEXT PRIMARY KEY,
+                        param_D REAL,
+                        param_eta REAL,
+                        param_rho_vac REAL,
+                        param_a_coupling REAL,
+                        param_splash_coupling REAL,
+                        param_splash_fraction REAL
+                    )
+                    '''
+                )
+                cursor.execute(
+                    '''
+                    CREATE TABLE IF NOT EXISTS metrics (
+                        config_hash TEXT PRIMARY KEY,
+                        log_prime_sse REAL,
+                        bragg_peaks_detected INTEGER,
+                        n_bragg_peaks INTEGER,
+                        bragg_prime_sse REAL,
+                        collapse_event_count INTEGER,
+                        pcs REAL
+                    )
+                    '''
+                )
+
+                cursor.execute("PRAGMA table_info(runs)")
+                runs_columns = {row[1] for row in cursor.fetchall()}
+                if 'origin' not in runs_columns:
+                    cursor.execute("ALTER TABLE runs ADD COLUMN origin TEXT DEFAULT 'NATURAL'")
+                if 'timestamp' not in runs_columns:
+                    cursor.execute("ALTER TABLE runs ADD COLUMN timestamp DATETIME")
+
+                cursor.execute("PRAGMA table_info(metrics)")
+                metrics_columns = {row[1] for row in cursor.fetchall()}
+                if 'bragg_peaks_detected' not in metrics_columns:
+                    cursor.execute("ALTER TABLE metrics ADD COLUMN bragg_peaks_detected INTEGER")
+                if 'n_bragg_peaks' not in metrics_columns:
+                    cursor.execute("ALTER TABLE metrics ADD COLUMN n_bragg_peaks INTEGER")
+                if 'collapse_event_count' not in metrics_columns:
+                    cursor.execute("ALTER TABLE metrics ADD COLUMN collapse_event_count INTEGER")
+                if 'pcs' not in metrics_columns:
+                    cursor.execute("ALTER TABLE metrics ADD COLUMN pcs REAL")
+
+                conn.commit()
+            self.logger.info(f"Ledger schema initialized at {self.ledger_db_path}")
+        except Exception as exc:
+            self.logger.error(f"Failed to initialize ledger schema: {exc}")
+            raise

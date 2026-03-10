@@ -90,7 +90,7 @@ class SpectralManifoldTracker:
         except Exception as e:
             print(f"[ASMT Warning] GPR Training failed: {e}")
 
-    def predict_parameters(self, k1: float, k2: float, pcs: float) -> Optional[tuple]:
+    def predict_parameters(self, k1: float, k2: float, pcs: float) -> Optional[tuple[float, float]]:
         """Predicts ideal solver parameters for an unexplored spectral target."""
         if not self.trained:
             return None
@@ -135,8 +135,8 @@ class Hunter:
         self.db_file = db_file
         self._init_db()
         # True LRU implementation via OrderedDict
-        self._smoothed_grads = OrderedDict()
-        self.gradient_cache = OrderedDict()  # Persistent SGN cross-generation cache
+        self._smoothed_grads: OrderedDict[tuple[float, float], tuple[float, float]] = OrderedDict()
+        self.gradient_cache: OrderedDict[tuple[float, float], Optional[tuple[float, float, float]]] = OrderedDict()  # Persistent SGN cross-generation cache
         # Initialize V16 ASMT Tracker
         self.manifold = SpectralManifoldTracker()
         
@@ -797,7 +797,7 @@ class Hunter:
             """
             return pd.read_sql_query(query, conn, params=(target_min_gen,))
 
-    def estimate_local_error_gradient(self, df: pd.DataFrame, parent_a: float, parent_s: float) -> Optional[tuple]:
+    def estimate_local_error_gradient(self, df: pd.DataFrame, parent_a: float, parent_s: float) -> Optional[tuple[float, float, float]]:
         """
         Estimates local gradient of harmonic error w.r.t parameters using
         Distance-Weighted Ridge-Regularized Local Linear Regression.

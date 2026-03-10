@@ -104,29 +104,46 @@ class ETDRK4Solver:
         self.ikz = 1j * self.kz
         self.minus_k_sq = -self.k_sq
 
+        # Mild derivative-stage high-k damping to suppress Gibbs ringing in covariant gradients
+        k_mag = cp.sqrt(self.k_sq)
+        k_max = cp.max(k_mag) + cp.float32(1e-12)
+        spectral_filter_alpha = cp.float32(params.get('param_spectral_filter_alpha', 0.05))
+        self.derivative_filter = cp.exp(-spectral_filter_alpha * (k_mag / k_max) ** 4).astype(cp.float32)
+        self.ikx_filtered = (self.ikx * self.derivative_filter).astype(cp.complex64)
+        self.iky_filtered = (self.iky * self.derivative_filter).astype(cp.complex64)
+        self.ikz_filtered = (self.ikz * self.derivative_filter).astype(cp.complex64)
+        self.minus_k_sq_filtered = (self.minus_k_sq * self.derivative_filter).astype(cp.float32)
+
         # Linear Operator: Incorporates the flat Laplacian for exponential stiff integration
         self.L_k = -self.D_diff * self.k_sq - self.eta + 1j * self.rho_vac
         
-        # True Kassam-Trefethen ETDRK4 Coefficient integration per-mode
+        # True Kassam-Trefethen ETDRK4 Coefficient integration per-mode (VRAM-safe)
         M = 32
-        r = 1.0
-        theta = 2.0 * np.pi * np.arange(1, M+1) / M
-        z = cp.asarray(r * np.exp(1j * theta)).astype(cp.complex64)
-        z = z[:, None, None, None]  # Broadcast to 3D grid
-        
-        w = self.L_k * dt
-        w_exp = w[None, ...] + z
-        
-        # Integrating factors & phi-functions using contour integration
-        self.Q = dt * cp.mean((cp.exp(w_exp / 2.0) - 1.0) / w_exp, axis=0)
-        
-        f1_integrand = (-4.0 - w_exp + cp.exp(w_exp) * (4.0 - 3.0*w_exp + w_exp**2)) / (w_exp**3)
-        f2_integrand = (2.0 + w_exp + cp.exp(w_exp) * (w_exp - 2.0)) / (w_exp**3)
-        f3_integrand = (-4.0 - 3.0*w_exp - w_exp**2 + cp.exp(w_exp) * (4.0 - w_exp)) / (w_exp**3)
-        
-        self.f1 = dt * cp.mean(f1_integrand, axis=0)
-        self.f2 = dt * cp.mean(f2_integrand, axis=0)
-        self.f3 = dt * cp.mean(f3_integrand, axis=0)
+        theta = cp.exp(1j * cp.pi * (cp.arange(1, M + 1, dtype=cp.float32) - 0.5) / M).astype(cp.complex64)
+        r = cp.float32(1.0)
+
+        w = (self.L_k * dt).astype(cp.complex64, copy=False)
+
+        # Preallocate accumulators to avoid 4D broadcast allocation (M x N x N x N)
+        Q_acc = cp.zeros_like(w, dtype=cp.complex64)
+        f1_acc = cp.zeros_like(w, dtype=cp.complex64)
+        f2_acc = cp.zeros_like(w, dtype=cp.complex64)
+        f3_acc = cp.zeros_like(w, dtype=cp.complex64)
+
+        for i in range(M):
+            z = r * theta[i]
+            w_exp = w + z
+            exp_w = cp.exp(w_exp)
+
+            Q_acc += (cp.exp(w_exp / 2.0) - 1.0) / w_exp
+            f1_acc += (-4.0 - w_exp + exp_w * (4.0 - 3.0 * w_exp + w_exp**2)) / (w_exp**3)
+            f2_acc += (2.0 + w_exp + exp_w * (w_exp - 2.0)) / (w_exp**3)
+            f3_acc += (-4.0 - 3.0 * w_exp - w_exp**2 + exp_w * (4.0 - w_exp)) / (w_exp**3)
+
+        self.Q = dt * cp.real(Q_acc / M)
+        self.f1 = dt * cp.real(f1_acc / M)
+        self.f2 = dt * cp.real(f2_acc / M)
+        self.f3 = dt * cp.real(f3_acc / M)
         
         self.E = cp.exp(w)
         self.E2 = cp.exp(w / 2.0)
@@ -169,10 +186,10 @@ class ETDRK4Solver:
         """
         # 1. Build derivative spectra in-place
         cp.copyto(self.batch_k[0], psi_k)
-        cp.multiply(self.ikx, psi_k, out=self.batch_k[1])
-        cp.multiply(self.iky, psi_k, out=self.batch_k[2])
-        cp.multiply(self.ikz, psi_k, out=self.batch_k[3])
-        cp.multiply(self.minus_k_sq, psi_k, out=self.batch_k[4])
+        cp.multiply(self.ikx_filtered, psi_k, out=self.batch_k[1])
+        cp.multiply(self.iky_filtered, psi_k, out=self.batch_k[2])
+        cp.multiply(self.ikz_filtered, psi_k, out=self.batch_k[3])
+        cp.multiply(self.minus_k_sq_filtered, psi_k, out=self.batch_k[4])
 
         # 2. Batched Transform (1 invocation produces all 5 real-space arrays)
         self.batch_real[:] = self.ifft_batch(self.batch_k)
@@ -277,14 +294,16 @@ def run_simulation(
     
     collapse_threshold = psi_params.get('collapse_threshold', 1e10)
     
-    # Pre-allocate metrics
+    # Pre-allocate telemetry
     dV = (L_domain / N_grid)**3
     history = []
     extended_telemetry = []
+    final_step = -1
     
     start_time = time.time()
     
     for step in range(T_steps):
+        final_step = step
         # 1. Core Evolution (in Spectral Space)
         psi_k = solver.step(psi_k)
         
@@ -294,56 +313,38 @@ def run_simulation(
             mean_phase = cp.angle(mean_psi)
             psi_k *= cp.exp(-1j * mean_phase)
             
-        # 3. Lightweight Telemetry (1 extra IFFT every 10 steps)
+        # 3. Lightweight Telemetry & Pure Math Termination Guards
         if step % 10 == 0 or step == T_steps - 1:
             psi_real = solver.ifft_single(psi_k)
+
+            # Terminate purely on mathematical overflow (NaN/Inf)
+            if not cp.isfinite(psi_real).all():
+                logging.error(f"Worker Terminated: Mathematical overflow (NaN/Inf) detected at step {step}.")
+                break
+
+            # Terminate on absolute amplitude threshold (Hardware/FP32 limit)
+            max_amp = float(cp.max(cp.abs(psi_real)))
+            if max_amp > collapse_threshold:
+                logging.error(f"Worker Terminated: Explosive amplitude ({max_amp:.2e}) exceeded threshold at step {step}.")
+                break
+
             rho = cp.maximum(cp.abs(psi_real)**2, 1e-12)
-            C_inv = float(cp.sum(rho**2)) * dV
-            energy = float(cp.sum(rho)) * dV
-            
-            if cp.isnan(rho).any() or cp.isinf(rho).any():
-                logging.error(f"Worker Terminated: NaN detected at step {step}.")
-                break
-                
-            if C_inv > collapse_threshold:
-                logging.error(f"Worker Terminated: Explosive collapse detected at step {step} (C_inv: {C_inv:.2e}).")
-                break
-                
+            energy = float(cp.sum(rho, dtype=cp.float64)) * dV
+            c_invariant = float(cp.sum(rho * rho, dtype=cp.float64)) * dV
             history.append({
                 'step': step,
-                'C_invariant': C_inv,
-                'energy': energy
+                'energy': energy,
+                'C_invariant': c_invariant,
             })
 
-        # Legacy Extended Telemetry (True Spectral Derivatives)
+        # Operational Extended Telemetry (Strictly physical parameters)
         if (step > 0 and step % 100 == 0) or step == T_steps - 1:
-            psi_real = solver.ifft_single(psi_k)
-            rho = cp.maximum(cp.abs(psi_real)**2, 1e-12)
-            phase = cp.angle(psi_real)
-            
-            phase_k = solver.fft_single(phase)
-            dp_x = cp.real(solver.ifft_single(solver.ikx * phase_k))
-            dp_y = cp.real(solver.ifft_single(solver.iky * phase_k))
-            dp_z = cp.real(solver.ifft_single(solver.ikz * phase_k))
-            
-            rho_k = solver.fft_single(rho)
-            dr_x = cp.real(solver.ifft_single(solver.ikx * rho_k))
-            dr_y = cp.real(solver.ifft_single(solver.iky * rho_k))
-            dr_z = cp.real(solver.ifft_single(solver.ikz * rho_k))
-            
-            phase_coherence = float(cp.abs(cp.mean(cp.exp(1j * phase))))
-            grad_phase_var = float(cp.var(dp_x**2 + dp_y**2 + dp_z**2))
-            J_info_l2 = float(cp.sum((dr_x**2 + dr_y**2 + dr_z**2) / (4.0 * rho))) * dV
-            
-            omega_sq_tel = derive_stable_conformal_factor(rho, psi_params)
-            omega_saturation = float(cp.max(omega_sq_tel))
-            
             extended_telemetry.append({
                 'step': step,
-                'J_info_l2': J_info_l2,
-                'phase_coherence': phase_coherence,
-                'grad_phase_var': grad_phase_var,
-                'omega_saturation': omega_saturation
+                'sim_time': float(step * dt),
+                'dt': dt,
+                'grid_shape': N_grid,
+                'params_hash': config_hash
             })
 
     total_time = time.time() - start_time
@@ -358,23 +359,26 @@ def run_simulation(
     
     with h5py.File(output_path, 'w') as f:
         f.create_dataset('psi_final', data=cp.asnumpy(psi_final))
-        f.create_dataset('rho_final', data=cp.asnumpy(rho_final))
         f.create_dataset('omega_sq_final', data=cp.asnumpy(omega_sq_final))
-        # Ensure rho_history is exported as 4D (Time, X, Y, Z) for downstream TDA profilers
-        f.create_dataset('rho_history', data=np.expand_dims(cp.asnumpy(rho_final), axis=0))
         
         hist_grp = f.create_group('telemetry')
         hist_grp.create_dataset('step', data=np.array([t['step'] for t in history]))
-        hist_grp.create_dataset('C_invariant', data=np.array([t['C_invariant'] for t in history]))
         hist_grp.create_dataset('energy', data=np.array([t['energy'] for t in history]))
-        
+        hist_grp.create_dataset('C_invariant', data=np.array([t['C_invariant'] for t in history]))
+
+        ext_grp = f.create_group('extended_telemetry')
         if extended_telemetry:
-            ext_grp = f.create_group('extended_telemetry')
-            ext_grp.create_dataset('step', data=np.array([t['step'] for t in extended_telemetry]))
-            ext_grp.create_dataset('J_info_l2', data=np.array([t['J_info_l2'] for t in extended_telemetry]))
-            ext_grp.create_dataset('phase_coherence', data=np.array([t['phase_coherence'] for t in extended_telemetry]))
-            ext_grp.create_dataset('grad_phase_var', data=np.array([t['grad_phase_var'] for t in extended_telemetry]))
-            ext_grp.create_dataset('omega_saturation', data=np.array([t['omega_saturation'] for t in extended_telemetry]))
+            ext_grp.create_dataset('step_count', data=np.array([t['step'] for t in extended_telemetry], dtype=np.int64))
+            ext_grp.create_dataset('sim_time', data=np.array([t['sim_time'] for t in extended_telemetry], dtype=np.float64))
+            ext_grp.create_dataset('dt', data=np.array([t['dt'] for t in extended_telemetry], dtype=np.float64))
+            ext_grp.create_dataset('grid_shape', data=np.array([t['grid_shape'] for t in extended_telemetry], dtype=np.int32))
+            ext_grp.create_dataset('params_hash', data=np.array([str(t['params_hash'] or "") for t in extended_telemetry], dtype=h5py.string_dtype(encoding='utf-8')))
+        else:
+            ext_grp.create_dataset('step_count', data=np.array([final_step], dtype=np.int64))
+            ext_grp.create_dataset('sim_time', data=np.array([total_time], dtype=np.float64))
+            ext_grp.create_dataset('dt', data=np.array([dt], dtype=np.float64))
+            ext_grp.create_dataset('grid_shape', data=np.array([N_grid], dtype=np.int32))
+            ext_grp.create_dataset('params_hash', data=np.array([config_hash or ""], dtype=h5py.string_dtype(encoding='utf-8')))
         f.flush()
 
     # ASTE D.6: Force NFS metadata sync and explicitly release VRAM for daemon safety

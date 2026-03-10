@@ -30,7 +30,13 @@ def _engine_config(tmp_path: Path) -> dict:
 
 
 def test_timeout_fail_path_pushes_result_queue(tmp_path: Path):
-    wd.DB_FILE = str(tmp_path / "simulation_ledger.db")
+    from orchestrator.schema_utils import initialize_ledger_schema
+    
+    db_path = tmp_path / "simulation_ledger.db"
+    wd.DB_FILE = str(db_path)
+    
+    # Initialize ledger schema
+    initialize_ledger_schema(str(db_path))
 
     class _FakeQueueManager:
         def __init__(self):
@@ -155,6 +161,14 @@ def test_async_visual_trigger_non_blocking(tmp_path: Path):
 
 
 def test_pre_execution_setup_failure_records_fail_and_releases_claim(tmp_path: Path):
+    from orchestrator.schema_utils import initialize_ledger_schema
+    
+    db_path = tmp_path / "simulation_ledger.db"
+    wd.DB_FILE = str(db_path)
+    
+    # Initialize ledger schema
+    initialize_ledger_schema(str(db_path))
+    
     class _FakeQueueManager:
         def __init__(self):
             self.claimed = False
@@ -191,6 +205,14 @@ def test_pre_execution_setup_failure_records_fail_and_releases_claim(tmp_path: P
 
 
 def test_success_path_keeps_artifact_for_orchestrator_lifecycle(tmp_path: Path):
+    from orchestrator.schema_utils import initialize_ledger_schema
+    
+    db_path = tmp_path / "simulation_ledger.db"
+    wd.DB_FILE = str(db_path)
+    
+    # Initialize ledger schema
+    initialize_ledger_schema(str(db_path))
+    
     class _FakeQueueManager:
         def __init__(self):
             self.claimed = False

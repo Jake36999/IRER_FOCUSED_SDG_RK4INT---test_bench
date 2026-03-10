@@ -8,7 +8,6 @@ import subprocess
 import sys
 import uuid
 import sqlite3
-from filelock import FileLock
 from orchestrator.diagnostics.runtime_audit import log_lifecycle_event
 from orchestrator.scheduling.queue_manager import QueueManager
 
@@ -23,45 +22,6 @@ SIM_TIMEOUT = float(os.environ.get("ASTE_SIM_TIMEOUT", "7200"))
 VAL_TIMEOUT = float(os.environ.get("ASTE_VAL_TIMEOUT", "1800"))
 
 
-def push_result_to_queue(result_payload):
-    """Atomically append a result payload for orchestrator consumption."""
-    try:
-        lock = FileLock(f"{RESULT_FILE}.lock", timeout=15)
-        with lock:
-            if os.path.exists(RESULT_FILE):
-                with open(RESULT_FILE, "r", encoding="utf-8") as f:
-                    results = json.load(f)
-            else:
-                results = []
-            results.append(result_payload)
-            tmp = f"{RESULT_FILE}.tmp"
-            with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(results, f, indent=2)
-            os.replace(tmp, RESULT_FILE)
-    except Exception as exc:
-        logging.error(f"Failed to push result payload: {exc}")
-
-def pop_job_from_queue():
-    """Safely pops the first job from the JSON backlog."""
-    try:
-        lock = FileLock(f"{QUEUE_FILE}.lock", timeout=15)
-        with lock:
-            if not os.path.exists(QUEUE_FILE):
-                return None
-            with open(QUEUE_FILE, "r", encoding="utf-8") as f:
-                queue = json.load(f)
-            if not queue:
-                return None
-            job = queue.pop(0)
-            tmp = f"{QUEUE_FILE}.tmp"
-            with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(queue, f, indent=4)
-            os.replace(tmp, QUEUE_FILE)
-            return job
-    except Exception as e:
-        logging.error(f"Queue read error: {e}")
-        return None
-
 def write_to_ledger(config_hash, params, status, provenance=None):
     """Writes the job results directly to the SQLite ledger."""
     try:
@@ -71,18 +31,6 @@ def write_to_ledger(config_hash, params, status, provenance=None):
         conn.execute("PRAGMA synchronous=NORMAL;")
         conn.execute(f"PRAGMA busy_timeout={SQLITE_BUSY_TIMEOUT_MS};")
         c = conn.cursor()
-        
-        # Ensure tables exist for Hunter compatibility
-        c.execute('''CREATE TABLE IF NOT EXISTS runs 
-                     (config_hash TEXT PRIMARY KEY, generation INTEGER, status TEXT, fitness REAL, origin TEXT DEFAULT 'NATURAL', timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-        c.execute("PRAGMA table_info(runs)")
-        existing_columns = {row[1] for row in c.fetchall()}
-        if "origin" not in existing_columns:
-            c.execute("ALTER TABLE runs ADD COLUMN origin TEXT DEFAULT 'NATURAL'")
-        c.execute('''CREATE TABLE IF NOT EXISTS parameters 
-                     (config_hash TEXT PRIMARY KEY, param_D REAL, param_eta REAL, param_rho_vac REAL, param_a_coupling REAL, param_splash_coupling REAL, param_splash_fraction REAL)''')
-        c.execute('''CREATE TABLE IF NOT EXISTS metrics 
-                     (config_hash TEXT PRIMARY KEY, log_prime_sse REAL, n_bragg_peaks INTEGER, bragg_prime_sse REAL, collapse_event_count INTEGER, pcs REAL)''')
         
         generation = params.get("generation", -1)
         origin = str(params.get("origin", "NATURAL"))
@@ -100,9 +48,24 @@ def write_to_ledger(config_hash, params, status, provenance=None):
             c.execute("INSERT OR REPLACE INTO parameters (config_hash, param_D, param_eta, param_rho_vac, param_a_coupling, param_splash_coupling, param_splash_fraction) VALUES (?, ?, ?, ?, ?, ?, ?)",
                       (config_hash, params.get("param_D"), params.get("param_eta"), params.get("param_rho_vac"), params.get("param_a_coupling"), params.get("param_splash_coupling"), params.get("param_splash_fraction")))
             
-            # Record Deep Metrics
-            c.execute("INSERT OR REPLACE INTO metrics (config_hash, log_prime_sse, n_bragg_peaks, bragg_prime_sse, collapse_event_count, pcs) VALUES (?, ?, ?, ?, ?, ?)",
-                      (config_hash, sf.get("log_prime_sse"), sf.get("n_bragg_peaks"), sf.get("bragg_prime_sse"), sf.get("collapse_event_count"), am.get("pcs")))
+            # Record Deep Metrics (schema-tolerant peak-count mapping)
+            peak_count = sf.get("bragg_peaks_detected", sf.get("n_bragg_peaks", 0))
+            c.execute(
+                """
+                INSERT OR REPLACE INTO metrics
+                (config_hash, log_prime_sse, bragg_peaks_detected, n_bragg_peaks, bragg_prime_sse, collapse_event_count, pcs)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    config_hash,
+                    sf.get("log_prime_sse"),
+                    peak_count,
+                    peak_count,
+                    sf.get("bragg_prime_sse", sf.get("bragg_lattice_sse")),
+                    sf.get("collapse_event_count", 0),
+                    am.get("pcs"),
+                ),
+            )
         else:
             # Record Failures so the Hunter learns to avoid them
             c.execute("INSERT OR REPLACE INTO runs (config_hash, generation, status, fitness, origin) VALUES (?, ?, ?, ?, ?)", 
@@ -111,12 +74,19 @@ def write_to_ledger(config_hash, params, status, provenance=None):
         conn.commit()
         conn.close()
         return True
+    except sqlite3.OperationalError as e:
+        logging.error(
+            "Ledger schema unavailable or incompatible. "
+            "Ensure orchestrator initializes schema before workers start. "
+            f"error={e}"
+        )
+        return False
     except Exception as e:
         logging.error(f"Failed to write to SQL ledger: {e}")
         return False
 
 
-def record_fail_result(job_id, job_params, config_hash, output_h5_path, reason=None):
+def record_fail_result(queue_manager: QueueManager, job_id, job_params, config_hash, output_h5_path, reason=None):
     """Enforce fail accounting sinks: ledger + result queue payload."""
     write_to_ledger(config_hash, job_params, "FAIL")
     payload = {
@@ -130,11 +100,22 @@ def record_fail_result(job_id, job_params, config_hash, output_h5_path, reason=N
         payload["error"] = reason
         payload["reason"] = reason
     payload["config"] = job_params
-    push_result_to_queue(payload)
+    queue_manager.push_result(json.dumps(payload))
 
 
 def main():
     logging.info("[WorkerDaemon] Autonomous Backlog Engine Started.")
+    
+    # ASTE Priority-1: Enforce orchestrator-first schema ownership
+    from orchestrator.schema_utils import ensure_ledger_ready
+    if not ensure_ledger_ready(DB_FILE, raise_on_fail=False):
+        logging.error(
+            f"[FATAL] Ledger schema not initialized. "
+            f"Orchestrator must initialize schema before worker spawn. "
+            f"DB path: {DB_FILE}"
+        )
+        sys.exit(1)
+    
     repo_root = os.path.dirname(os.path.abspath(__file__))
     worker_id = os.environ.get("ASTE_WORKER_ID", f"worker_{os.getpid()}")
     queue_manager = QueueManager(queue_file=QUEUE_FILE, result_file=RESULT_FILE)
@@ -192,8 +173,8 @@ def main():
             validation_params = dict(job_params)
             validation_params.setdefault("config_hash", config_hash)
 
-            temp_manifest_path = f"temp_manifest_{config_hash}.json"
-            temp_params_path = f"temp_params_{config_hash}.json"
+            temp_manifest_path = f"temp_manifest_{config_hash}_{job_id}.json"
+            temp_params_path = f"temp_params_{config_hash}_{job_id}.json"
             output_h5_path = f"simulation_data/rho_history_{config_hash}.h5"
             provenance_path = os.path.join("provenance_reports", f"provenance_{config_hash}.json")
 
@@ -213,7 +194,7 @@ def main():
             )
         except Exception as exc:
             logging.exception(f"❌ Pre-execution setup failed for claim {claim_token}: {exc}")
-            record_fail_result(job_id, job_params, config_hash, output_h5_path, reason="pre_execution_setup_failed")
+            record_fail_result(queue_manager, job_id, job_params, config_hash, output_h5_path, reason="pre_execution_setup_failed")
             queue_manager.complete_job(claim_token)
             claim_released = True
             continue
@@ -245,39 +226,43 @@ def main():
                     provenance = json.load(f)
                 ledger_written = write_to_ledger(config_hash, job_params, "SUCCESS", provenance)
                 if ledger_written:
-                    push_result_to_queue(
-                        {
-                            "job_id": job_id,
-                            "generation": int(job_params.get("generation", -1)),
-                            "config_hash": config_hash,
-                            "artifact_url": output_h5_path,
-                            "status": "SUCCESS",
-                            "provenance_path": provenance_path,
-                            "config": job_params,
-                        }
+                    queue_manager.push_result(
+                        json.dumps(
+                            {
+                                "job_id": job_id,
+                                "generation": int(job_params.get("generation", -1)),
+                                "config_hash": config_hash,
+                                "artifact_url": output_h5_path,
+                                "status": "SUCCESS",
+                                "provenance_path": provenance_path,
+                                "config": job_params,
+                            }
+                        )
                     )
                     logging.info(f"✅ Successfully processed and recorded {config_hash[:12]} to DB.")
                 else:
-                    push_result_to_queue(
-                        {
-                            "job_id": job_id,
-                            "generation": int(job_params.get("generation", -1)),
-                            "config_hash": config_hash,
-                            "artifact_url": output_h5_path,
-                            "status": "FAIL",
-                            "config": job_params,
-                        }
+                    queue_manager.push_result(
+                        json.dumps(
+                            {
+                                "job_id": job_id,
+                                "generation": int(job_params.get("generation", -1)),
+                                "config_hash": config_hash,
+                                "artifact_url": output_h5_path,
+                                "status": "FAIL",
+                                "config": job_params,
+                            }
+                        )
                     )
                     logging.warning(f"⚠️ Validation succeeded but DB write failed for {config_hash[:12]}.")
             else:
                 logging.warning(f"⚠️ Validation succeeded but provenance JSON missing for {config_hash[:12]}.")
-                record_fail_result(job_id, job_params, config_hash, output_h5_path, reason="provenance_missing")
+                record_fail_result(queue_manager, job_id, job_params, config_hash, output_h5_path, reason="provenance_missing")
 
             jobs_completed += 1
 
         except subprocess.CalledProcessError:
             logging.error(f"❌ Job {config_hash[:12]} failed during execution. Recording FAIL to DB.")
-            record_fail_result(job_id, job_params, config_hash, output_h5_path, reason="subprocess_failed")
+            record_fail_result(queue_manager, job_id, job_params, config_hash, output_h5_path, reason="subprocess_failed")
         except subprocess.TimeoutExpired as exc:
             timed_out_stage = "validation" if "validation_pipeline.py" in str(exc.cmd) else "simulation"
             logging.error(
@@ -307,7 +292,7 @@ def main():
             claim_released = True
         except Exception as exc:
             logging.exception(f"❌ Job {config_hash[:12]} experienced an unhandled error: {exc}")
-            record_fail_result(job_id, job_params, config_hash, output_h5_path, reason="unhandled_exception")
+            record_fail_result(queue_manager, job_id, job_params, config_hash, output_h5_path, reason="unhandled_exception")
         finally:
             if not claim_released:
                 queue_manager.complete_job(claim_token)

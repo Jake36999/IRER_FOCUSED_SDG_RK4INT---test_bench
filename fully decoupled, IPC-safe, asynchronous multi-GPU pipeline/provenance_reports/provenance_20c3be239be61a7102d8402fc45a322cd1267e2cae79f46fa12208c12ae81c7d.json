@@ -1,0 +1,82 @@
+{
+    "metadata": {
+        "config_hash": "20c3be239be61a7102d8402fc45a322cd1267e2cae79f46fa12208c12ae81c7d",
+        "legacy_hash_reference": null,
+        "timestamp": "2026-03-10T11:04:26.145359Z",
+        "schema_version": "SFP-v3.2-ARCS"
+    },
+    "spectral_fidelity": {
+        "validation_status": "FAIL: NUMERICAL_INVALID",
+        "log_prime_sse": 999.0,
+        "scaling_factor_S": 0.0,
+        "dominant_peak_k": 0.0,
+        "secondary_peak_k": 0.0,
+        "analysis_protocol": "CEPP v2.0",
+        "prime_log_targets": [
+            0.6931471805599453,
+            1.0986122886681098,
+            1.6094379124341003,
+            1.9459101490553132,
+            2.3978952727983707,
+            2.5649493574615367,
+            2.833213344056216
+        ],
+        "sse_null_phase_scramble": 999.0,
+        "sse_null_target_shuffle": 999.0,
+        "primary_harmonic_error": 999.0,
+        "missing_peak_penalty": 7.0,
+        "noise_penalty": 0.0,
+        "best_single_error": 999.0,
+        "bragg_lattice_sse": 999.0,
+        "bragg_peaks_detected": 0,
+        "n_bragg_peaks": 0,
+        "bragg_prime_sse": 999.0,
+        "measured_peaks": [],
+        "scaled_peaks": [],
+        "n_peaks_found_main": 0,
+        "failure_reason_main": "Quantule compute exception: non-broadcastable output operand with shape (128,1,1) doesn't match the broadcast shape (128,128,1)",
+        "n_peaks_found_null_a": 0,
+        "failure_reason_null_a": "Quantule compute exception: non-broadcastable output operand with shape (128,1,1) doesn't match the broadcast shape (128,128,1)",
+        "n_peaks_found_null_b": 0,
+        "failure_reason_null_b": "Quantule compute exception: non-broadcastable output operand with shape (128,1,1) doesn't match the broadcast shape (128,128,1)",
+        "collapse_event_count": 0
+    },
+    "aletheia_metrics": {
+        "pcs": 0.1410330832004547,
+        "pli": 0.0,
+        "ic": 1.0,
+        "j_info_l2_mean": null,
+        "grad_phase_var_mean": null,
+        "grad_phase_var_tau_c": null,
+        "max_amp_peak": null,
+        "clamp_fraction_mean": null,
+        "omega_sat_mean": null,
+        "C_invariant_final": null,
+        "energy_final": null,
+        "tau_c": 2.0,
+        "relative_variance": null,
+        "nonlinear_balance": null,
+        "correlation_length": null,
+        "fractal_dimension": null
+    },
+    "empirical_bridge": {
+        "c4_interference_contrast": 0.0,
+        "ablated_c4_contrast": 0.0
+    },
+    "tensor_validation": {
+        "symmetry_error": 1.0,
+        "shear_stress": 1.0
+    },
+    "topology": {
+        "q_type": "Transient",
+        "persistent_loops": 0,
+        "persistent_voids": 0,
+        "betti_0": 1,
+        "betti_1": 0,
+        "betti_2": 0
+    },
+    "statistical_validation": {
+        "p_value": 1.0,
+        "mean_random_sse": 999.0
+    }
+}

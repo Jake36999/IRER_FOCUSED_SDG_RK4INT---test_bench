@@ -48,6 +48,7 @@ from orchestrator.diagnostics.runtime_audit import log_lifecycle_event
 
 try:
     from scipy.stats import entropy as scipy_entropy
+    from scipy.ndimage import gaussian_filter
 except ImportError:
     print("FATAL: Missing 'scipy'. Please install: pip install scipy", file=sys.stderr)
     sys.exit(1)
@@ -68,12 +69,36 @@ logger = setup_logger("validation_pipeline")
 
 SCHEMA_VERSION = "SFP-v3.2-ARCS"
 MAX_ARTIFACT_ELEMENTS = int(os.environ.get("ASTE_MAX_ARTIFACT_ELEMENTS", str(512**3)))
+ANTI_ALIAS_MAX_SOURCE_ELEMENTS = int(
+    os.environ.get("ASTE_ANTI_ALIAS_MAX_SOURCE_ELEMENTS", str(MAX_ARTIFACT_ELEMENTS * 4))
+)
 
 
 # ==========================================
 # STAGE 1: Artifact Loader
 # ==========================================
 class ArtifactLoader:
+    @staticmethod
+    def _anti_aliased_downsample(dataset: h5py.Dataset, stride: int, label: str) -> np.ndarray:
+        size = int(dataset.size)
+        if size > ANTI_ALIAS_MAX_SOURCE_ELEMENTS:
+            raise MemoryError(
+                f"{label} dataset too large for anti-aliased decimation ({size} elements). "
+                "Increase ASTE_ANTI_ALIAS_MAX_SOURCE_ELEMENTS or provide smaller artifact chunks."
+            )
+
+        source = dataset[()]
+        sigma = max(0.5, 0.5 * float(stride))
+        if np.iscomplexobj(source):
+            real_filtered = gaussian_filter(np.real(source), sigma=sigma, mode='nearest')
+            imag_filtered = gaussian_filter(np.imag(source), sigma=sigma, mode='nearest')
+            filtered = real_filtered + 1j * imag_filtered
+        else:
+            filtered = gaussian_filter(source, sigma=sigma, mode='nearest')
+
+        slices = tuple(slice(None, None, stride) for _ in range(dataset.ndim))
+        return filtered[slices]
+
     @staticmethod
     def _adaptive_load_dataset(dataset: h5py.Dataset, label: str) -> np.ndarray:
         size = int(dataset.size)
@@ -86,12 +111,12 @@ class ArtifactLoader:
         slices = tuple(slice(None, None, stride) for _ in range(dataset.ndim))
         logger.warning(
             f"Large {label} field detected ({size} elements). "
-            f"Applying adaptive downsample stride={stride} to prevent OOM."
+            f"Applying anti-aliased downsample stride={stride} to prevent spectral aliasing."
         )
-        return dataset[slices]
+        return ArtifactLoader._anti_aliased_downsample(dataset, stride, label)
 
     @staticmethod
-    def load(h5_path: str) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
+    def load(h5_path: str) -> Tuple[np.ndarray, Optional[np.ndarray], Dict[str, Any]]:
         logger.info(f"[Stage 1: ArtifactLoader] Loading artifact: {h5_path}")
         if not os.path.exists(h5_path):
             raise FileNotFoundError(f"Input file not found: {h5_path}")
@@ -104,6 +129,7 @@ class ArtifactLoader:
                 raise ValueError("No valid psi data found.")
             psi_final_3d = ArtifactLoader._adaptive_load_dataset(h5f[psi_key], "psi")
 
+            rho_final_3d: Optional[np.ndarray] = None
             rho_key = 'rho_final' if 'rho_final' in h5f else 'final_rho'
             if rho_key in h5f:
                 rho_final_3d = ArtifactLoader._adaptive_load_dataset(h5f[rho_key], "rho")
@@ -112,43 +138,74 @@ class ArtifactLoader:
                 if int(np.prod(rho_history.shape[1:])) > MAX_ARTIFACT_ELEMENTS:
                     logger.warning(
                         f"Large rho_history final frame detected ({int(np.prod(rho_history.shape[1:]))} elements). "
-                        "Applying adaptive downsample to prevent OOM."
+                        "Applying anti-aliased downsample to prevent spectral aliasing."
                     )
                     ratio = float(np.prod(rho_history.shape[1:])) / float(MAX_ARTIFACT_ELEMENTS)
                     stride = max(1, int(np.ceil(ratio ** (1.0 / max(1, len(rho_history.shape[1:]))))))
+                    final_frame = np.asarray(rho_history[-1])
+                    sigma = max(0.5, 0.5 * float(stride))
+                    filtered = gaussian_filter(final_frame, sigma=sigma, mode='nearest')
                     slices = tuple(slice(None, None, stride) for _ in rho_history.shape[1:])
-                    rho_final_3d = rho_history[(rho_history.shape[0] - 1, *slices)]
+                    rho_final_3d = filtered[slices]
                 else:
                     rho_final_3d = rho_history[-1]
-            else:
-                raise ValueError("No valid rho data found.")
 
-            if psi_final_3d.shape != rho_final_3d.shape:
+            if rho_final_3d is not None and psi_final_3d.shape != rho_final_3d.shape:
                 raise ValueError(f"Domain mismatch: psi {psi_final_3d.shape} vs rho {rho_final_3d.shape}")
 
             # 2. V4.0 Decoupled Telemetry (Grouped)
             if 'extended_telemetry' in h5f:
                 ext_grp = h5f['extended_telemetry']
-                for key in ['J_info_l2', 'grad_phase_var', 'phase_coherence', 'omega_saturation']:
-                    if key in ext_grp and len(ext_grp[key]) > 0:
-                        data = ext_grp[key][:]
-                        telemetry[f'{key}_final'] = float(data[-1])
-                        if key == 'J_info_l2':
+                canonical_from_extended = {
+                    'J_info_l2': 'j_info_l2_mean',
+                    'grad_phase_var': 'grad_phase_var_mean',
+                    'phase_coherence': 'phase_coherence_mean',
+                    'omega_saturation': 'omega_sat_mean',
+                }
+                for src_key, dst_key in canonical_from_extended.items():
+                    if src_key in ext_grp and len(ext_grp[src_key]) > 0:
+                        data = np.asarray(ext_grp[src_key][:], dtype=np.float64)
+                        telemetry[dst_key] = float(np.mean(data))
+                        if src_key == 'J_info_l2':
                             telemetry['tau_c'] = ArtifactLoader._compute_tau_c(data)
 
             # 3. Legacy Schema Fallback (Flat Datasets)
             else:
                 legacy_mappings = {
-                    'j_info_l2_history': 'J_info_l2_final',
-                    'grad_phase_var_history': 'grad_phase_var_final',
-                    'phase_coherence_history': 'phase_coherence_final'
+                    'j_info_l2_history': 'j_info_l2_mean',
+                    'grad_phase_var_history': 'grad_phase_var_mean',
+                    'phase_coherence_history': 'phase_coherence_mean'
                 }
                 for old_key, new_key in legacy_mappings.items():
                     if old_key in h5f and len(h5f[old_key]) > 0:
-                        data = h5f[old_key][:]
-                        telemetry[new_key] = float(data[-1])
+                        data = np.asarray(h5f[old_key][:], dtype=np.float64)
+                        telemetry[new_key] = float(np.mean(data))
                         if old_key == 'j_info_l2_history':
                             telemetry['tau_c'] = ArtifactLoader._compute_tau_c(data)
+
+            # Read-only deprecated aliases from legacy writer variants
+            deprecated_aliases = {
+                'phase_coherence_final': 'phase_coherence_mean',
+                'grad_phase_var_final': 'grad_phase_var_mean',
+                'J_info_l2_final': 'j_info_l2_mean',
+                'omega_saturation_final': 'omega_sat_mean',
+            }
+            for alias_key, canonical_key in deprecated_aliases.items():
+                if alias_key in h5f and canonical_key not in telemetry:
+                    alias_data = np.asarray(h5f[alias_key][:], dtype=np.float64)
+                    if alias_data.size > 0:
+                        telemetry[canonical_key] = float(np.mean(alias_data))
+
+            if 'telemetry' in h5f:
+                base_telemetry = h5f['telemetry']
+                if 'C_invariant' in base_telemetry and len(base_telemetry['C_invariant']) > 0:
+                    c_data = np.asarray(base_telemetry['C_invariant'][:], dtype=np.float64)
+                    telemetry['C_invariant_final'] = float(c_data[-1])
+                    telemetry['collapse_invariant'] = float(np.mean(c_data))
+                    telemetry['collapse_invariant_mean'] = float(np.mean(c_data))
+                if 'energy' in base_telemetry and len(base_telemetry['energy']) > 0:
+                    e_data = np.asarray(base_telemetry['energy'][:], dtype=np.float64)
+                    telemetry['energy_final'] = float(e_data[-1])
 
             # 4. Memory-Safe Geometry Loading
             if "omega_sq_final" in h5f:
@@ -479,6 +536,45 @@ class StatisticalValidationEngine:
             return 1.0, None
 
 
+class ValidationDerivedMetricsEngine:
+    @staticmethod
+    def run(psi_final: np.ndarray, rho_final: np.ndarray, telemetry: Dict[str, Any]) -> Dict[str, float]:
+        rho = np.maximum(rho_final.astype(np.float64, copy=False), 1e-12)
+        phase = np.angle(psi_final)
+
+        grad_phase = np.gradient(phase)
+        grad_phase_sq = np.zeros_like(rho, dtype=np.float64)
+        for comp in grad_phase:
+            grad_phase_sq += np.asarray(comp, dtype=np.float64) ** 2
+
+        grad_rho = np.gradient(rho)
+        grad_rho_sq = np.zeros_like(rho, dtype=np.float64)
+        for comp in grad_rho:
+            grad_rho_sq += np.asarray(comp, dtype=np.float64) ** 2
+
+        fft_rho = np.fft.fftn(rho)
+        power = np.abs(fft_rho) ** 2
+        grid_shape = rho.shape
+        freq_axes = [np.fft.fftfreq(n) for n in grid_shape]
+        kx, ky, kz = np.meshgrid(*freq_axes, indexing='ij')
+        k_mag = np.sqrt(kx**2 + ky**2 + kz**2)
+        denom = float(np.sum(power) + 1e-12)
+
+        collapse_invariant = float(np.mean(rho**2))
+        phase_coherence = float(np.abs(np.mean(np.exp(1j * phase))))
+        derived = {
+            'phase_coherence_final': phase_coherence,
+            'phase_coherence_mean': phase_coherence,
+            'grad_phase_var_mean': float(np.var(grad_phase_sq)),
+            'j_info_l2_mean': float(np.mean(grad_rho_sq / (4.0 * rho))),
+            'omega_sat_mean': float(np.mean(np.asarray(telemetry.get('omega_sq_final', rho), dtype=np.float64))),
+            'spectral_bandwidth_mean': float(np.sum(k_mag * power) / denom),
+            'collapse_invariant': collapse_invariant,
+            'collapse_invariant_mean': collapse_invariant,
+        }
+        return derived
+
+
 class AletheiaMetricsEngine:
     @staticmethod
     def run(rho: np.ndarray) -> dict:
@@ -539,9 +635,10 @@ class ProvenanceAssembler:
             },
             "spectral_fidelity": spec_results,
             "aletheia_metrics": {
-                "pcs": telemetry.get('phase_coherence_final', None),
+                "pcs": telemetry.get('phase_coherence_mean', None),
                 "pli": metrics.get('pli', 0.0),
                 "ic": metrics.get('ic', 0.0),
+                "phase_coherence_mean": telemetry.get('phase_coherence_mean', None),
                 
                 # GPU Telemetry mapped for Hunter penalties
                 "j_info_l2_mean": telemetry.get('j_info_l2_mean', None),
@@ -550,6 +647,9 @@ class ProvenanceAssembler:
                 "max_amp_peak": telemetry.get('max_amp_peak', None),
                 "clamp_fraction_mean": telemetry.get('clamp_fraction_mean', None),
                 "omega_sat_mean": telemetry.get('omega_sat_mean', None),
+                "spectral_bandwidth_mean": telemetry.get('spectral_bandwidth_mean', None),
+                "collapse_invariant": telemetry.get('collapse_invariant', None),
+                "collapse_invariant_mean": telemetry.get('collapse_invariant_mean', None),
                 
                 # Conservation Invariants 
                 "C_invariant_final": telemetry.get('C_invariant_final', None),
@@ -606,10 +706,21 @@ class ValidationPipeline:
             return False
 
         try:
-            psi_final, rho_final, telemetry = ArtifactLoader.load(self.input_path)
+            psi_final, rho_final_loaded, telemetry = ArtifactLoader.load(self.input_path)
         except Exception as e:
             logger.error(f"Artifact Loader failed: {e}")
             return False
+
+        psi_final = cast(np.ndarray, psi_final)
+
+        # Canonical validation rule: derive rho from psi to avoid trusting persisted rho drift.
+        rho_final = np.abs(psi_final) ** 2
+        rho_final = cast(np.ndarray, rho_final)
+
+        # Validation-owned derived metrics from physical state.
+        derived_metrics = ValidationDerivedMetricsEngine.run(psi_final, rho_final, telemetry)
+        for key, value in derived_metrics.items():
+            telemetry.setdefault(key, value)
 
         # PRIMARY STABILITY SIGNAL: Derived post-hoc from spectral attractors
         try:
@@ -623,23 +734,28 @@ class ValidationPipeline:
         target_sse = spec_results.get("log_prime_sse", 999.0)
         validation_status = spec_results.get("validation_status", "FAIL")
         metrics_dict: Dict[str, Any]
-        c4: float
-        c4_ablated: float
+        c4: Optional[float]
+        c4_ablated: Optional[float]
         sym_err: Optional[float]
         shear: Optional[float]
-        p_val: float
+        p_val: Optional[float]
         rand_sse: Optional[float]
         tda_results: Dict[str, Any]
         
         # Early Rejection Gate (Post-hoc decision)
+        gate_rejected = False
         if target_sse > 15.0:
+            gate_rejected = True
             logger.warning(f"[Gate] Run Rejected (SSE: {target_sse:.2f}). Skipping heavy metrics.")
-            metrics_dict = {"pli": 0.0, "ic": 1.0}
-            c4, c4_ablated = 0.0, 0.0
-            sym_err, shear = 1.0, 1.0
-            p_val, rand_sse = 1.0, 999.0
+            metrics_dict = {"pli": None, "ic": None}
+            c4, c4_ablated = None, None
+            sym_err, shear = None, None
+            p_val, rand_sse = None, None
             tda_results = TopologyEngine.null_result()
+            telemetry['validation_gate_status'] = 'GATE_REJECTED'
+            spec_results['validation_status'] = 'GATE_REJECTED'
         else:
+            telemetry['validation_gate_status'] = validation_status
             tda_results = TopologyEngine.run_tda(rho_final, config_hash, self.output_dir)
             
             # Extract collapse metrics only for post-gate stable runs
@@ -652,17 +768,24 @@ class ValidationPipeline:
             p_val, rand_sse = StatisticalValidationEngine.run(target_sse, rho_final.shape, self.mc_iterations)
             metrics_dict = AletheiaMetricsEngine.run(rho_final)
 
-        sym_err = 1.0 if sym_err is None else sym_err
-        shear = 1.0 if shear is None else shear
-        rand_sse = 999.0 if rand_sse is None else rand_sse
+        if not gate_rejected:
+            sym_err = 1.0 if sym_err is None else sym_err
+            shear = 1.0 if shear is None else shear
+            rand_sse = 999.0 if rand_sse is None else rand_sse
 
-        assert sym_err is not None
-        assert shear is not None
-        assert rand_sse is not None
+            assert sym_err is not None
+            assert shear is not None
+            assert rand_sse is not None
 
         provenance = ProvenanceAssembler.assemble(
             config_hash, legacy_hash, spec_results, telemetry, metrics_dict,
-            c4, c4_ablated, sym_err, shear, p_val, rand_sse, tda_results
+            0.0 if c4 is None else c4,
+            0.0 if c4_ablated is None else c4_ablated,
+            0.0 if sym_err is None else sym_err,
+            0.0 if shear is None else shear,
+            1.0 if p_val is None else p_val,
+            0.0 if rand_sse is None else rand_sse,
+            tda_results
         )
 
         out_file = os.path.join(self.output_dir, f"provenance_{config_hash}.json")
